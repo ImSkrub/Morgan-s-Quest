@@ -7,7 +7,16 @@ using UnityEngine.UI;
 public class GameManager : MonoBehaviour
 {
     public static GameManager Instance;
-  
+    public int counter = 0;    
+
+    //player
+    [SerializeField] GameObject player;
+
+    //Stats and text
+    public float escence;
+    public Text textCount;
+    public GameObject stats;
+    private bool activeStats = true;
 
 
     private void Awake()
@@ -23,31 +32,31 @@ public class GameManager : MonoBehaviour
             return;
         }
         DontDestroyOnLoad(gameObject);
-        //player.GetComponent<LifePlayer>().OnDeath += FinishGame;
+        player.GetComponent<LifePlayer>().OnDeath += FinishGame;
     }
 
     private void Update()
     {
+        //Exit game
         if (Input.GetKeyDown(KeyCode.Escape))
         {
             SceneManager.LoadScene(0);
         }
         
-        
     }
 
     public void CompleteGame()
     {
-       // AudioManager.instance.PlaySound(7);
-        SceneManager.LoadScene(14);
-       //PointManager.Instance.SaveFinalScore();
+      
+        SceneManager.LoadScene(4);
+  
     }
 
     public void FinishGame()
     {
-       // AudioManager.instance.PlaySound(6);
-        SceneManager.LoadScene(12);
-        //PointManager.Instance.SaveFinalScore();
+       
+        SceneManager.LoadScene(5);
+
     }
 
    
