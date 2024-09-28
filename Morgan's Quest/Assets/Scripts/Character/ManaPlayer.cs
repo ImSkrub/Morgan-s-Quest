@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -13,7 +14,7 @@ public class ManaPlayer : MonoBehaviour
     public float maxTime;
     private float currentTime;
 
-    public Text Mana; //Texto del canvas que implica la vida (estadisticas UI)
+   
     public Image manaImage; //Imagen barra
 
     // Start is called before the first frame update
@@ -25,7 +26,7 @@ public class ManaPlayer : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        maxMana=Estadisticas.Instance.mana;
+        maxMana = Estadisticas.Instance.mana;
 
         currentTime += Time.deltaTime;
         if (currentMana < maxMana)
@@ -34,7 +35,6 @@ public class ManaPlayer : MonoBehaviour
         }
 
         manaImage.fillAmount = currentMana / maxMana;
-        Mana.text = "Mana " + currentMana;
     }
     private void OffMana()
     {

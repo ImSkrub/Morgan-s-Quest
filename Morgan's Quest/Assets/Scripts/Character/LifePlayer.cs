@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using System;
+using TMPro;
 
 public class LifePlayer : MonoBehaviour, IDamageable
 {
@@ -29,9 +30,8 @@ public class LifePlayer : MonoBehaviour, IDamageable
     public float currentTime;
     public event Action OnDeath; //Muerte del jugador como evento.
     
-
+   
     //Vida texto e imagen
-    public Text Vida; //Texto del canvas que implica la vida (estadisticas UI)
     public Image lifeImage; //Imagen barra
 
     //Color al recibir da�o.
@@ -76,7 +76,7 @@ public class LifePlayer : MonoBehaviour, IDamageable
         }
 
         lifeImage.fillAmount = currentHealth / maxHealth;
-        Vida.text = "Vida " + currentHealth;
+        
     }
 
     //Recibie da�o

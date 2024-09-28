@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -32,9 +33,9 @@ public class Player : MonoBehaviour, IShoot, IMovable
     private float nextFire = 0f;
 
     //Estadisticas del personaje.
-    public Text Velocidad;
-    public Text Daño;
-    public Text Escence;
+    public TextMeshProUGUI Velocidad;
+    public TextMeshProUGUI Daño;
+    public TextMeshProUGUI Escence;
 
     public bool isShooting=false;
 
@@ -54,7 +55,7 @@ public class Player : MonoBehaviour, IShoot, IMovable
         //Textos del canvas que marcan estadisticas.
         Velocidad.text = "Velocidad " + speed;
         Daño.text = "Daño " + Estadisticas.Instance.dano;
-       // Escence.text = "Escencias " + GameManager.Instance.escence;
+        Escence.text = "Escencias " + GameManager.Instance.escence;
 
         //Movimiento del personaje
         float horizontal = Input.GetAxis("Horizontal");
@@ -64,33 +65,33 @@ public class Player : MonoBehaviour, IShoot, IMovable
         float shootHorizontal = Input.GetAxis("ShootHorizontal");
         float shootVertical = Input.GetAxis("ShootVertical");
 
-        //if ((shootHorizontal != 0 || shootVertical != 0) && Time.time > nextFire + fireRate)
-        //{
-        //    //AudioManager.instance.PlaySound(0);
-        //    Shoot(shootHorizontal, shootVertical);
-        //    nextFire = Time.time + fireRate;
-        //    //<
-        //    if (shootHorizontal < 0 && isShooting==true)
-        //    {
-        //        anim.SetTrigger("ShootL");
-        //        isShooting = false;   
-        //    }
-        //    if (shootHorizontal > 0 && isShooting == true)
-        //    {
-        //        anim.SetTrigger("ShootR");
-        //        isShooting = false;
-        //    }
-        //    if (shootVertical > 0 && isShooting == true)
-        //    {
-        //        anim.SetTrigger("ShootUp");
-        //        isShooting = false;
-        //    }
-        //    if (shootVertical < 0 && isShooting == true)
-        //    {
-        //        anim.SetTrigger("ShootD");
-        //        isShooting = false;
-        //    }
-        //}
+        if ((shootHorizontal != 0 || shootVertical != 0) && Time.time > nextFire + fireRate)
+        {
+            //AudioManager.instance.PlaySound(0);
+            Shoot(shootHorizontal, shootVertical);
+            nextFire = Time.time + fireRate;
+            //<
+            if (shootHorizontal < 0 && isShooting == true)
+            {
+               // anim.SetTrigger("ShootL");
+                isShooting = false;
+            }
+            if (shootHorizontal > 0 && isShooting == true)
+            {
+               // anim.SetTrigger("ShootR");
+                isShooting = false;
+            }
+            if (shootVertical > 0 && isShooting == true)
+            {
+               // anim.SetTrigger("ShootUp");
+                isShooting = false;
+            }
+            if (shootVertical < 0 && isShooting == true)
+            {
+               // anim.SetTrigger("ShootD");
+                isShooting = false;
+            }
+        }
         rigidbody.velocity = new Vector3(horizontal * speed, vertical * speed, 0);
     }
 
@@ -105,16 +106,16 @@ public class Player : MonoBehaviour, IShoot, IMovable
         isShooting = true;
         if (Mana.currentMana >= 20)
         {
-           //AudioManager.instance.PlaySound(0);
-           GameObject bullet = bulletPool.GetBullet(); //Bala del pool.
-           bullet.transform.position = transform.position;
-           bullet.SetActive(true);
-           Rigidbody2D bulletRigidbody = bullet.GetComponent<Rigidbody2D>();
-           Vector2 shootDirection = new Vector2(x, y).normalized; //Dirección
-           bulletRigidbody.velocity = shootDirection * bulletSpeed;
+           ////AudioManager.instance.PlaySound(0);
+           //GameObject bullet = bulletPool.GetBullet(); //Bala del pool.
+           //bullet.transform.position = transform.position;
+           //bullet.SetActive(true);
+           //Rigidbody2D bulletRigidbody = bullet.GetComponent<Rigidbody2D>();
+           //Vector2 shootDirection = new Vector2(x, y).normalized; //Dirección
+           //bulletRigidbody.velocity = shootDirection * bulletSpeed;
 
            //Mana.
-           Mana.currentMana = Mana.currentMana - 20;
+           Mana.currentMana -= 20;
         }
     }
 }

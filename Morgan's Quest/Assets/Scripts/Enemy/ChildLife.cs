@@ -12,7 +12,7 @@ public class ChildLife : MonoBehaviour
 
     //Color al recibir daño.
     private SpriteRenderer spriteRenderer;
-    public Color damageColor = Color.red;
+    [SerializeField] private Color damageColor = Color.red;
     private Color originalColor;
 
     //Drop de escencia

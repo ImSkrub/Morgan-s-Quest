@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
@@ -12,9 +13,10 @@ public class GameManager : MonoBehaviour
     //player
     [SerializeField] GameObject player;
 
-    //Stats and text
+    //Stats and
+    //
     public float escence;
-    public Text textCount;
+    public TextMeshProUGUI textCount;
     public GameObject stats;
     private bool activeStats = true;
 
