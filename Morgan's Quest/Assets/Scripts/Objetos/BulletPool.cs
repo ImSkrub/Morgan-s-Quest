@@ -1,68 +1,41 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class BulletPool : MonoBehaviour
 {
-    //Pool con nuestra cola 
-    private ColaTF objectPool;
-    private GameObject prefab; //prefab para usar en la pool
-    private Transform poolContainer; //Lugar donde van a spawnear
+    public static BulletPool Instance;
+    public Bullet bulletPrefab; // Prefab de la bala
+    public int poolSize = 10; // Número de balas en el pool
+    private Cola<Bullet> bulletPool;
 
-    public BulletPool(GameObject prefab, int poolSize, Transform poolContainer = null)
+    private void Awake()
     {
-        this.prefab = prefab;
-        this.poolContainer = poolContainer;
+        Instance = this;
+        bulletPool = new Cola<Bullet>();
 
-        objectPool = new ColaTF(poolSize);
-
+        // Inicializar el pool de balas
         for (int i = 0; i < poolSize; i++)
         {
-            GameObject newObject = CreateNewObject();
-            ReturnToPool(newObject);
+            Bullet bullet = Instantiate(bulletPrefab);
+            bullet.gameObject.SetActive(false); // Desactivamos inicialmente
+            bulletPool.Enqueue(bullet); // Añadimos al pool
         }
     }
 
-    private GameObject CreateNewObject()
+    public Bullet GetBullet()
     {
-        GameObject newObj = GameObject.Instantiate(prefab);
-        if (poolContainer != null)
+        if (!bulletPool.IsEmpty())
         {
-            newObj.transform.SetParent(poolContainer);
+            Bullet bullet = bulletPool.Dequeue();
+            bullet.gameObject.SetActive(true);
+            return bullet;
         }
-        newObj.SetActive(false);
-        return newObj;
+        return null; // O puedes crear nuevas balas si es necesario
     }
 
-    // Obtener un objeto de la cola
-    public GameObject GetFromPool(Vector3 position, Quaternion rotation)
+    public void ReturnBullet(Bullet bullet)
     {
-        if (objectPool.IsEmpty())
-        {
-            Debug.LogWarning("El pool está vacío, no hay objetos disponibles.");
-            return null;
-        }
-
-        GameObject objectToUse = objectPool.Dequeue();
-
-       
-        objectToUse.transform.position = position;
-        objectToUse.transform.rotation = rotation;
-        objectToUse.SetActive(true);
-
-        return objectToUse;
-    }
-
-    public void ReturnToPool(GameObject obj)
-    {
-        if (objectPool.IsFull())
-        {
-            Debug.LogWarning("El pool está lleno. No se puede retornar más objetos.");
-            return;
-        }
-
-        // Desactivar el objeto y devolverlo al pool
-        obj.SetActive(false);
-        objectPool.Enqueue(obj);
+        bullet.gameObject.SetActive(false);
+        bulletPool.Enqueue(bullet);
     }
 }

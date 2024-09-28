@@ -48,7 +48,7 @@ public class Player : MonoBehaviour, IShoot, IMovable
 
     private void Start()
     {
-        bulletPool = new BulletPool(bulletPrefab, poolSize, bulletSpawn);
+        bulletPool = new BulletPool();
         rigidbody = GetComponent<Rigidbody2D>();
         anim=GetComponent<Animator>();
         Mana= GetComponent<ManaPlayer>();
@@ -111,14 +111,12 @@ public class Player : MonoBehaviour, IShoot, IMovable
         isShooting = true;
         if (Mana.currentMana >= 20)
         {
-            //AudioManager.instance.PlaySound(0);
-            GameObject bullet = bulletPool.GetFromPool(transform.position,Quaternion.identity); //Bala del pool.
-            if (bullet != null) return;
-           
-            //Velocidad y direccion a la bullet
-            Rigidbody2D bulletRigidbody = bullet.GetComponent<Rigidbody2D>();
-            Vector2 shootDirection = new Vector2(x, y).normalized; //Dirección
-            bulletRigidbody.velocity = shootDirection * bulletSpeed;
+            Bullet bullet = BulletPool.Instance.GetBullet();
+            if (bullet != null)
+            {
+                bullet.transform.position = transform.position; // Ajustar la posición de la bala
+                bullet.Fire(transform.forward); // Disparar en la dirección del frente
+            }
 
             //Mana.
             Mana.currentMana -= 20;

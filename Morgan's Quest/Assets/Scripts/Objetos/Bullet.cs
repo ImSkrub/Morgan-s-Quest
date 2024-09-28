@@ -1,56 +1,17 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class Bullet : MonoBehaviour
 {
-    //Daño
-    private float damage;
-    [SerializeField] private float speed = 10f;
-    public float activeRadius = 20f;
-    private BulletPool poolBalas;
+    public float speed = 10f;
 
-    public void Initialize(BulletPool pool)
+    public void Fire(Vector3 direction)
     {
-        this.poolBalas = pool;
+        //Rigidbody rb = GetComponent<Rigidbody>();
+        //rb.velocity = direction * speed;
     }
 
-
-    private void Update()
+    private void OnBecameInvisible()
     {
-        damage = Estadisticas.Instance.dano;
-
-        if (Mathf.Abs(transform.position.x) > activeRadius || Mathf.Abs(transform.position.y) > activeRadius)
-        {
-            DeactivateBullet();
-        }
-
-    }
-
-
-
-    // Colision pared con bala.
-    private void OnCollisionEnter2D(Collision2D collision)
-    {
-        if (collision.gameObject.layer == 6)
-        {
-            collision.gameObject.GetComponent<ChildLife>().GetDamage(damage); 
-            DeactivateBullet(); //Desactivar la bala.
-        }
-        if (collision.gameObject.layer == 11)
-        {
-            DeactivateBullet();
-        }
-        if (collision.gameObject.layer == 12)
-        {
-            collision.gameObject.GetComponent<ChildLife>().GetDamage(damage);
-            DeactivateBullet();
-        }
-    }
-
-    //Método para desactivar la bala.
-    private void DeactivateBullet()
-    {
-        poolBalas.ReturnToPool(this.g);
+        BulletPool.Instance.ReturnBullet(this);
     }
 }
