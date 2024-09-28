@@ -6,11 +6,28 @@ public class Bullet : MonoBehaviour
 {
     //Daño
     private float damage;
+    [SerializeField] private float speed = 10f;
+    public float activeRadius = 20f;
+    private BulletPool poolBalas;
+
+    public void Initialize(BulletPool pool)
+    {
+        this.poolBalas = pool;
+    }
+
 
     private void Update()
     {
-       damage = Estadisticas.Instance.dano;
+        damage = Estadisticas.Instance.dano;
+
+        if (Mathf.Abs(transform.position.x) > activeRadius || Mathf.Abs(transform.position.y) > activeRadius)
+        {
+            DeactivateBullet();
+        }
+
     }
+
+
 
     // Colision pared con bala.
     private void OnCollisionEnter2D(Collision2D collision)
@@ -34,6 +51,6 @@ public class Bullet : MonoBehaviour
     //Método para desactivar la bala.
     private void DeactivateBullet()
     {
-        gameObject.SetActive(false);
+        poolBalas.ReturnToPool(this.g);
     }
 }

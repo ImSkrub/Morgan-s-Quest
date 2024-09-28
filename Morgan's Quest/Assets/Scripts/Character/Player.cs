@@ -27,7 +27,11 @@ public class Player : MonoBehaviour, IShoot, IMovable
     private int speed;
 
     //Bala, objeto y disparo//
+    [Header("Bullet y pool")]
     [SerializeField] private BulletPool bulletPool;
+    [SerializeField] private GameObject bulletPrefab;
+    [SerializeField] private int poolSize = 5;
+    [SerializeField] private Transform bulletSpawn;
     private float bulletSpeed = 50f;
     private float fireRate = 0.2f;
     private float nextFire = 0f;
@@ -44,6 +48,7 @@ public class Player : MonoBehaviour, IShoot, IMovable
 
     private void Start()
     {
+        bulletPool = new BulletPool(bulletPrefab, poolSize, bulletSpawn);
         rigidbody = GetComponent<Rigidbody2D>();
         anim=GetComponent<Animator>();
         Mana= GetComponent<ManaPlayer>();
@@ -106,16 +111,17 @@ public class Player : MonoBehaviour, IShoot, IMovable
         isShooting = true;
         if (Mana.currentMana >= 20)
         {
-           ////AudioManager.instance.PlaySound(0);
-           //GameObject bullet = bulletPool.GetBullet(); //Bala del pool.
-           //bullet.transform.position = transform.position;
-           //bullet.SetActive(true);
-           //Rigidbody2D bulletRigidbody = bullet.GetComponent<Rigidbody2D>();
-           //Vector2 shootDirection = new Vector2(x, y).normalized; //Dirección
-           //bulletRigidbody.velocity = shootDirection * bulletSpeed;
+            //AudioManager.instance.PlaySound(0);
+            GameObject bullet = bulletPool.GetFromPool(transform.position,Quaternion.identity); //Bala del pool.
+            if (bullet != null) return;
+           
+            //Velocidad y direccion a la bullet
+            Rigidbody2D bulletRigidbody = bullet.GetComponent<Rigidbody2D>();
+            Vector2 shootDirection = new Vector2(x, y).normalized; //Dirección
+            bulletRigidbody.velocity = shootDirection * bulletSpeed;
 
-           //Mana.
-           Mana.currentMana -= 20;
+            //Mana.
+            Mana.currentMana -= 20;
         }
     }
 }
