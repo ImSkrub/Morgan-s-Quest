@@ -12,30 +12,43 @@ public class Bullet : MonoBehaviour
         damage = Estadisticas.Instance.dano;
     }
 
-    public void Fire(Vector2 direction,float speed)
+    public void Fire(Vector2 direction, float speed)
     {
-      rb.velocity = direction*speed;
+        rb.velocity = direction * speed;
     }
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
-        //colision con pared
+        // Colisión con pared (Layer 6)
         if (collision.gameObject.layer == 6)
         {
-         BulletPool.Instance.ReturnBullet(this);
-        }
-        //enemy
-        if(collision.gameObject.layer == 7)
-        {
             BulletPool.Instance.ReturnBullet(this);
-            collision.gameObject.GetComponent<ChildLife>().GetDamage(damage);
+        }
+
+        // Colisión con enemigo (Layer 7)
+        if (collision.gameObject.layer == 7)
+        {
+            // Retornar la bala al pool
+            BulletPool.Instance.ReturnBullet(this);
+
+            // Obtener el componente de vida del enemigo y aplicar daño
+            ChildLife enemyLife = collision.gameObject.GetComponent<ChildLife>();
+            if (enemyLife != null)
+            {
+                enemyLife.GetDamage(damage);
+
+                // Si la vida del enemigo es 0 o menos, destruir el enemigo
+                if (enemyLife.currentLife <= 0)
+                {
+                    Destroy(collision.gameObject);
+                }
+            }
         }
     }
 
-    //Salga de la camara
+    // Cuando la bala salga de la cámara
     private void OnBecameInvisible()
     {
         BulletPool.Instance.ReturnBullet(this);
     }
-    
 }
