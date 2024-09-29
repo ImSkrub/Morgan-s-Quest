@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
@@ -7,7 +8,17 @@ using UnityEngine.UI;
 public class GameManager : MonoBehaviour
 {
     public static GameManager Instance;
-  
+    public int counter = 0;    
+
+    //player
+    [SerializeField] GameObject player;
+
+    //Stats and
+    //
+    public float escence;
+    public TextMeshProUGUI textCount;
+    public GameObject stats;
+    private bool activeStats = true;
 
 
     private void Awake()
@@ -23,31 +34,37 @@ public class GameManager : MonoBehaviour
             return;
         }
         DontDestroyOnLoad(gameObject);
-        //player.GetComponent<LifePlayer>().OnDeath += FinishGame;
+        player.GetComponent<LifePlayer>().OnDeath += LoseGame;
     }
 
     private void Update()
     {
+        //Exit game
         if (Input.GetKeyDown(KeyCode.Escape))
         {
             SceneManager.LoadScene(0);
         }
-        
+
+        if (counter >= 10)
+        {
+            LevelManager.instance.LoadNextLevel();
+            counter = 0;
+        }
         
     }
 
-    public void CompleteGame()
+    public void WinGame()
     {
-       // AudioManager.instance.PlaySound(7);
-        SceneManager.LoadScene(14);
-       //PointManager.Instance.SaveFinalScore();
+      
+        SceneManager.LoadScene(3);
+  
     }
 
-    public void FinishGame()
+    public void LoseGame()
     {
-       // AudioManager.instance.PlaySound(6);
-        SceneManager.LoadScene(12);
-        //PointManager.Instance.SaveFinalScore();
+       
+        SceneManager.LoadScene(4);
+
     }
 
    
