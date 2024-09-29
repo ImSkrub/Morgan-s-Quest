@@ -65,15 +65,15 @@ public class LifePlayer : MonoBehaviour, IDamageable
             
         }
 
-        if (inmortal==1&&currentTime >=6)
-        {
-            inmortal = 0;
-        }
+        //if (inmortal==1&&currentTime >=6)
+        //{
+        //    inmortal = 0;
+        //}
 
-        if (shield == 2 && currentTime >= 4)
-        {
-            shield = 1;
-        }
+        //if (shield == 2 && currentTime >= 4)
+        //{
+        //    shield = 1;
+        //}
 
         lifeImage.fillAmount = currentHealth / maxHealth;
         

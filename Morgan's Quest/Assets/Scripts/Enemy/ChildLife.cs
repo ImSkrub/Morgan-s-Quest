@@ -53,5 +53,6 @@ public class ChildLife : MonoBehaviour
         //anim.SetTrigger("Death");
         Destroy(gameObject, destroyDelay);
         item.SpawnItem();
+        GameManager.Instance.counter += 1;
     }
 }

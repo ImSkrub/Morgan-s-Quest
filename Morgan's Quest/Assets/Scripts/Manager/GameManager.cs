@@ -44,6 +44,12 @@ public class GameManager : MonoBehaviour
         {
             SceneManager.LoadScene(0);
         }
+
+        if (counter >= 10)
+        {
+            LevelManager.instance.LoadNextLevel();
+            counter = 0;
+        }
         
     }
 
