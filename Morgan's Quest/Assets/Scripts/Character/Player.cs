@@ -7,14 +7,14 @@ using UnityEngine.UI;
 public class Player : MonoBehaviour, IShoot, IMovable
 {
     //Variables de interfaz IShoot//
-    public BulletPool BulletPool=>bulletPool;
-    public float BulletSpeed=>bulletSpeed;
+    public BulletPool BulletPool => bulletPool;
+    public float BulletSpeed => bulletSpeed;
     public float FireRate => fireRate;
     public float NextFire => nextFire;
 
     //Variables de interfaz IMovable//
     public int Speed => speed;
-    
+
     private Rigidbody2D rigidbody;
     public Rigidbody2D Rigidbody => rigidbody;
 
@@ -23,19 +23,26 @@ public class Player : MonoBehaviour, IShoot, IMovable
     //Animaciones.
     private Animator anim;
 
+    [Header("MOVIMIENTO")]
     //Velocidad
     private int speed;
+    [SerializeField][Range(1,10)] private float acceleration = 3f;
+    [SerializeField][Range(1, 10)] private float deceleration = 10f;
+    [SerializeField] private float maxSpeed = 10f;
+    private Vector2 currentVelocity = Vector2.zero;
+    [SerializeField] private float moveForce = 50f;
 
     //Bala, objeto y disparo//
-    [Header("Bullet y pool")]
+    [Header("BULLET Y POOL")]
     [SerializeField] private BulletPool bulletPool;
     [SerializeField] private GameObject bulletPrefab;
     [SerializeField] private int poolSize = 5;
     [SerializeField] private Transform bulletSpawn;
-    private float bulletSpeed = 50f;
+    [SerializeField] private float bulletSpeed = 30f;
     private float fireRate = 0.2f;
-    private float nextFire = 0f;
+    private float nextFire = 0.3f;
 
+    [Header("STATS")]
     //Estadisticas del personaje.
     public TextMeshProUGUI Velocidad;
     public TextMeshProUGUI Daño;
@@ -62,13 +69,12 @@ public class Player : MonoBehaviour, IShoot, IMovable
         Daño.text = "Daño " + Estadisticas.Instance.dano;
         Escence.text = "Escencias " + GameManager.Instance.escence;
 
-        //Movimiento del personaje
-        float horizontal = Input.GetAxis("Horizontal");
-        float vertical = Input.GetAxis("Vertical");
+     
 
         //Ataques del personaje (disparo)
         float shootHorizontal = Input.GetAxis("ShootHorizontal");
         float shootVertical = Input.GetAxis("ShootVertical");
+       
 
         if ((shootHorizontal != 0 || shootVertical != 0) && Time.time > nextFire + fireRate)
         {
@@ -97,7 +103,36 @@ public class Player : MonoBehaviour, IShoot, IMovable
                 isShooting = false;
             }
         }
-        rigidbody.velocity = new Vector3(horizontal * speed, vertical * speed, 0);
+    
+        //rigidbody.velocity = new Vector3(horizontal * speed, vertical * speed, 0);
+
+    }
+    private void FixedUpdate()
+    {
+        //Movimiento del personaje
+        float horizontal = Input.GetAxis("Horizontal");
+        float vertical = Input.GetAxis("Vertical");
+        Vector2 inputDirection = new Vector2(horizontal, vertical).normalized;
+       
+        if (inputDirection.magnitude > 0)
+        {
+            currentVelocity += inputDirection * acceleration * Time.deltaTime;
+            currentVelocity = Vector2.ClampMagnitude(currentVelocity, maxSpeed);  // Limitar a la velocidad máxima
+           
+        }
+        else
+        {
+            // Desaceleración cuando no hay input
+            
+            currentVelocity = Vector2.MoveTowards(currentVelocity, Vector2.zero, deceleration * Time.deltaTime);
+        }
+
+        if (rigidbody.velocity.magnitude < maxSpeed)
+        {
+            rigidbody.AddForce(inputDirection * moveForce);
+        }
+
+        rigidbody.velocity = currentVelocity;
     }
 
     //Disparo del personaje
@@ -115,7 +150,7 @@ public class Player : MonoBehaviour, IShoot, IMovable
             if (bullet != null)
             {
                 bullet.transform.position = transform.position; // Ajustar la posición de la bala
-                bullet.Fire(transform.forward); // Disparar en la dirección del frente
+                bullet.Fire(new Vector2(x,y),bulletSpeed); // Disparar en la dirección del frente
             }
 
             //Mana.

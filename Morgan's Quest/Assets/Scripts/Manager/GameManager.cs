@@ -34,7 +34,7 @@ public class GameManager : MonoBehaviour
             return;
         }
         DontDestroyOnLoad(gameObject);
-        player.GetComponent<LifePlayer>().OnDeath += FinishGame;
+        player.GetComponent<LifePlayer>().OnDeath += LoseGame;
     }
 
     private void Update()
@@ -47,17 +47,17 @@ public class GameManager : MonoBehaviour
         
     }
 
-    public void CompleteGame()
+    public void WinGame()
     {
       
-        SceneManager.LoadScene(4);
+        SceneManager.LoadScene(3);
   
     }
 
-    public void FinishGame()
+    public void LoseGame()
     {
        
-        SceneManager.LoadScene(5);
+        SceneManager.LoadScene(4);
 
     }
 

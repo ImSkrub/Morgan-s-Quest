@@ -603,7 +603,7 @@ GameObject:
   - component: {fileID: 779024678}
   - component: {fileID: 779024677}
   - component: {fileID: 779024676}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Walls
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -46648,10 +46648,6 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 1119043211}
     - target: {fileID: 7245871451756230001, guid: 06f5550d5f1373345bc6f2f1b18aa3ee, type: 3}
-      propertyPath: moveForce
-      value: 40
-      objectReference: {fileID: 0}
-    - target: {fileID: 7245871451756230001, guid: 06f5550d5f1373345bc6f2f1b18aa3ee, type: 3}
       propertyPath: bulletPool
       value: 
       objectReference: {fileID: 584903458}
@@ -46660,17 +46656,9 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 524018351}
     - target: {fileID: 7245871451756230001, guid: 06f5550d5f1373345bc6f2f1b18aa3ee, type: 3}
-      propertyPath: acceleration
-      value: 2.68
-      objectReference: {fileID: 0}
-    - target: {fileID: 7245871451756230001, guid: 06f5550d5f1373345bc6f2f1b18aa3ee, type: 3}
       propertyPath: bulletPrefab
       value: 
       objectReference: {fileID: 5695938505088007620, guid: b5ae7ba8997e4ca4294899cf76eff78f, type: 3}
-    - target: {fileID: 7245871451756230001, guid: 06f5550d5f1373345bc6f2f1b18aa3ee, type: 3}
-      propertyPath: deceleration
-      value: 8.07
-      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []

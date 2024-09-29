@@ -28,7 +28,7 @@ public class ManaPlayer : MonoBehaviour
     {
         maxMana = Estadisticas.Instance.mana;
 
-        currentTime += Time.deltaTime;
+        currentTime += Time.deltaTime*2;
         if (currentMana < maxMana)
         {
             OffMana();

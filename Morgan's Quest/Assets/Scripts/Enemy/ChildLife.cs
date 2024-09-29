@@ -2,9 +2,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ChildLife : MonoBehaviour 
+public class ChildLife : MonoBehaviour
 {
-    public float health = 25f; 
+    public float health = 25f;
     private bool isDead = false; 
     //Animator anim;
     public float delay = 2f; 
@@ -16,29 +16,26 @@ public class ChildLife : MonoBehaviour
     private Color originalColor;
 
     //Drop de escencia
-   // private GenerateItem item;
+    private GenerateItem item;
 
     private void Start()
     {
         //anim = GetComponent<Animator>();
         spriteRenderer = GetComponent<SpriteRenderer>();
         originalColor = spriteRenderer.color;
-       // item = GetComponent<GenerateItem>();
+        item = GetComponent<GenerateItem>();
     }
 
     private void Update()
     {
         if (health <= 0f && !isDead )
         {
-            isDead = true;
-            //anim.SetTrigger("Death");
-            Destroy(gameObject, destroyDelay);
-         //   item.SpawnItem();
+            Die();
         }
     }
 
     //Recibir daño
-    public void GetDamage(float value)
+    public void GetDamage(int value)
     {
         health -= value; //currentHealth = currentHealth - value; 
         spriteRenderer.color = damageColor;
@@ -49,5 +46,12 @@ public class ChildLife : MonoBehaviour
     {
         // Restaurar el color original del sprite
         spriteRenderer.color = originalColor;
+    }
+    public void Die()
+    {
+        isDead = true;
+        //anim.SetTrigger("Death");
+        Destroy(gameObject, destroyDelay);
+        item.SpawnItem();
     }
 }

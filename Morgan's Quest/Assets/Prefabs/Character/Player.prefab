@@ -15,9 +15,9 @@ GameObject:
   - component: {fileID: 7245871451756230001}
   - component: {fileID: 3230147441993176510}
   - component: {fileID: 1454767695649868040}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Player
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -229,7 +229,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2311225677724147288}
   - component: {fileID: 3946609583741494132}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Pool
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -263,3 +263,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fea217e67cc59084e9074103b43282b7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  bulletPrefab: {fileID: 0}
+  poolSize: 10
