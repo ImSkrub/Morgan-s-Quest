@@ -3,15 +3,22 @@ using UnityEngine;
 public class Bullet : MonoBehaviour
 {
     public float speed = 10f;
+    private Rigidbody2D rb;
 
-    public void Fire(Vector3 direction)
+    private void Awake()
     {
-        //Rigidbody rb = GetComponent<Rigidbody>();
-        //rb.velocity = direction * speed;
+        rb = GetComponent<Rigidbody2D>();
     }
 
+    public void Fire(Vector2 direction)
+    {
+      rb.AddForce(direction*speed,ForceMode2D.Impulse);
+    }
+
+    //Salga de la camara
     private void OnBecameInvisible()
     {
         BulletPool.Instance.ReturnBullet(this);
     }
+    
 }
