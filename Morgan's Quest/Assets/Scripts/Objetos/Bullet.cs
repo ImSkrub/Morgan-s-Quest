@@ -38,7 +38,7 @@ public class Bullet : MonoBehaviour
                 enemyLife.GetDamage(damage);
 
                 // Si la vida del enemigo es 0 o menos, destruir el enemigo
-                if (enemyLife.currentLife <= 0)
+                if (enemyLife.health <= 0) // Cambiado de currentLife a health
                 {
                     Destroy(collision.gameObject);
                 }

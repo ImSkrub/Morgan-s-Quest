@@ -4,14 +4,17 @@ using UnityEngine;
 
 public class GenerateItem : MonoBehaviour
 {
-    //Variables.
-    public GameObject item; // Prefab del enemigo hijo
-    public float delay = 2f; // Delay para generar los enemigos hijos
-    public Transform spawnpoint; //Spawn del hijo 1
+    [SerializeField] private GameObject essencePrefab;
 
-    //Generar item
     public void SpawnItem()
     {
-        Instantiate(item, spawnpoint.position, transform.rotation);
+        if (essencePrefab != null)
+        {
+            Instantiate(essencePrefab, transform.position, Quaternion.identity);
+        }
+        else
+        {
+            Debug.LogWarning("Essence Prefab no está asignado en el inspector.");
+        }
     }
 }

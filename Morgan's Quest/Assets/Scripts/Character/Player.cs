@@ -8,6 +8,9 @@ public class Player : MonoBehaviour, IShoot, IMovable
 {
     //Variables de interfaz IShoot//
     public BulletPool BulletPool => bulletPool;
+
+    private EssenceStack essenceStack;
+
     public float BulletSpeed => bulletSpeed;
     public float FireRate => fireRate;
     public float NextFire => nextFire;
@@ -55,6 +58,8 @@ public class Player : MonoBehaviour, IShoot, IMovable
 
     private void Start()
     {
+        essenceStack = gameObject.AddComponent<EssenceStack>(); // Añade el componente de la pila
+        essenceStack.InitializeStack(); // Inicializa la pila
         bulletPool = new BulletPool();
         rigidbody = GetComponent<Rigidbody2D>();
         anim=GetComponent<Animator>();

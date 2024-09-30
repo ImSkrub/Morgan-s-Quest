@@ -6,31 +6,25 @@ public class ChildLife : MonoBehaviour
 {
     public float health = 25f;
     private bool isDead = false;
-    //Animator anim;
-    public float destroyDelay = 0.5f;  // Retardo antes de destruir el enemigo
-    public int currentLife = 25; 
-    // Color al recibir daño
     private SpriteRenderer spriteRenderer;
-    [SerializeField] private Color damageColor = Color.red;
     private Color originalColor;
 
-    // Drop de esencia
-    private GenerateItem item;
+    [SerializeField] private Color damageColor = Color.red;
+    [SerializeField] private float destroyDelay = 0.5f;  // Retardo antes de destruir el enemigo
+    [SerializeField] private GenerateItem item;  // Referencia al script GenerateItem para dropear la esencia
 
     private void Start()
     {
-        //anim = GetComponent<Animator>();
         spriteRenderer = GetComponent<SpriteRenderer>();
         originalColor = spriteRenderer.color;
         item = GetComponent<GenerateItem>();
     }
 
-    // Recibir daño
     public void GetDamage(int value)
     {
         if (isDead) return;  // Si ya está muerto, no hacer nada
 
-        health -= value; // Reducir la vida
+        health -= value;  // Reducir la vida
 
         if (health <= 0f && !isDead)
         {
@@ -45,19 +39,25 @@ public class ChildLife : MonoBehaviour
 
     private void RestoreColor()
     {
-        // Restaurar el color original del sprite si el enemigo no ha muerto
         if (!isDead)
         {
-            spriteRenderer.color = originalColor;
+            spriteRenderer.color = originalColor;  // Restaurar el color original del sprite
         }
     }
 
     public void Die()
     {
         isDead = true;
-        //anim.SetTrigger("Death");  // Animación de muerte si existe
         Destroy(gameObject, destroyDelay);  // Destruir el objeto después del retardo
         item.SpawnItem();  // Generar el ítem al morir
+
+        // Llama al método de recoger essence
+        EssenceManager essenceManager = FindObjectOfType<EssenceManager>();
+        if (essenceManager != null)
+        {
+            essenceManager.AddEssence(); // Añadir essence a la pila
+        }
+
         GameManager.Instance.counter += 1;  // Incrementar el contador de enemigos muertos en el GameManager
     }
 }
