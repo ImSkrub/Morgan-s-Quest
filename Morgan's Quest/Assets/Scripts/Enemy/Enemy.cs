@@ -36,7 +36,7 @@ public class Enemy : MonoBehaviour
     private void Update()
     {
         currentTime += Time.deltaTime;
-
+        
         enemyDirection = follow.transform.position - transform.position;
         transform.right = Vector3.Lerp(transform.right,enemyDirection,lerpSpeedRotation*Time.deltaTime);
 
