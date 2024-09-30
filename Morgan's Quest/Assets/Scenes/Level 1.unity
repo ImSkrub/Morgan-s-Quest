@@ -144,6 +144,21 @@ MonoBehaviour:
   destroyDelay: 0.5
   currentLife: 25
   damageColor: {r: 1, g: 0, b: 0, a: 1}
+--- !u!114 &50615990
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 50615983}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ce99815158732b441b239c11150db3a1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  followSpeed: 10
+  stopDistance: 1
+  detectionRadius: 90
 --- !u!1 &133590503
 GameObject:
   m_ObjectHideFlags: 0
@@ -46721,6 +46736,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Enemy
       objectReference: {fileID: 0}
+    - target: {fileID: 961352286208665006, guid: 38f1c65c4adfc2243979081664eebe88, type: 3}
+      propertyPath: m_Layer
+      value: 7
+      objectReference: {fileID: 0}
     - target: {fileID: 4101970601860146529, guid: 38f1c65c4adfc2243979081664eebe88, type: 3}
       propertyPath: m_Color.b
       value: 0
@@ -46780,6 +46799,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 961352286208665006, guid: 38f1c65c4adfc2243979081664eebe88, type: 3}
       insertIndex: 2
       addedObject: {fileID: 50615989}
+    - targetCorrespondingSourceObject: {fileID: 961352286208665006, guid: 38f1c65c4adfc2243979081664eebe88, type: 3}
+      insertIndex: 3
+      addedObject: {fileID: 50615990}
   m_SourcePrefab: {fileID: 100100000, guid: 38f1c65c4adfc2243979081664eebe88, type: 3}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:

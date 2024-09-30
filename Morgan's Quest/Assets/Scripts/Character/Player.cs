@@ -110,7 +110,7 @@ public class Player : MonoBehaviour, IShoot, IMovable
     private void FixedUpdate()
     {
         //Movimiento del personaje
-        float horizontal = Input.GetAxis("Horizontal");
+        float horizontal = Input.GetAxis("Horizontal"); 
         float vertical = Input.GetAxis("Vertical");
         Vector2 inputDirection = new Vector2(horizontal, vertical).normalized;
        
