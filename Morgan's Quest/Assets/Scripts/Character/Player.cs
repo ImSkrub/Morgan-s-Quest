@@ -28,10 +28,7 @@ public class Player : MonoBehaviour, IShoot, IMovable
 
     [Header("MOVIMIENTO")]
     //Velocidad
-    private int speed;
-    [SerializeField][Range(1,10)] private float acceleration = 3f;
-    [SerializeField][Range(1, 10)] private float deceleration = 10f;
-    [SerializeField] private float maxSpeed = 10f;
+    [SerializeField] private int speed=7;
     private Vector2 currentVelocity = Vector2.zero;
     [SerializeField] private float moveForce = 50f;
 
@@ -41,15 +38,15 @@ public class Player : MonoBehaviour, IShoot, IMovable
     [SerializeField] private GameObject bulletPrefab;
     [SerializeField] private int poolSize = 5;
     [SerializeField] private Transform bulletSpawn;
-    [SerializeField] private float bulletSpeed = 30f;
+    [SerializeField] private float bulletSpeed = 20f;
+    private float originalBulletSpeed;
     private float fireRate = 0.2f;
     private float nextFire = 0.3f;
 
     [Header("STATS")]
     //Estadisticas del personaje.
-    public TextMeshProUGUI Velocidad;
-    public TextMeshProUGUI Daño;
-    public TextMeshProUGUI Escence;
+
+    public TextMeshProUGUI Puntaje;
 
     public bool isShooting=false;
 
@@ -62,20 +59,26 @@ public class Player : MonoBehaviour, IShoot, IMovable
         essenceStack.InitializeStack(); // Inicializa la pila
         bulletPool = new BulletPool();
         rigidbody = GetComponent<Rigidbody2D>();
-        anim=GetComponent<Animator>();
+       // anim=GetComponent<Animator>();
         Mana= GetComponent<ManaPlayer>();
+        originalBulletSpeed = bulletSpeed;
     }
 
     private void Update()
     {
-        speed = Estadisticas.Instance.vel;
-        //Textos del canvas que marcan estadisticas.
-        Velocidad.text = "Velocidad " + speed;
-        Daño.text = "Daño " + Estadisticas.Instance.dano;
-        Escence.text = "Escencias " + GameManager.Instance.escence;
+        Puntaje.text = "Escencias " + GameManager.Instance.escence;
+        //Cambiar vel bala
+        if (Input.GetKey(KeyCode.G))
+        {
+            bulletSpeed = 1f; 
+        }
+        else
+        {
+            bulletSpeed = originalBulletSpeed;
+        }
 
-     
-
+        float horizontal = Input.GetAxis("Horizontal"); 
+        float vertical = Input.GetAxis("Vertical");
         //Ataques del personaje (disparo)
         float shootHorizontal = Input.GetAxis("ShootHorizontal");
         float shootVertical = Input.GetAxis("ShootVertical");
@@ -109,35 +112,8 @@ public class Player : MonoBehaviour, IShoot, IMovable
             }
         }
     
-        //rigidbody.velocity = new Vector3(horizontal * speed, vertical * speed, 0);
+       rigidbody.velocity = new Vector3(horizontal * speed, vertical * speed, 0);
 
-    }
-    private void FixedUpdate()
-    {
-        //Movimiento del personaje
-        float horizontal = Input.GetAxis("Horizontal"); 
-        float vertical = Input.GetAxis("Vertical");
-        Vector2 inputDirection = new Vector2(horizontal, vertical).normalized;
-       
-        if (inputDirection.magnitude > 0)
-        {
-            currentVelocity += inputDirection * acceleration * Time.deltaTime;
-            currentVelocity = Vector2.ClampMagnitude(currentVelocity, maxSpeed);  // Limitar a la velocidad máxima
-           
-        }
-        else
-        {
-            // Desaceleración cuando no hay input
-            
-            currentVelocity = Vector2.MoveTowards(currentVelocity, Vector2.zero, deceleration * Time.deltaTime);
-        }
-
-        if (rigidbody.velocity.magnitude < maxSpeed)
-        {
-            rigidbody.AddForce(inputDirection * moveForce);
-        }
-
-        rigidbody.velocity = currentVelocity;
     }
 
     //Disparo del personaje

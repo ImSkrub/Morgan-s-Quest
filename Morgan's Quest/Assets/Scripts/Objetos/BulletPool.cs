@@ -13,6 +13,9 @@ public class BulletPool : MonoBehaviour
         Instance = this;
         bulletPool = new Cola<Bullet>();
 
+    }
+    private void Start() 
+    {
         // Inicializar el pool de balas
         for (int i = 0; i < poolSize; i++)
         {
