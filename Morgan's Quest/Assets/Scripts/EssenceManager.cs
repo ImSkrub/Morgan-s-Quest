@@ -2,6 +2,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+using UnityEngine;
+
 public class EssenceManager : MonoBehaviour
 {
     private EssenceStack essenceStack; // Pila de essences
@@ -37,3 +39,4 @@ public class EssenceManager : MonoBehaviour
         }
     }
 }
+

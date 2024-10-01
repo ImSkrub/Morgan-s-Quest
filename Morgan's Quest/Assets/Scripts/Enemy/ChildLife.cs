@@ -2,6 +2,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+
+
 public class ChildLife : MonoBehaviour
 {
     public float health = 25f;
@@ -50,13 +52,6 @@ public class ChildLife : MonoBehaviour
         isDead = true;
         Destroy(gameObject, destroyDelay);  // Destruir el objeto después del retardo
         item.SpawnItem();  // Generar el ítem al morir
-
-        // Llama al método de recoger essence
-        EssenceManager essenceManager = FindObjectOfType<EssenceManager>();
-        if (essenceManager != null)
-        {
-            essenceManager.AddEssence(); // Añadir essence a la pila
-        }
 
         GameManager.Instance.counter += 1;  // Incrementar el contador de enemigos muertos en el GameManager
     }
