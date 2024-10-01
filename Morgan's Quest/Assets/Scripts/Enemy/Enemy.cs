@@ -9,14 +9,15 @@ public class Enemy : MonoBehaviour
     [SerializeField] GameObject follow;
     public Transform player;
     [Header("Atributos")]
-    [SerializeField] float distToAttack;
-    [SerializeField] float vel;
-    [SerializeField] float attackDelay;
-    [SerializeField] float closestDist;
-    [SerializeField] float lerpSpeedRotation;
-    private Rigidbody2D rb;
+    [SerializeField] public float distToAttack;
+    [SerializeField] public float vel;
+    [SerializeField] public float attackDelay;
+    [SerializeField] public float closestDist;
+    [SerializeField] public float lerpSpeedRotation;
+    [SerializeField] public Rigidbody2D rb;
     private Vector3 enemyDirection;
     private bool isFacingRight = true;
+    public string id;
     public int damage;
     private float currentTime;
 

@@ -28,8 +28,7 @@ public class Player : MonoBehaviour, IShoot, IMovable
 
     [Header("MOVIMIENTO")]
     //Velocidad
-    private int speed;
-    [SerializeField] private float maxSpeed = 10f;
+    [SerializeField] private int speed=7;
     private Vector2 currentVelocity = Vector2.zero;
     [SerializeField] private float moveForce = 50f;
 
@@ -46,9 +45,8 @@ public class Player : MonoBehaviour, IShoot, IMovable
 
     [Header("STATS")]
     //Estadisticas del personaje.
-    public TextMeshProUGUI Velocidad;
-    public TextMeshProUGUI Daño;
-    public TextMeshProUGUI Escence;
+
+    public TextMeshProUGUI Puntaje;
 
     public bool isShooting=false;
 
@@ -68,12 +66,8 @@ public class Player : MonoBehaviour, IShoot, IMovable
 
     private void Update()
     {
-        speed = Estadisticas.Instance.vel;
-        //Textos del canvas que marcan estadisticas.
-        Velocidad.text = "Velocidad " + speed;
-        Daño.text = "Daño " + Estadisticas.Instance.dano;
-        Escence.text = "Escencias " + GameManager.Instance.escence;
-
+        Puntaje.text = "Escencias " + GameManager.Instance.escence;
+        //Cambiar vel bala
         if (Input.GetKey(KeyCode.G))
         {
             bulletSpeed = 1f; 
