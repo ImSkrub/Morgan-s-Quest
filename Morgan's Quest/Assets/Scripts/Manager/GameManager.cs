@@ -11,10 +11,9 @@ public class GameManager : MonoBehaviour
     public int counter = 0;    
 
     //player
-    [SerializeField] GameObject player;
+    [SerializeField]private GameObject player;
 
-    //Stats and
-    //
+    //Stats
     public float escence;
     public TextMeshProUGUI textCount;
     public GameObject stats;
@@ -47,7 +46,9 @@ public class GameManager : MonoBehaviour
 
         if (counter >= 10)
         {
+            //Pasar siguiente nivel y reiniciar las estadisticas --> puntaje
             LevelManager.instance.LoadNextLevel();
+            Estadisticas.Instance.RestarStat();
             counter = 0;
         }
         

@@ -41,7 +41,8 @@ public class Player : MonoBehaviour, IShoot, IMovable
     [SerializeField] private GameObject bulletPrefab;
     [SerializeField] private int poolSize = 5;
     [SerializeField] private Transform bulletSpawn;
-    [SerializeField] private float bulletSpeed = 30f;
+    [SerializeField] private float bulletSpeed = 20f;
+    private float originalBulletSpeed;
     private float fireRate = 0.2f;
     private float nextFire = 0.3f;
 
@@ -64,6 +65,7 @@ public class Player : MonoBehaviour, IShoot, IMovable
         rigidbody = GetComponent<Rigidbody2D>();
         anim=GetComponent<Animator>();
         Mana= GetComponent<ManaPlayer>();
+        originalBulletSpeed = bulletSpeed;
     }
 
     private void Update()
@@ -74,7 +76,14 @@ public class Player : MonoBehaviour, IShoot, IMovable
         Daño.text = "Daño " + Estadisticas.Instance.dano;
         Escence.text = "Escencias " + GameManager.Instance.escence;
 
-     
+        if (Input.GetKey(KeyCode.G))
+        {
+            bulletSpeed = 1f; 
+        }
+        else
+        {
+            bulletSpeed = originalBulletSpeed;
+        }
 
         //Ataques del personaje (disparo)
         float shootHorizontal = Input.GetAxis("ShootHorizontal");

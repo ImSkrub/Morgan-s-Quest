@@ -13,6 +13,10 @@ public class BulletPool : MonoBehaviour
         Instance = this;
         bulletPool = new Cola<Bullet>();
 
+    }
+
+    private void Update()
+    {
         // Inicializar el pool de balas
         for (int i = 0; i < poolSize; i++)
         {
@@ -20,6 +24,7 @@ public class BulletPool : MonoBehaviour
             bullet.gameObject.SetActive(false); // Desactivamos inicialmente
             bulletPool.Enqueue(bullet); // Añadimos al pool
         }
+        
     }
 
     public Bullet GetBullet()

@@ -11,7 +11,7 @@ public class ManaPlayer : MonoBehaviour
     public float currentMana; //Mana in game
     public float manaCooldown = 1f; //Daño
 
-    public float maxTime;
+    [SerializeField][Range(0,1)] float maxTime;
     private float currentTime;
 
    

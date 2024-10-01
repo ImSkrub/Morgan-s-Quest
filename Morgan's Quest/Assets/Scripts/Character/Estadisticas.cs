@@ -15,14 +15,14 @@ public class Estadisticas : MonoBehaviour
      
     private void Awake()
     {
-        if (Estadisticas.Instance == null)
+        if (Instance == null)
         {
-            Estadisticas.Instance = this; 
-            DontDestroyOnLoad(this.gameObject);
+            Instance = this; 
+            DontDestroyOnLoad(gameObject);
         } 
         else
         {
-            Destroy(this.gameObject);
+            Destroy(gameObject);
         }
             
     }
