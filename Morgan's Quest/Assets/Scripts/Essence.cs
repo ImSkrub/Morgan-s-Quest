@@ -4,13 +4,15 @@ using UnityEngine;
 
 public class Essence : MonoBehaviour
 {
-    // Aquí puedes agregar propiedades y métodos para tu clase Essence.
-    // Por ejemplo, un campo para almacenar un valor.
-    public string essenceName;
-
-    private void Start()
+    [SerializeField] private int value;
+   
+    private void OnCollisionEnter2D(Collision2D collision)
     {
-        // Inicialización, si es necesaria.
-        essenceName = name; // Usa el nombre del GameObject como nombre de esencia.
+        if (collision.gameObject.CompareTag("Player") && EssenceManager.instance.escenceStack != null)
+        {
+            GameManager.Instance.escence += value;
+            EssenceManager.instance.escenceStack.Push(this);
+            Destroy(gameObject);
+        }
     }
 }

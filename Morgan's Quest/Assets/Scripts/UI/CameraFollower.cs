@@ -5,7 +5,7 @@ using UnityEngine;
 public class CameraFollower : MonoBehaviour
 {
     [SerializeField] GameObject spawnPoint;
-    [SerializeField] float vel;
+    [SerializeField] float vel = 30f;
 
     Vector3 newPos;
 

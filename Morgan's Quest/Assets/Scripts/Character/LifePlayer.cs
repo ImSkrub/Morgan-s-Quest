@@ -85,7 +85,7 @@ public class LifePlayer : MonoBehaviour, IDamageable
         if(inmortal==0)
         {
         //  AudioManager.instance.PlaySound(1);
-          currentHealth -= value/shield; //currentHealth = currentHealth - value;
+          currentHealth -= value; //currentHealth = currentHealth - value;
           spriteRenderer.color = damageColor;
           Invoke("RestoreColor", 0.5f);
           //player.RestarPuntos();        ////MARTES IMPORTANTE///.
@@ -102,7 +102,7 @@ public class LifePlayer : MonoBehaviour, IDamageable
     public void Die()
     {
        // AudioManager.instance.PlaySound(2);
-        anim.SetTrigger("Death");
+        //anim.SetTrigger("Death");
         Destroy(gameObject,1f);
         OnDeath?.Invoke();
     }

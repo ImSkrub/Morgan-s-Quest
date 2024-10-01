@@ -14,7 +14,7 @@ public class GameManager : MonoBehaviour
     [SerializeField]private GameObject player;
 
     //Stats
-    public float escence;
+    public int escence = 0;
     public TextMeshProUGUI textCount;
     public GameObject stats;
     private bool activeStats = true;
@@ -44,14 +44,23 @@ public class GameManager : MonoBehaviour
             SceneManager.LoadScene(0);
         }
 
-        if (counter >= 10)
+        if (LevelManager.instance.currentLevel== 1 && counter >= 10)
         {
             //Pasar siguiente nivel y reiniciar las estadisticas --> puntaje
             LevelManager.instance.LoadNextLevel();
             Estadisticas.Instance.RestarStat();
             counter = 0;
         }
-        
+        //Si es el segundo nivel
+        if (LevelManager.instance.currentLevel == 2 && counter >= 20)
+        {
+            //Pasar siguiente nivel y reiniciar las estadisticas --> puntaje
+            LevelManager.instance.LoadNextLevel();
+            Estadisticas.Instance.RestarStat();
+            counter = 0;
+        }
+
+
     }
 
     public void WinGame()
