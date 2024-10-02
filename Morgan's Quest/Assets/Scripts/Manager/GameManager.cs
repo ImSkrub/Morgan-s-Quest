@@ -8,10 +8,10 @@ using UnityEngine.UI;
 public class GameManager : MonoBehaviour
 {
     public static GameManager Instance;
-    public int counter = 0;    
+    public int counter = 0;
 
     //player
-    [SerializeField]private GameObject player;
+    [SerializeField] private GameObject player;
 
     //Stats
     public int escence = 0;
@@ -19,15 +19,13 @@ public class GameManager : MonoBehaviour
     public GameObject stats;
     private bool activeStats = true;
 
-
     private void Awake()
     {
-
         if (Instance == null)
         {
             Instance = this;
         }
-        else if(Instance != this)
+        else if (Instance != this)
         {
             Destroy(gameObject);
             return;
@@ -44,47 +42,33 @@ public class GameManager : MonoBehaviour
             SceneManager.LoadScene(0);
         }
 
-        if (LevelManager.instance.currentLevel== 1 && counter >= 10)
+        if (LevelManager.instance.currentLevel == 1 && counter >= 10)
         {
-            //Pasar siguiente nivel y reiniciar las estadisticas --> puntaje
+            // Pasar al siguiente nivel y reiniciar las estadísticas
             LevelManager.instance.LoadNextLevel();
             Estadisticas.Instance.RestarStat();
             counter = 0;
             escence = 0;
         }
-        //Si es el segundo nivel
+        // Si es el segundo nivel
         if (LevelManager.instance.currentLevel == 2 && counter >= 20)
         {
-            //Pasar siguiente nivel y reiniciar las estadisticas --> puntaje
+            // Pasar al siguiente nivel y reiniciar las estadísticas
             LevelManager.instance.LoadNextLevel();
             Estadisticas.Instance.RestarStat();
             counter = 0;
             escence = 0;
         }
-
-
     }
 
     public void WinGame()
     {
-      
         SceneManager.LoadScene(3);
-  
     }
 
     public void LoseGame()
     {
-
-        if (LevelManager.instance.currentLevel == 1)
-        {
-            LevelManager.instance.LoadNextLevel();
-        }
-        if (LevelManager.instance.currentLevel == 2)
-        {
-        SceneManager.LoadScene(4);
-        }
-
+        Debug.Log("Perdiste el juego. Cargando la escena de derrota...");
+        SceneManager.LoadScene(4); // Asegúrate de que el índice 4 sea la escena de derrota
     }
-
-   
 }
