@@ -55,9 +55,7 @@ public class GameManager : MonoBehaviour
         //Si es el segundo nivel
         if (LevelManager.instance.currentLevel == 2 && counter >= 20)
         {
-            //Pasar siguiente nivel y reiniciar las estadisticas --> puntaje
-            LevelManager.instance.LoadNextLevel();
-            Estadisticas.Instance.RestarStat();
+            WinGame();
             counter = 0;
             escence = 0;
         }
