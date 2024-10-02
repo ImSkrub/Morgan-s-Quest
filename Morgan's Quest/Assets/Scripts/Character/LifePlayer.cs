@@ -7,103 +7,66 @@ using TMPro;
 
 public class LifePlayer : MonoBehaviour, IDamageable
 {
-    //Variables interfaz IDamageable//
-    public float CurrentHealth => currentHealth;
+    // Variables de vida
+    public float currentHealth;
+    public int maxHealth;
 
-    //Variables de vida.
-    public int maxHealth; //Maximo de vida
-    public float currentHealth; //Vida que llevas en el juego
-    public float damageCooldown = 1f; //Da�o
-
-    //Llamar para Pop de Pila.
-  //  private EscenceCollector player;
-
-    //Animacion
-    private Animator anim;
-    private SpriteRenderer spriteRenderer; //Renderizado color
-
-    //Inmortalidad y escudo
-    public int inmortal = 0;
-    public int shield = 1;
-
-    //Tiempo y muerte
-    public float currentTime;
-    public event Action OnDeath; //Muerte del jugador como evento.
-    
-   
-    //Vida texto e imagen
-    public Image lifeImage; //Imagen barra
-
-    //Color al recibir da�o.
+    private SpriteRenderer spriteRenderer;
     public Color damageColor = Color.red;
     private Color originalColor;
+
+    // Inmortalidad y escudo
+    public int inmortal = 0;
+
+    // Evento de muerte
+    public event Action OnDeath;
+
+    // Implementación de la propiedad requerida por IDamageable
+    public float CurrentHealth => currentHealth;
 
     private void Start()
     {
         currentHealth = maxHealth;
         spriteRenderer = GetComponent<SpriteRenderer>();
         originalColor = spriteRenderer.color;
-      //  player = GetComponent<EscenceCollector>();
-        anim =GetComponent<Animator>();
     }
 
     private void Update()
     {
-        maxHealth=Estadisticas.Instance.vida;
-
-        currentTime += Time.deltaTime;
-        //Daño
         if (currentHealth <= 0)
         {
-            //PointManager.Instance.SaveFinalScore();
-            Die();    
+            Die();
         }
-
-        if (currentHealth > maxHealth)
-        {
-            currentHealth = maxHealth;
-            
-        }
-
-        //if (inmortal==1&&currentTime >=6)
-        //{
-        //    inmortal = 0;
-        //}
-
-        //if (shield == 2 && currentTime >= 4)
-        //{
-        //    shield = 1;
-        //}
-
-        lifeImage.fillAmount = currentHealth / maxHealth;
-        
     }
 
-    //Recibie da�o
     public void GetDamage(int value)
     {
-        if(inmortal==0)
+        if (inmortal == 0)
         {
-        //  AudioManager.instance.PlaySound(1);
-          currentHealth -= value; //currentHealth = currentHealth - value;
-          spriteRenderer.color = damageColor;
-          Invoke("RestoreColor", 0.5f);
-          //player.RestarPuntos();        ////MARTES IMPORTANTE///.
+            currentHealth -= value;
+            spriteRenderer.color = damageColor;
+            Invoke("RestoreColor", 0.5f);
+
+            if (!EssenceManager.instance.escenceStack.IsEmpty())
+            {
+                Essence essence = EssenceManager.instance.escenceStack.Pop();
+                GameManager.Instance.escence -= essence.value; // Asegúrate que 'value' sea accesible
+            }
         }
     }
 
     private void RestoreColor()
     {
-        // Restaurar el color original del sprite
         spriteRenderer.color = originalColor;
     }
 
-    //Muere
     public void Die()
     {
-       // AudioManager.instance.PlaySound(2);
-        //anim.SetTrigger("Death");
-        Destroy(gameObject,1f);
-        OnDeath?.Invoke();
+        Destroy(gameObject, 1f);
+        OnDeath?.Invoke(); // Invocamos el evento de muerte si está suscrito
+
+        // Reiniciar la pila de essences
+        EssenceManager.instance.escenceStack.InitializeStack();
+        GameManager.Instance.escence = 0;
     }
 }

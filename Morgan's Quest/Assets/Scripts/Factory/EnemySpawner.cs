@@ -5,7 +5,7 @@ using UnityEngine;
 public class EnemySpawner : MonoBehaviour
 {
     [SerializeField] private EnemyFactory factory;
-    [SerializeField] [Range(1,2.5f)]private float spawnTime = 2f;
+    [SerializeField] [Range(15,20f)]private float spawnTime = 10f;
     private float nextSpawnTime;
     [SerializeField] private List<Transform> spawnpoint = new List<Transform>();
 

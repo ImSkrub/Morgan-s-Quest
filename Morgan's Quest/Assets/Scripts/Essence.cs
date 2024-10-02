@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class Essence : MonoBehaviour
 {
-    [SerializeField] private int value;
+    [SerializeField] public int value;
    
     private void OnCollisionEnter2D(Collision2D collision)
     {
