@@ -7,10 +7,8 @@ using TMPro;
 
 public class LifePlayer : MonoBehaviour, IDamageable
 {
-    public event Action OnDeath; // Asegúrate de que este evento esté definido
-
     // Variables de vida
-    public float currentHealth { get; private set; } // Implementa la propiedad CurrentHealth
+    public float currentHealth;
     public int maxHealth;
 
     private SpriteRenderer spriteRenderer;
@@ -19,6 +17,13 @@ public class LifePlayer : MonoBehaviour, IDamageable
 
     // Inmortalidad y escudo
     public int inmortal = 0;
+
+    // Evento de muerte
+    public event Action OnDeath;
+    public Image barraHp;
+
+    // Implementación de la propiedad requerida por IDamageable
+    public float CurrentHealth => currentHealth;
 
     private void Start()
     {
@@ -33,9 +38,8 @@ public class LifePlayer : MonoBehaviour, IDamageable
         {
             Die();
         }
+        barraHp.fillAmount = currentHealth/maxHealth;
     }
-
-  
 
     public void GetDamage(int value)
     {
@@ -48,7 +52,7 @@ public class LifePlayer : MonoBehaviour, IDamageable
             if (!EssenceManager.instance.escenceStack.IsEmpty())
             {
                 Essence essence = EssenceManager.instance.escenceStack.Pop();
-                GameManager.Instance.escence -= essence.value;
+                GameManager.Instance.escence -= essence.value; // Asegúrate que 'value' sea accesible
             }
         }
     }
@@ -60,11 +64,13 @@ public class LifePlayer : MonoBehaviour, IDamageable
 
     public void Die()
     {
-        Destroy(gameObject, 1f);
-        OnDeath?.Invoke(); // Llama al evento OnDeath
+        this.gameObject.SetActive(false);
+        OnDeath?.Invoke(); // Invocamos el evento de muerte si está suscrito
 
         // Reiniciar la pila de essences
         EssenceManager.instance.escenceStack.InitializeStack();
         GameManager.Instance.escence = 0;
+        GameManager.Instance.counter = 0;
+
     }
 }

@@ -16,7 +16,7 @@ GameObject:
   - component: {fileID: 7808557852648628793}
   - component: {fileID: 1580407401438509767}
   m_Layer: 7
-  m_Name: EnemyFollow
+  m_Name: Enemy Tank
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -79,7 +79,7 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_Sprite: {fileID: 7482667652216324306, guid: 311925a002f4447b3a28927169b83ea6, type: 3}
-  m_Color: {r: 0.89505315, g: 0.9056604, b: 0, a: 1}
+  m_Color: {r: 0, g: 0.90588236, b: 0.04967219, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -114,7 +114,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c9528051fed1d164fbada0f028ece14a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  health: 25
+  health: 100
   damageColor: {r: 1, g: 0, b: 0, a: 1}
   destroyDelay: 0.5
   item: {fileID: 6249668151975592760}
@@ -132,14 +132,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   follow: {fileID: 0}
   player: {fileID: 0}
-  distToAttack: 25
+  distToAttack: 15
   vel: 5
   attackDelay: 2
   closestDist: 1
   lerpSpeedRotation: 0
   rb: {fileID: 7808557852648628793}
   id: Persigue
-  damage: 10
+  damage: 50
 --- !u!50 &7808557852648628793
 Rigidbody2D:
   serializedVersion: 4

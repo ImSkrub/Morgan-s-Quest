@@ -4,9 +4,6 @@ using UnityEngine;
 
 public class EnemyFollow : Enemy
 {
-    
-    [SerializeField] private float detectionRadius = 90f;  // Radio de detección
-
     private void Start()
     {
         
@@ -26,7 +23,7 @@ public class EnemyFollow : Enemy
             // Calcula la distancia al jugador
             float distanceToPlayer = Vector2.Distance(transform.position, player.position);
 
-            if (distanceToPlayer < detectionRadius && distanceToPlayer > closestDist)
+            if (distanceToPlayer < distToAttack && distanceToPlayer > closestDist)
             {
                 // Moverse hacia el jugador
                 Vector2 direction = (player.position - transform.position).normalized;
