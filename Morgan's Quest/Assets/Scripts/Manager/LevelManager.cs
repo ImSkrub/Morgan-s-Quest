@@ -26,6 +26,11 @@ public class LevelManager : MonoBehaviour
 
     }
 
+    private void Update()
+    {
+        Debug.Log(currentLevel);
+    }
+
     public void LoadNextLevel()
     {
         currentLevelIndex++;
@@ -50,7 +55,7 @@ public class LevelManager : MonoBehaviour
 
     public void LoadMainMenu()
     {
-        currentLevelIndex = 1;
+        currentLevelIndex = 0;
         LoadLevel(0);
         //AudioManager.instance.PlayMusic("Music1");
 

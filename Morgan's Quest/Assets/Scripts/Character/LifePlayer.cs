@@ -64,7 +64,7 @@ public class LifePlayer : MonoBehaviour, IDamageable
 
     public void Die()
     {
-        Destroy(gameObject, 1f);
+        this.gameObject.SetActive(false);
         OnDeath?.Invoke(); // Invocamos el evento de muerte si está suscrito
 
         // Reiniciar la pila de essences

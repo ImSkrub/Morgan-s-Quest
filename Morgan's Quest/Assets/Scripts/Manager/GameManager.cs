@@ -32,12 +32,12 @@ public class GameManager : MonoBehaviour
             Destroy(gameObject);
             return;
         }
-        DontDestroyOnLoad(gameObject);
         player.GetComponent<LifePlayer>().OnDeath += LoseGame;
     }
 
     private void Update()
     {
+        textCount.text = "Enemy deaths: " + counter;
         //Exit game
         if (Input.GetKeyDown(KeyCode.Escape))
         {
@@ -74,15 +74,7 @@ public class GameManager : MonoBehaviour
 
     public void LoseGame()
     {
-
-        if (LevelManager.instance.currentLevel == 1)
-        {
-            LevelManager.instance.LoadNextLevel();
-        }
-        if (LevelManager.instance.currentLevel == 2)
-        {
-        SceneManager.LoadScene(4);
-        }
+      SceneManager.LoadScene(4);
 
     }
 

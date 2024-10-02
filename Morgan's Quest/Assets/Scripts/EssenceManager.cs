@@ -22,6 +22,7 @@ public class EssenceManager : MonoBehaviour
         }
         escenceStack.InitializeStack();
     }
+    
 
 }
 

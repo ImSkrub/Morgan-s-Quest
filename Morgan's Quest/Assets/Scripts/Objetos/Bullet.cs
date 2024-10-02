@@ -1,3 +1,4 @@
+using System.Collections;
 using Unity.VisualScripting;
 using UnityEngine;
 
@@ -9,7 +10,20 @@ public class Bullet : MonoBehaviour
     private void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
-        damage = Estadisticas.Instance.dano;
+    }
+
+    private void Update()
+    {
+        var escencia = GameManager.Instance.escence;
+        switch (escencia)
+        {
+            case 5:
+                damage += 20;
+                break;
+            case 10:
+                damage *= 2;
+                break;
+        }
     }
 
     public void Fire(Vector2 direction, float speed)
