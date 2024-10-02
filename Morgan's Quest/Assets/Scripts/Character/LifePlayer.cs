@@ -35,11 +35,7 @@ public class LifePlayer : MonoBehaviour, IDamageable
         }
     }
 
-    public interface IDamageable
-    {
-        float currentHealth { get; } // Asegúrate de que esta propiedad esté definida
-        void GetDamage(int value);
-    }
+  
 
     public void GetDamage(int value)
     {
