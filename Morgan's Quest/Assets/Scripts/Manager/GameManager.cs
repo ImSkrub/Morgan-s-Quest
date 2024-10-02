@@ -50,6 +50,7 @@ public class GameManager : MonoBehaviour
             LevelManager.instance.LoadNextLevel();
             Estadisticas.Instance.RestarStat();
             counter = 0;
+            escence = 0;
         }
         //Si es el segundo nivel
         if (LevelManager.instance.currentLevel == 2 && counter >= 20)
@@ -58,6 +59,7 @@ public class GameManager : MonoBehaviour
             LevelManager.instance.LoadNextLevel();
             Estadisticas.Instance.RestarStat();
             counter = 0;
+            escence = 0;
         }
 
 
@@ -72,8 +74,15 @@ public class GameManager : MonoBehaviour
 
     public void LoseGame()
     {
-       
+
+        if (LevelManager.instance.currentLevel == 1)
+        {
+            LevelManager.instance.LoadNextLevel();
+        }
+        if (LevelManager.instance.currentLevel == 2)
+        {
         SceneManager.LoadScene(4);
+        }
 
     }
 

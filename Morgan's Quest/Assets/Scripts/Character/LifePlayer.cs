@@ -20,6 +20,7 @@ public class LifePlayer : MonoBehaviour, IDamageable
 
     // Evento de muerte
     public event Action OnDeath;
+    public Image barraHp;
 
     // Implementación de la propiedad requerida por IDamageable
     public float CurrentHealth => currentHealth;
@@ -37,6 +38,7 @@ public class LifePlayer : MonoBehaviour, IDamageable
         {
             Die();
         }
+        barraHp.fillAmount = currentHealth/maxHealth;
     }
 
     public void GetDamage(int value)
@@ -68,5 +70,7 @@ public class LifePlayer : MonoBehaviour, IDamageable
         // Reiniciar la pila de essences
         EssenceManager.instance.escenceStack.InitializeStack();
         GameManager.Instance.escence = 0;
+        GameManager.Instance.counter = 0;
+
     }
 }
