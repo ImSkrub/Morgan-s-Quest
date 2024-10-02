@@ -1,39 +1,54 @@
-using System.Collections;
-using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class Bullet : MonoBehaviour
 {
-    //Daño
-    private float damage;
+    private Rigidbody2D rb;
+    [SerializeField] private int damage;
 
-    private void Update()
+    private void Awake()
     {
-       damage = Estadisticas.Instance.dano;
+        rb = GetComponent<Rigidbody2D>();
+        damage = Estadisticas.Instance.dano;
     }
 
-    // Colision pared con bala.
+    public void Fire(Vector2 direction, float speed)
+    {
+        rb.velocity = direction * speed;
+    }
+
     private void OnCollisionEnter2D(Collision2D collision)
     {
+        // Colisión con pared (Layer 6)
         if (collision.gameObject.layer == 6)
         {
-            collision.gameObject.GetComponent<ChildLife>().GetDamage(damage); 
-            DeactivateBullet(); //Desactivar la bala.
+            BulletPool.Instance.ReturnBullet(this);
         }
-        if (collision.gameObject.layer == 11)
+
+        // Colisión con enemigo (Layer 7)
+        if (collision.gameObject.layer == 7)
         {
-            DeactivateBullet();
-        }
-        if (collision.gameObject.layer == 12)
-        {
-            collision.gameObject.GetComponent<ChildLife>().GetDamage(damage);
-            DeactivateBullet();
+            // Retornar la bala al pool
+            BulletPool.Instance.ReturnBullet(this);
+
+            // Obtener el componente de vida del enemigo y aplicar daño
+            ChildLife enemyLife = collision.gameObject.GetComponent<ChildLife>();
+            if (enemyLife != null)
+            {
+                enemyLife.GetDamage(damage);
+
+                // Si la vida del enemigo es 0 o menos, destruir el enemigo
+                if (enemyLife.health <= 0) // Cambiado de currentLife a health
+                {
+                    Destroy(collision.gameObject);
+                }
+            }
         }
     }
 
-    //Método para desactivar la bala.
-    private void DeactivateBullet()
+    // Cuando la bala salga de la cámara
+    private void OnBecameInvisible()
     {
-        gameObject.SetActive(false);
+        BulletPool.Instance.ReturnBullet(this);
     }
 }
