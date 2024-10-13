@@ -3,7 +3,7 @@ guid: 4122542ae979674468555f2b5caf3443
 TextureImporter:
   internalIDToNameTable: []
   externalObjects: {}
-  serializedVersion: 13
+  serializedVersion: 12
   mipmaps:
     mipMapMode: 0
     enableMipMap: 0
@@ -136,7 +136,7 @@ TextureImporter:
         serializedVersion: 2
         x: 88
         y: 216
-        width: 39
+        width: 36
         height: 57
       alignment: 2
       pivot: {x: 0.5, y: 1}
@@ -176,10 +176,10 @@ TextureImporter:
       name: Char_001_6
       rect:
         serializedVersion: 2
-        x: 232
-        y: 213
-        width: 38
-        height: 60
+        x: 233
+        y: 215
+        width: 36
+        height: 57
       alignment: 2
       pivot: {x: 0.5, y: 1}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -198,9 +198,9 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 18
-        y: 147
+        y: 148
         width: 36
-        height: 63
+        height: 57
       alignment: 2
       pivot: {x: 0.5, y: 1}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -219,9 +219,9 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 89
-        y: 143
-        width: 37
-        height: 55
+        y: 145
+        width: 36
+        height: 57
       alignment: 2
       pivot: {x: 0.5, y: 1}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -242,7 +242,7 @@ TextureImporter:
         x: 162
         y: 147
         width: 36
-        height: 54
+        height: 57
       alignment: 2
       pivot: {x: 0.5, y: 1}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -261,8 +261,8 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 233
-        y: 141
-        width: 38
+        y: 142
+        width: 36
         height: 57
       alignment: 2
       pivot: {x: 0.5, y: 1}
@@ -282,9 +282,9 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 17
-        y: 74
-        width: 37
-        height: 56
+        y: 75
+        width: 36
+        height: 57
       alignment: 2
       pivot: {x: 0.5, y: 1}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -305,7 +305,7 @@ TextureImporter:
         x: 90
         y: 72
         width: 36
-        height: 54
+        height: 57
       alignment: 2
       pivot: {x: 0.5, y: 1}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -347,7 +347,7 @@ TextureImporter:
         x: 234
         y: 72
         width: 36
-        height: 54
+        height: 57
       alignment: 2
       pivot: {x: 0.5, y: 1}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -367,7 +367,7 @@ TextureImporter:
         serializedVersion: 2
         x: 18
         y: 3
-        width: 37
+        width: 36
         height: 57
       alignment: 2
       pivot: {x: 0.5, y: 1}
@@ -407,10 +407,10 @@ TextureImporter:
       name: Char_001_40
       rect:
         serializedVersion: 2
-        x: 162
-        y: 0
-        width: 37
-        height: 60
+        x: 161
+        y: 2
+        width: 36
+        height: 57
       alignment: 2
       pivot: {x: 0.5, y: 1}
       border: {x: 0, y: 0, z: 0, w: 0}
