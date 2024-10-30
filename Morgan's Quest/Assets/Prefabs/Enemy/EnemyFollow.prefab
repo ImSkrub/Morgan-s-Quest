@@ -132,8 +132,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   follow: {fileID: 0}
   player: {fileID: 0}
-  distToAttack: 25
-  vel: 5
+  distToAttack: 15
+  vel: 10
   attackDelay: 2
   closestDist: 1
   lerpSpeedRotation: 0

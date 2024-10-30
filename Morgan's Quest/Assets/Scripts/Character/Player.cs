@@ -31,7 +31,7 @@ public class Player : MonoBehaviour, IShoot, IMovable
     [SerializeField] private int speed=7;
     private Vector2 currentVelocity = Vector2.zero;
     [SerializeField] private float moveForce = 50f;
-
+    [Space(2)]
     //Bala, objeto y disparo//
     [Header("BULLET Y POOL")]
     [SerializeField] private BulletPool bulletPool;
@@ -42,7 +42,7 @@ public class Player : MonoBehaviour, IShoot, IMovable
     private float originalBulletSpeed;
     private float fireRate = 0.2f;
     private float nextFire = 0.3f;
-
+    [Space(2)]
     [Header("STATS")]
     //Estadisticas del personaje.
 
