@@ -59,7 +59,7 @@ public class Player : MonoBehaviour, IShoot, IMovable
         essenceStack.InitializeStack(); // Inicializa la pila
         bulletPool = new BulletPool();
         rigidbody = GetComponent<Rigidbody2D>();
-       // anim=GetComponent<Animator>();
+        anim=GetComponent<Animator>();
         Mana= GetComponent<ManaPlayer>();
         originalBulletSpeed = bulletSpeed;
     }
@@ -84,6 +84,7 @@ public class Player : MonoBehaviour, IShoot, IMovable
         //Ataques del personaje (disparo)
         float shootHorizontal = Input.GetAxis("ShootHorizontal");
         float shootVertical = Input.GetAxis("ShootVertical");
+        
         anim.SetFloat("Horizontal", horizontal);
         anim.SetFloat("Vertical", vertical);
         anim.SetFloat("Speed", speed);
