@@ -24,7 +24,7 @@ public class Player : MonoBehaviour, IShoot, IMovable
     private float currentTime;
 
     //Animaciones.
-    private Animator anim;
+    public Animator anim;
 
     [Header("MOVIMIENTO")]
     //Velocidad
@@ -45,7 +45,7 @@ public class Player : MonoBehaviour, IShoot, IMovable
     [Space(2)]
     [Header("STATS")]
     //Estadisticas del personaje.
-
+    
     public TextMeshProUGUI Puntaje;
 
     public bool isShooting=false;
@@ -79,10 +79,14 @@ public class Player : MonoBehaviour, IShoot, IMovable
 
         float horizontal = Input.GetAxis("Horizontal"); 
         float vertical = Input.GetAxis("Vertical");
+
+        
         //Ataques del personaje (disparo)
         float shootHorizontal = Input.GetAxis("ShootHorizontal");
         float shootVertical = Input.GetAxis("ShootVertical");
-       
+        anim.SetFloat("Horizontal", horizontal);
+        anim.SetFloat("Vertical", vertical);
+        anim.SetFloat("Speed", speed);
 
         if ((shootHorizontal != 0 || shootVertical != 0) && Time.time > nextFire + fireRate)
         {
