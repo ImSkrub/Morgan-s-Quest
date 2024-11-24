@@ -24,7 +24,37 @@ public class Player : MonoBehaviour, IShoot, IMovable
     private float currentTime;
 
     //Animaciones.
-    private Animator anim;
+    private Animator m_animator;
+    private SpriteRenderer m_spriteRenderer;
+
+    public enum playerStates
+    {
+        IDLE,
+
+        WALK
+    }
+
+    bool m_stateLock = false;
+
+    playerStates CurrentState
+    {
+        set {
+            if (m_stateLock == false)
+            {
+                m_currentState = value;
+
+                switch (m_currentState)
+                {
+                    case playerStates.IDLE:
+                        m_animator.Play("Idle");
+                        break;
+                    case playerStates.WALK:
+                        m_animator.Play("Walk");
+                        break;
+                }
+            }          
+        }
+    }
 
     [Header("MOVIMIENTO")]
     //Velocidad
@@ -53,6 +83,8 @@ public class Player : MonoBehaviour, IShoot, IMovable
     //Mana
     private ManaPlayer Mana;
 
+    playerStates m_currentState;
+
     private void Start()
     {
         essenceStack = gameObject.AddComponent<EssenceStack>(); // Añade el componente de la pila
@@ -62,6 +94,8 @@ public class Player : MonoBehaviour, IShoot, IMovable
        // anim=GetComponent<Animator>();
         Mana= GetComponent<ManaPlayer>();
         originalBulletSpeed = bulletSpeed;
+        m_animator = GetComponent<Animator>();
+        m_spriteRenderer = GetComponent<SpriteRenderer>();
     }
 
     private void Update()
@@ -82,7 +116,31 @@ public class Player : MonoBehaviour, IShoot, IMovable
         //Ataques del personaje (disparo)
         float shootHorizontal = Input.GetAxis("ShootHorizontal");
         float shootVertical = Input.GetAxis("ShootVertical");
-       
+
+        Vector2 movementInput = new Vector2(horizontal, vertical).normalized;
+
+        if (movementInput != Vector2.zero)
+        {
+            CurrentState = playerStates.WALK;
+
+            // Actualiza los parámetros del Animator
+            m_animator.SetFloat("xMove", movementInput.x);
+            m_animator.SetFloat("yMove", movementInput.y);
+
+            // Volteo del sprite en función del eje X
+            if (movementInput.x > 0)
+            {
+                m_spriteRenderer.flipX = false;
+            }
+            else if (movementInput.x < 0)
+            {
+                m_spriteRenderer.flipX = true;
+            }
+        }
+        else
+        {
+            CurrentState = playerStates.IDLE;
+        }
 
         if ((shootHorizontal != 0 || shootVertical != 0) && Time.time > nextFire + fireRate)
         {

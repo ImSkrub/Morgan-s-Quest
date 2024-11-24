@@ -15,6 +15,7 @@ GameObject:
   - component: {fileID: 7245871451756230001}
   - component: {fileID: 3230147441993176510}
   - component: {fileID: 1454767695649868040}
+  - component: {fileID: 474300504681299270}
   m_Layer: 3
   m_Name: Player
   m_TagString: Player
@@ -174,13 +175,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c4244fbf41585334a9fbebe9b8483eb2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  speed: 7
+  moveForce: 50
   bulletPool: {fileID: 0}
   bulletPrefab: {fileID: 0}
   poolSize: 5
   bulletSpawn: {fileID: 0}
-  Velocidad: {fileID: 0}
-  "Da\xF1o": {fileID: 0}
-  Escence: {fileID: 0}
+  bulletSpeed: 20
+  Puntaje: {fileID: 0}
   isShooting: 0
 --- !u!114 &3230147441993176510
 MonoBehaviour:
@@ -194,14 +196,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8a35b4dc76b11d545b54973660308e80, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxHealth: 100
   currentHealth: 0
-  damageCooldown: 1
-  inmortal: 0
-  shield: 1
-  currentTime: 0
-  lifeImage: {fileID: 0}
+  maxHealth: 100
   damageColor: {r: 1, g: 0, b: 0, a: 1}
+  inmortal: 0
+  barraHp: {fileID: 0}
 --- !u!114 &1454767695649868040
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -219,6 +218,27 @@ MonoBehaviour:
   manaCooldown: 1
   maxTime: 0
   manaImage: {fileID: 0}
+--- !u!95 &474300504681299270
+Animator:
+  serializedVersion: 5
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4279892550882587833}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: e406fefdfc71d054ab5bec48e0459eab, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
 --- !u!1 &7768201810547843109
 GameObject:
   m_ObjectHideFlags: 0
