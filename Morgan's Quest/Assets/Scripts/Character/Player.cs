@@ -24,6 +24,7 @@ public class Player : MonoBehaviour, IShoot, IMovable
     private float currentTime;
 
     //Animaciones.
+<<<<<<< HEAD
     private Animator m_animator;
     private SpriteRenderer m_spriteRenderer;
 
@@ -55,6 +56,9 @@ public class Player : MonoBehaviour, IShoot, IMovable
             }          
         }
     }
+=======
+    public Animator anim;
+>>>>>>> 84173f2d8f46dd9e768282a944e662485aca52af
 
     [Header("MOVIMIENTO")]
     //Velocidad
@@ -75,7 +79,7 @@ public class Player : MonoBehaviour, IShoot, IMovable
     [Space(2)]
     [Header("STATS")]
     //Estadisticas del personaje.
-
+    
     public TextMeshProUGUI Puntaje;
 
     public bool isShooting=false;
@@ -113,9 +117,12 @@ public class Player : MonoBehaviour, IShoot, IMovable
 
         float horizontal = Input.GetAxis("Horizontal"); 
         float vertical = Input.GetAxis("Vertical");
+
+        
         //Ataques del personaje (disparo)
         float shootHorizontal = Input.GetAxis("ShootHorizontal");
         float shootVertical = Input.GetAxis("ShootVertical");
+<<<<<<< HEAD
 
         Vector2 movementInput = new Vector2(horizontal, vertical).normalized;
 
@@ -141,6 +148,11 @@ public class Player : MonoBehaviour, IShoot, IMovable
         {
             CurrentState = playerStates.IDLE;
         }
+=======
+        anim.SetFloat("Horizontal", horizontal);
+        anim.SetFloat("Vertical", vertical);
+        anim.SetFloat("Speed", speed);
+>>>>>>> 84173f2d8f46dd9e768282a944e662485aca52af
 
         if ((shootHorizontal != 0 || shootVertical != 0) && Time.time > nextFire + fireRate)
         {
