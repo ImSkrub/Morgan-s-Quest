@@ -1,20 +1,28 @@
 using UnityEngine;
 using System.Collections.Generic;
+using TMPro;
+using System;
+
 
 public class PointManager : MonoBehaviour
 {
     [SerializeField] public Estadisticas estadisticas;
 
-    //Variable para mantener un registro de las puntuaciones anteriores.
     private Stack<int> scoreHistory = new Stack<int>();
-     
-
     private static PointManager instance;
 
     public static PointManager Instance
     {
         get { return instance; }
     }
+
+    private int highScore = 0;
+
+    [Header("UI Elements")]
+    [SerializeField] private TextMeshProUGUI highScoreText;
+
+    // Evento para notificar cambios de puntajes
+    public event Action OnHighScoreUpdated;
 
     private void Awake()
     {
@@ -31,13 +39,29 @@ public class PointManager : MonoBehaviour
 
     public Stack<int> GetScoreHistory()
     {
-        // no saca 
         return scoreHistory;
     }
 
     public void SaveFinalScore()
     {
         scoreHistory.Push(estadisticas.puntos);
+        OnHighScoreUpdated?.Invoke(); // Notifica cambio
+    }
+
+    public void AddScore(int points)
+    {
+        highScore += points;
+        scoreHistory.Push(highScore); // Agrega el puntaje al historial
+        UpdateHighScoreUI();
+        OnHighScoreUpdated?.Invoke(); // Notifica cambio
+        Debug.Log("Highscore actualizado: " + highScore);
+    }
+
+    private void UpdateHighScoreUI()
+    {
+        if (highScoreText != null)
+        {
+            highScoreText.text = "Highscore: " + highScore;
+        }
     }
 }
- 

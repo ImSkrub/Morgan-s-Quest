@@ -9,42 +9,51 @@ public class ButtonManager : MonoBehaviour
     {
         LevelManager.instance.LoadLevel(0);
     }
+
     public void RestartGame()
     {
-        LevelManager.instance.RestartLevel();
+        Debug.Log("Reiniciando el juego...");
+        LevelManager.instance.RestartLevel(); // Llama al reinicio del nivel actual
     }
+
     public void ButtonPlay()
     {
         LevelManager.instance.LoadLevel(1);
     }
+
     public void ExitGame()
     {
         Application.Quit();
     }
+
     public void Config()
     {
         SceneManager.LoadScene(11);
     }
+
     public void LvlSelect()
     {
         SceneManager.LoadScene(12);
     }
-    //Levels
+
+    // Levels
     public void Level1()
     {
         LevelManager.instance.LoadLevel(1);
     }
+
     public void Level2()
     {
         LevelManager.instance.LoadLevel(2);
     }
+
     public void Level3()
     {
         LevelManager.instance.LoadLevel(3);
     }
+
     public void Level4()
     {
         LevelManager.instance.LoadLevel(4);
     }
-  
 }

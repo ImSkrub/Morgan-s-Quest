@@ -12,7 +12,6 @@ public class LevelManager : MonoBehaviour
 
     private void Awake()
     {
-
         if (instance == null)
         {
             instance = this;
@@ -22,8 +21,6 @@ public class LevelManager : MonoBehaviour
         {
             Destroy(gameObject);
         }
-        DontDestroyOnLoad(gameObject);
-
     }
 
     private void Update()
@@ -39,26 +36,21 @@ public class LevelManager : MonoBehaviour
 
     public void RestartLevel()
     {
+        Debug.Log($"Reiniciando nivel: {currentLevelIndex}");
         LoadLevel(currentLevelIndex);
-
     }
 
     public void LoadLevel(int levelIndex)
     {
+        Debug.Log($"Cargando nivel: {levelIndex}");
         SceneManager.LoadScene(levelIndex);
         currentLevelIndex = levelIndex;
-        if (levelIndex != 8)
-        {
-            //AudioManager.instance.PlayMusic("Music2");
-        }
     }
 
     public void LoadMainMenu()
     {
         currentLevelIndex = 0;
         LoadLevel(0);
-        //AudioManager.instance.PlayMusic("Music1");
-
     }
 
     public void QuitGame()

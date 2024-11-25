@@ -4,16 +4,32 @@ using TMPro;
 
 public class QuickSortHS : MonoBehaviour
 {
-    public TextMeshProUGUI globalHighScore; //Donde se muestran los jugadores
-    private int cuenta = 0;
-
+    public TextMeshProUGUI globalHighScore; // Donde se muestran los jugadores
     private PointManager pointManager;
     private List<EscenceScore> puntajes;
 
     private void Start()
     {
-        Debug.Log(cuenta);
         pointManager = PointManager.Instance;
+
+        // Suscribirse al evento de actualización de highscore
+        pointManager.OnHighScoreUpdated += ActualizarHighScores;
+
+        // Cargar y mostrar los puntajes iniciales
+        ActualizarHighScores();
+    }
+
+    private void OnDestroy()
+    {
+        // Desuscribirse del evento para evitar errores
+        if (pointManager != null)
+        {
+            pointManager.OnHighScoreUpdated -= ActualizarHighScores;
+        }
+    }
+
+    private void ActualizarHighScores()
+    {
         GenerarPuntajes();
         OrdenarPuntajes();
         MostrarPuntajes();
@@ -22,14 +38,12 @@ public class QuickSortHS : MonoBehaviour
     private void GenerarPuntajes()
     {
         puntajes = new List<EscenceScore>();
-        
         Stack<int> scoreHistory = pointManager.GetScoreHistory();
+
         foreach (int score in scoreHistory)
         {
-            Debug.Log(score);
             puntajes.Add(new EscenceScore(score));
         }
-     
     }
 
     private void OrdenarPuntajes()
@@ -43,8 +57,7 @@ public class QuickSortHS : MonoBehaviour
 
         for (int i = 0; i < puntajes.Count; i++)
         {
-            puntajesTexto += (i + 1) + "Lugar: " + " - Escencias totales: " + puntajes[i].Puntaje + "\n";
-            Debug.Log((i + 1) + "Lugar: " + " - Escencias totales: " + puntajes[i].Puntaje);
+            puntajesTexto += (i + 1) + " Lugar: " + puntajes[i].Puntaje + "\n";
         }
 
         globalHighScore.text = puntajesTexto;
