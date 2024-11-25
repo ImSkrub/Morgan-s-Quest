@@ -22,12 +22,7 @@ public class LevelManager : MonoBehaviour
             Destroy(gameObject);
         }
     }
-
-    private void Update()
-    {
-        Debug.Log(currentLevel);
-    }
-
+    
     public void LoadNextLevel()
     {
         currentLevelIndex++;

@@ -6,7 +6,6 @@ using System;
 
 public class PointManager : MonoBehaviour
 {
-    [SerializeField] private Estadisticas estadisticas; // Reference to the Estadisticas class
     private Stack<int> scoreHistory = new Stack<int>();
     private static PointManager instance;
 
@@ -41,12 +40,14 @@ public class PointManager : MonoBehaviour
         return scoreHistory;
     }
 
-    public void SaveFinalScore()
+    // Method to save the final score (if needed)
+    public void SaveFinalScore(int finalScore)
     {
-        scoreHistory.Push(estadisticas.puntos);
+        scoreHistory.Push(finalScore);
         NotifyHighScoreUpdated();
     }
 
+    // Method to add score directly
     public void AddScore(int points)
     {
         highScore += points;
