@@ -19,6 +19,11 @@ public class QuickSortHS : MonoBehaviour
         ActualizarHighScores();
     }
 
+    private void Update()
+    {
+        ActualizarHighScores();
+    }
+
     private void OnDestroy()
     {
         // Desuscribirse del evento para evitar errores

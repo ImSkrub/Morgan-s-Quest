@@ -16,8 +16,6 @@ public class GameManager : MonoBehaviour
     //Stats
     public int escence = 0;
     public TextMeshProUGUI textCount;
-    public GameObject stats;
-    private bool activeStats = true;
 
 
     private void Awake()
