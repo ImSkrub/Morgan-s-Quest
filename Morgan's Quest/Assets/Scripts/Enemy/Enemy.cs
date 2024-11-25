@@ -75,6 +75,8 @@ public class Enemy : MonoBehaviour
 
     public void Die()
     {
+        Debug.Log("Enemigo eliminado, sumando 10 puntos al Highscore.");
+        PointManager.Instance.AddScore(10);
         Destroy(gameObject);
     }
 
