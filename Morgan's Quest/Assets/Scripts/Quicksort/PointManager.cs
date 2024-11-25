@@ -6,8 +6,7 @@ using System;
 
 public class PointManager : MonoBehaviour
 {
-    [SerializeField] public Estadisticas estadisticas;
-
+    [SerializeField] private Estadisticas estadisticas; // Reference to the Estadisticas class
     private Stack<int> scoreHistory = new Stack<int>();
     private static PointManager instance;
 
@@ -21,19 +20,19 @@ public class PointManager : MonoBehaviour
     [Header("UI Elements")]
     [SerializeField] private TextMeshProUGUI highScoreText;
 
-    // Evento para notificar cambios de puntajes
+    // Event to notify score changes
     public event Action OnHighScoreUpdated;
 
     private void Awake()
     {
-        if (PointManager.Instance == null)
+        if (instance == null)
         {
-            PointManager.instance = this;
-            DontDestroyOnLoad(this.gameObject);
+            instance = this;
+            DontDestroyOnLoad(gameObject);
         }
         else
         {
-            Destroy(this.gameObject);
+            Destroy(gameObject);
         }
     }
 
@@ -45,16 +44,16 @@ public class PointManager : MonoBehaviour
     public void SaveFinalScore()
     {
         scoreHistory.Push(estadisticas.puntos);
-        OnHighScoreUpdated?.Invoke(); // Notifica cambio
+        NotifyHighScoreUpdated();
     }
 
     public void AddScore(int points)
     {
         highScore += points;
-        scoreHistory.Push(highScore); // Agrega el puntaje al historial
+        scoreHistory.Push(highScore); // Add the score to history
         UpdateHighScoreUI();
-        OnHighScoreUpdated?.Invoke(); // Notifica cambio
-        Debug.Log("Highscore actualizado: " + highScore);
+        NotifyHighScoreUpdated();
+        Debug.Log("Highscore updated: " + highScore);
     }
 
     private void UpdateHighScoreUI()
@@ -63,5 +62,10 @@ public class PointManager : MonoBehaviour
         {
             highScoreText.text = "Highscore: " + highScore;
         }
+    }
+
+    private void NotifyHighScoreUpdated()
+    {
+        OnHighScoreUpdated?.Invoke(); // Notify subscribers of the score change
     }
 }
