@@ -872,7 +872,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   factory: {fileID: 74598373}
-  spawnTime: 15
+  spawnTime: 5
   spawnpoint:
   - {fileID: 1253712162}
   - {fileID: 1579439370}
