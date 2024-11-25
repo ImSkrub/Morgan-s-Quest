@@ -69909,7 +69909,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b6639769a25f3ed44abb0530de828e44, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  estadisticas: {fileID: 843296567}
   highScoreText: {fileID: 1385239505}
 --- !u!1 &1385239503
 GameObject:
@@ -70110,7 +70109,6 @@ MonoBehaviour:
   player: {fileID: 524018344}
   escence: 0
   textCount: {fileID: 1986963940}
-  stats: {fileID: 843296566}
 --- !u!4 &1575354894
 Transform:
   m_ObjectHideFlags: 0
