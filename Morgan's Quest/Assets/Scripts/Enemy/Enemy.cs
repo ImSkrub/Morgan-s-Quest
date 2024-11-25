@@ -26,7 +26,8 @@ public class Enemy : MonoBehaviour
     private void Start()
     {
        rb = GetComponent<Rigidbody2D>();
-
+       player = FindAnyObjectByType<Player>().transform;
+       follow = FindAnyObjectByType<Player>().gameObject;
     }
 
     private void FixedUpdate()
