@@ -14,9 +14,9 @@ public class ChildLife : MonoBehaviour
     [SerializeField] private float destroyDelay = 0.5f;
     [SerializeField] private GenerateItem item;
 
-    private ABB enemyTree;  
-    private Transform player;  
-    private float lastDistance;  
+    private ABB enemyTree; // Instancia de ABB
+    private Transform player;
+    private float lastDistance;
 
     private void Start()
     {
@@ -24,15 +24,18 @@ public class ChildLife : MonoBehaviour
         originalColor = spriteRenderer.color;
         item = GetComponent<GenerateItem>();
 
-        // Buscar referencias necesarias
-        enemyTree = FindObjectOfType<GameManager>().enemyTree;  // Obtén el ABB desde el GameManager
-        player = GameObject.FindGameObjectWithTag("Player").transform;
+        // Inicializar el ABB
+        enemyTree = new ABB();
+        enemyTree.InicializarArbol();
+
+        // Buscar referencia al jugador
+        player = GameObject.FindGameObjectWithTag("Player")?.transform;
 
         if (player != null)
         {
-            
+            // Calcular la distancia inicial y agregar este enemigo al ABB
             lastDistance = Vector2.Distance(transform.position, player.position);
-            enemyTree.AgregarElem(gameObject.name, lastDistance); 
+            enemyTree.AgregarElem(gameObject.name, lastDistance);
         }
         else
         {
@@ -86,16 +89,25 @@ public class ChildLife : MonoBehaviour
     {
         isDead = true;
 
-        
-        enemyTree.EliminarElem(gameObject.name);  
+        // Eliminar del ABB al morir
+        enemyTree.EliminarElem(gameObject.name);
 
-        
-        item.SpawnItem();  
-
-        
-        GameManager.Instance.counter += 1;
-
-       
+        // Destruir el objeto después del retardo
         Destroy(gameObject, destroyDelay);
+        item.SpawnItem();
+
+        // Incrementar el contador global si es necesario
+        GameManager.Instance.counter += 1;
+    }
+
+    // Métodos adicionales para consultar el ABB:
+    public string GetClosestEnemy()
+    {
+        return enemyTree.EnemigoMasCercano();
+    }
+
+    public string GetFarthestEnemy()
+    {
+        return enemyTree.EnemigoMasLejano();
     }
 }
