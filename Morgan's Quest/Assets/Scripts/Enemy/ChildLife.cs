@@ -89,14 +89,14 @@ public class ChildLife : MonoBehaviour
     {
         isDead = true;
 
-        // Eliminar del ABB al morir
+        
         enemyTree.EliminarElem(gameObject.name);
 
-        // Destruir el objeto después del retardo
+        
         Destroy(gameObject, destroyDelay);
         item.SpawnItem();
 
-        // Incrementar el contador global si es necesario
+        
         GameManager.Instance.counter += 1;
     }
 
