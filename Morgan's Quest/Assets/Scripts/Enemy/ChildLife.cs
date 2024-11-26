@@ -1,3 +1,4 @@
+using ABB_EnemyPriority;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -10,30 +11,66 @@ public class ChildLife : MonoBehaviour
     private Color originalColor;
 
     [SerializeField] private Color damageColor = Color.red;
-    [SerializeField] private float destroyDelay = 0.5f;  // Retardo antes de destruir el enemigo
-    [SerializeField] private GenerateItem item;  // Referencia al script GenerateItem para dropear la esencia
+    [SerializeField] private float destroyDelay = 0.5f;
+    [SerializeField] private GenerateItem item;
+
+    private ABB enemyTree;  
+    private Transform player;  
+    private float lastDistance;  
 
     private void Start()
     {
         spriteRenderer = GetComponent<SpriteRenderer>();
         originalColor = spriteRenderer.color;
         item = GetComponent<GenerateItem>();
+
+        // Buscar referencias necesarias
+        enemyTree = FindObjectOfType<GameManager>().enemyTree;  // Obtén el ABB desde el GameManager
+        player = GameObject.FindGameObjectWithTag("Player").transform;
+
+        if (player != null)
+        {
+            
+            lastDistance = Vector2.Distance(transform.position, player.position);
+            enemyTree.AgregarElem(gameObject.name, lastDistance); 
+        }
+        else
+        {
+            Debug.LogError("Jugador no encontrado. Asegúrate de que tenga la etiqueta 'Player'.");
+        }
+    }
+
+    private void Update()
+    {
+        if (!isDead && player != null)
+        {
+            // Calcular distancia actual al jugador
+            float currentDistance = Vector2.Distance(transform.position, player.position);
+
+            if (Mathf.Abs(currentDistance - lastDistance) > 0.1f)
+            {
+                // Actualizar posición en el ABB
+                enemyTree.EliminarElem(gameObject.name);  // Eliminar por nombre del enemigo
+                enemyTree.AgregarElem(gameObject.name, currentDistance);  // Agregar por nombre y distancia
+                lastDistance = currentDistance;
+            }
+        }
     }
 
     public void GetDamage(int value)
     {
-        if (isDead) return;  // Si ya está muerto, no hacer nada
+        if (isDead) return;
 
-        health -= value;  // Reducir la vida
+        health -= value;
 
         if (health <= 0f && !isDead)
         {
-            Die();  // Si la vida llega a 0 o menos, morir
+            Die();
         }
         else
         {
-            spriteRenderer.color = damageColor;  // Cambiar color al recibir daño
-            Invoke("RestoreColor", 0.5f);  // Restaurar color original después de un tiempo
+            spriteRenderer.color = damageColor;
+            Invoke("RestoreColor", 0.5f);
         }
     }
 
@@ -41,16 +78,24 @@ public class ChildLife : MonoBehaviour
     {
         if (!isDead)
         {
-            spriteRenderer.color = originalColor;  // Restaurar el color original del sprite
+            spriteRenderer.color = originalColor;
         }
     }
 
     public void Die()
     {
         isDead = true;
-        Destroy(gameObject, destroyDelay);  // Destruir el objeto después del retardo
-        item.SpawnItem();  // Generar el ítem al morir
+
         
-        GameManager.Instance.counter += 1;  // Incrementar el contador de enemigos muertos en el GameManager
+        enemyTree.EliminarElem(gameObject.name);  
+
+        
+        item.SpawnItem();  
+
+        
+        GameManager.Instance.counter += 1;
+
+       
+        Destroy(gameObject, destroyDelay);
     }
 }
