@@ -18,6 +18,9 @@ public class GameManager : MonoBehaviour
     public int escence = 0;
     public TextMeshProUGUI textCount;
 
+    // Define the desired score to pass level 2
+    private const int desiredScoreForLevel2 = 20;
+
     private void Awake()
     {
         if (Instance == null)
@@ -42,20 +45,24 @@ public class GameManager : MonoBehaviour
             SceneManager.LoadScene(0);
         }
 
+        // Check if in level 1 and counter reaches 10
         if (LevelManager.instance.currentLevel == 1 && counter >= 10)
         {
             LevelManager.instance.LoadNextLevel();
-            Estadisticas.Instance.RestarStat();
             counter = 0;
             escence = 0;
         }
 
-        // If it's the second level
-        if (LevelManager.instance.currentLevel == 2 && counter >= 20)
+        // Check if in level 2 and counter reaches the desired score
+        if (LevelManager.instance.currentLevel == 2)
         {
-            WinGame();
-            counter = 0;
-            escence = 0;
+            if (counter >= desiredScoreForLevel2)
+            {
+                WinGame(); // Call WinGame if the desired score is reached
+                counter = 0;
+                escence = 0;
+            }
+            // If the score is less than the desired score, do not allow level progression
         }
     }
 
