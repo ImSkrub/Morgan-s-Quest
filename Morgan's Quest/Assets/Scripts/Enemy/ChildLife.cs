@@ -92,7 +92,7 @@ public class ChildLife : MonoBehaviour
         
         enemyTree.EliminarElem(gameObject.name);
 
-        
+        PointManager.Instance.AddScore(10);
         Destroy(gameObject, destroyDelay);
         item.SpawnItem();
 

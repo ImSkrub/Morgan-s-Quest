@@ -9,17 +9,14 @@ public class PointManager : MonoBehaviour
     private Stack<int> scoreHistory = new Stack<int>();
     private static PointManager instance;
 
-    public static PointManager Instance
-    {
-        get { return instance; }
-    }
+    public static PointManager Instance => instance;
 
     private int highScore = 0;
 
     [Header("UI Elements")]
     [SerializeField] private TextMeshProUGUI highScoreText;
 
-    // Event to notify score changes
+    
     public event Action OnHighScoreUpdated;
 
     private void Awake()
@@ -37,36 +34,45 @@ public class PointManager : MonoBehaviour
 
     public Stack<int> GetScoreHistory()
     {
-        return scoreHistory;
+        return new Stack<int>(scoreHistory); 
     }
 
-    // Method to save the final score (if needed)
+    
     public void SaveFinalScore(int finalScore)
     {
         scoreHistory.Push(finalScore);
         NotifyHighScoreUpdated();
     }
 
-    // Method to add score directly
+   
     public void AddScore(int points)
     {
         highScore += points;
-        scoreHistory.Push(highScore); // Add the score to history
+        scoreHistory.Push(highScore); 
         UpdateHighScoreUI();
         NotifyHighScoreUpdated();
-        Debug.Log("Highscore updated: " + highScore);
+        Debug.Log("Highscore actualizado: " + highScore);
     }
 
+   
     private void UpdateHighScoreUI()
     {
         if (highScoreText != null)
         {
-            highScoreText.text = "Highscore: " + highScore;
+            highScoreText.text = $"Highscore: {highScore}";
+        }
+        else
+        {
+            Debug.LogWarning("No se asignó un TextMeshProUGUI al PointManager.");
         }
     }
 
+    
     private void NotifyHighScoreUpdated()
     {
-        OnHighScoreUpdated?.Invoke(); // Notify subscribers of the score change
+        if (OnHighScoreUpdated != null)
+        {
+            OnHighScoreUpdated.Invoke();
+        }
     }
 }
