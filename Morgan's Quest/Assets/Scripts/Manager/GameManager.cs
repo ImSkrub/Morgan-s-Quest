@@ -1,3 +1,4 @@
+//using ABB_EnemyPriority;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
@@ -12,7 +13,7 @@ public class GameManager : MonoBehaviour
 
     //player
     [SerializeField]private GameObject player;
-
+    //public ABB enemyTree;
     //Stats
     public int escence = 0;
     public TextMeshProUGUI textCount;
