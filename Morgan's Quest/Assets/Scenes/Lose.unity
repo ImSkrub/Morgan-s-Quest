@@ -942,6 +942,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: eb359d162103081489c5ef25e60e9e1f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  leaderboardPanel: {fileID: 0}
 --- !u!4 &994194226
 Transform:
   m_ObjectHideFlags: 0
@@ -1875,6 +1876,10 @@ PrefabInstance:
     - target: {fileID: 2057839495370483990, guid: a29fab1f47b40ef4ba54a50eba0f2975, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8087671928724464332, guid: a29fab1f47b40ef4ba54a50eba0f2975, type: 3}
+      propertyPath: m_text
+      value: 'Highscore: '
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
