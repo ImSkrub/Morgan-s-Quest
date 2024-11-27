@@ -1,74 +1,87 @@
-using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 
 public class EnemyFollow : Enemy
 {
+    private GraphManager graphManager;
     private List<Vertice> path = new List<Vertice>();
     private int currentWaypointIndex = 0;
     public float speed = 2;
-
-    private GraphManager graphManager; // Almacenar referencia a GraphManager
-    private float pathUpdateThreshold = 0.5f; // Distancia mínima para actualizar el camino
-
-    private void Start()
+    protected override void Start()
     {
         base.Start();
-        graphManager = FindObjectOfType<GraphManager>(); // Obtener referencia a GraphManager una vez
+        graphManager = FindObjectOfType<GraphManager>();
+
+        if (graphManager != null)
+        {
+            CalculatePathToPlayer();
+        }
     }
 
     private void Update()
     {
         base.Update();
 
-        if (player != null) // Asegurarse de que el jugador no sea nulo
+        if (path.Count > 0 && currentWaypointIndex < path.Count)
         {
-            // Obtener el waypoint específico del jugador
-            Vertice playerWaypoint = graphManager.GetSpecificWaypoint(player.gameObject);
-            if (playerWaypoint != null)
+            Vertice targetWaypoint = path[currentWaypointIndex];
+            MoveTowardsWaypoint(targetWaypoint);
+
+            if (Vector2.Distance(transform.position, targetWaypoint.Position) < 0.1f)
             {
-                // Moverse hacia el waypoint si está fuera del rango de ataque
-                if (Vector2.Distance(transform.position, player.position) >= distToAttack)
-                {
-                    MoveTowardsWaypoint(playerWaypoint);
-                }
-            }
-            else
-            {
-                Debug.LogWarning("No se encontró el waypoint del jugador.");
+                currentWaypointIndex++;
             }
         }
         else
         {
-            Debug.LogWarning("Player reference is null!");
+            CalculatePathToPlayer();
         }
+    }
+
+    private void CalculatePathToPlayer()
+    {
+        Graph graph = graphManager.GetGraph();
+        if (graph == null || player == null) return;
+
+        int enemyVerticeId = GetClosestVerticeId();
+        int playerVerticeId = player.gameObject.GetInstanceID();
+
+        Dijkstra dijkstra = gameObject.AddComponent<Dijkstra>();
+        var (distances, previous) = dijkstra.ShortestPaths(graph, enemyVerticeId);
+
+        path.Clear();
+        Vertice current = graph.Vertices[playerVerticeId];
+        while (current != null)
+        {
+            path.Insert(0, current);
+            previous.TryGetValue(current, out current);
+        }
+
+        currentWaypointIndex = 0;
+    }
+
+    private int GetClosestVerticeId()
+    {
+        Graph graph = graphManager.GetGraph();
+        Vertice closest = null;
+        float minDistance = float.MaxValue;
+
+        foreach (var vertice in graph.Vertices.Values)
+        {
+            float distance = Vector2.Distance(transform.position, vertice.Position);
+            if (distance < minDistance)
+            {
+                closest = vertice;
+                minDistance = distance;
+            }
+        }
+
+        return closest?.Value ?? -1;
     }
 
     private void MoveTowardsWaypoint(Vertice targetWaypoint)
     {
-        Vector2 targetPosition = targetWaypoint.transform.position;
+        Vector2 targetPosition = targetWaypoint.Position;
         transform.position = Vector2.MoveTowards(transform.position, targetPosition, speed * Time.deltaTime);
-
-        // Opcional: Si quieres que el enemigo haga algo al llegar al waypoint
-        if (Vector2.Distance(transform.position, targetPosition) < 0.1f)
-        {
-            Debug.Log("Reached target waypoint!");
-            // Aquí puedes agregar lógica adicional si es necesario
-        }
-    }
-
-    private void OnDrawGizmos()
-    {
-        // Dibuja Gizmos para visualizar el camino hacia el waypoint
-        if (player != null)
-        {
-            Vertice playerWaypoint = graphManager.GetSpecificWaypoint(player.gameObject);
-            if (playerWaypoint != null)
-            {
-                Gizmos.color = Color.green; // Color para el waypoint
-                Gizmos.DrawSphere(playerWaypoint.transform.position, 0.2f); // Dibuja un círculo en el waypoint del jugador
-            }
-        }
     }
 }

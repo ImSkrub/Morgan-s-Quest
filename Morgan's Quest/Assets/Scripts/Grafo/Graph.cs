@@ -1,4 +1,3 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -9,17 +8,20 @@ public class Graph : MonoBehaviour
     private void Awake()
     {
         Vertices = new Dictionary<int, Vertice>();
-        Debug.Log("Graph initialized. Vertices dictionary created.");
+        Debug.Log("Graph initialized.");
     }
 
-    public void AddVertice(int value)
+    public void AddVertice(GameObject waypoint)
     {
+        int value = waypoint.GetInstanceID();
+
         if (!Vertices.ContainsKey(value))
         {
-            Vertice newVertex = new GameObject($"Vertice{value}").AddComponent<Vertice>();
+            Vertice newVertex = waypoint.AddComponent<Vertice>();
             newVertex.Initialize(value);
             Vertices[value] = newVertex;
-            Debug.Log($"Vertex added: {value}");
+
+            Debug.Log($"Vertex added and linked to Waypoint: {waypoint.name}");
         }
         else
         {
@@ -36,43 +38,7 @@ public class Graph : MonoBehaviour
         }
         else
         {
-            if (!Vertices.ContainsKey(sourceValue))
-            {
-                Debug.LogWarning($"Source vertex {sourceValue} does not exist. Cannot add edge.");
-            }
-            if (!Vertices.ContainsKey(destinationValue))
-            {
-                Debug.LogWarning($"Destination vertex {destinationValue} does not exist. Cannot add edge.");
-            }
-        }
-    }
-
-    public Vertice GetVertice(int instanceId)
-    {
-        if (Vertices.TryGetValue(instanceId, out var vertice))
-        {
-            Debug.Log($"Vertex {instanceId} retrieved.");
-            return vertice;
-        }
-        else
-        {
-            Debug.LogWarning($"Vertex {instanceId} not found.");
-            return null;
-        }
-    }
-
-    private void OnDrawGizmos()
-    {
-        if (Vertices == null) return;
-
-        Gizmos.color = Color.red; // Color para las aristas
-
-        foreach (var vertice in Vertices.Values)
-        {
-            foreach (var arista in vertice.aristas)
-            {
-                Gizmos.DrawLine(vertice.transform.position, arista.Destination.transform.position);
-            }
+            Debug.LogWarning($"Cannot add edge: Source or destination vertex not found.");
         }
     }
 }
