@@ -26,8 +26,6 @@ public class ManaPlayer : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        maxMana = Estadisticas.Instance.mana;
-
         currentTime += Time.deltaTime*2;
         if (currentMana < maxMana)
         {
