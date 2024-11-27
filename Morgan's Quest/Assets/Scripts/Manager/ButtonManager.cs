@@ -24,7 +24,7 @@ public class ButtonManager : MonoBehaviour
     }
     public void Config()
     {
-        SceneManager.LoadScene(11);
+        SceneManager.LoadScene(5);
     }
     public void LvlSelect()
     {

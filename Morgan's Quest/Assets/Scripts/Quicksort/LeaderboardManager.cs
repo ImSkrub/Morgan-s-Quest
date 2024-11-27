@@ -17,16 +17,14 @@ public class LeaderboardManager : MonoBehaviour
         quickSortHS = FindObjectOfType<QuickSortHS>();
     }
 
-    // Mostrar el leaderboard
     public void ShowLeaderboard()
     {
-        // Resetear puntajes al mostrar el leaderboard
-        quickSortHS.CargarPuntajes(); // Cargar los puntajes actualizados
-        quickSortHS.MostrarPuntajes(); // Mostrar puntajes en la UI
+        // Reset scores when showing the leaderboard
+        quickSortHS.CargarPuntajes(); // Load the updated scores
+        quickSortHS.MostrarPuntajes();
         leaderboardPanel.SetActive(true);
     }
 
-    // Cerrar el leaderboard
     public void CloseLeaderboard()
     {
         leaderboardPanel.SetActive(false);

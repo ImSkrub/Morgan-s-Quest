@@ -26,16 +26,13 @@ public class ChildLife : MonoBehaviour
         originalColor = spriteRenderer.color;
         item = GetComponent<GenerateItem>();
 
-        
         enemyTree = new ABB();
         enemyTree.InicializarArbol();
-
        
         player = GameObject.FindGameObjectWithTag("Player")?.transform;
 
         if (player != null)
         {
-            
             lastDistance = Vector2.Distance(transform.position, player.position);
             enemyTree.AgregarElem(gameObject.name, lastDistance);
         }
@@ -49,7 +46,6 @@ public class ChildLife : MonoBehaviour
     {
         if (!isDead && player != null)
         {
-            
             float currentDistance = Vector2.Distance(transform.position, player.position);
 
             if (Mathf.Abs(currentDistance - lastDistance) > 0.1f)
@@ -59,7 +55,6 @@ public class ChildLife : MonoBehaviour
                 enemyTree.AgregarElem(gameObject.name, currentDistance);  
                 lastDistance = currentDistance;
             }
-
             
             if (currentDistance < 1.5f)
             {
@@ -74,7 +69,6 @@ public class ChildLife : MonoBehaviour
        
         Debug.Log($"Attacking closest enemy: {closestEnemy}");
     }
-
     public void GetDamage(int value)
     {
         if (isDead) return;
@@ -104,29 +98,12 @@ public class ChildLife : MonoBehaviour
     {
         isDead = true;
 
-        // Obtener la instancia de QuickSortHS para agregar puntajes
-        QuickSortHS quickSortHS = FindObjectOfType<QuickSortHS>();
-        if (quickSortHS != null)
-        {
-            quickSortHS.AgregarPuntaje(10); // Solo agregar el puntaje cuando el enemigo muere
-            Debug.Log("Puntaje agregado al morir el enemigo.");
-        }
-        else
-        {
-            Debug.LogWarning("QuickSortHS no encontrado.");
-        }
-
-        // Eliminar el enemigo de la lista de enemigos
+        PointManager.Instance.AddScore(10);
         enemyTree.EliminarElem(gameObject.name);
-
-        // Llamar al evento de muerte y destruir el objeto después de un pequeño retraso
         OnDeath?.Invoke();
         Destroy(gameObject, destroyDelay);
-
-        // Generar ítem al morir el enemigo
         item.SpawnItem();
 
-        // Incrementar el contador de enemigos muertos en el GameManager
         GameManager.Instance.counter += 1;
     }
 
