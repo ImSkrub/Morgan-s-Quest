@@ -1,4 +1,5 @@
 using ABB_EnemyPriority;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -14,9 +15,10 @@ public class ChildLife : MonoBehaviour
     [SerializeField] private float destroyDelay = 0.5f;
     [SerializeField] private GenerateItem item;
 
-    private ABB enemyTree; // Instancia de ABB
+    private ABB enemyTree; // Instance of ABB
     private Transform player;
     private float lastDistance;
+    public event Action OnDeath;
 
     private void Start()
     {
@@ -24,22 +26,22 @@ public class ChildLife : MonoBehaviour
         originalColor = spriteRenderer.color;
         item = GetComponent<GenerateItem>();
 
-        // Inicializar el ABB
+        // Initialize the ABB
         enemyTree = new ABB();
         enemyTree.InicializarArbol();
 
-        // Buscar referencia al jugador
+        // Find reference to the player
         player = GameObject.FindGameObjectWithTag("Player")?.transform;
 
         if (player != null)
         {
-            // Calcular la distancia inicial y agregar este enemigo al ABB
+            // Calculate initial distance and add this enemy to the ABB
             lastDistance = Vector2.Distance(transform.position, player.position);
             enemyTree.AgregarElem(gameObject.name, lastDistance);
         }
         else
         {
-            Debug.LogError("Jugador no encontrado. Asegúrate de que tenga la etiqueta 'Player'.");
+            Debug.LogError("Player not found. Ensure it has the 'Player' tag.");
         }
     }
 
@@ -47,17 +49,30 @@ public class ChildLife : MonoBehaviour
     {
         if (!isDead && player != null)
         {
-            // Calcular distancia actual al jugador
+            // Calculate current distance to the player
             float currentDistance = Vector2.Distance(transform.position, player.position);
 
             if (Mathf.Abs(currentDistance - lastDistance) > 0.1f)
             {
-                // Actualizar posición en el ABB
-                enemyTree.EliminarElem(gameObject.name);  // Eliminar por nombre del enemigo
-                enemyTree.AgregarElem(gameObject.name, currentDistance);  // Agregar por nombre y distancia
+                // Update position in the ABB
+                enemyTree.EliminarElem(gameObject.name);  // Remove by enemy name
+                enemyTree.AgregarElem(gameObject.name, currentDistance);  // Add by name and distance
                 lastDistance = currentDistance;
             }
+
+            // Check if the enemy can attack
+            if (currentDistance < 1.5f)
+            {
+                AttackClosestEnemy();
+            }
         }
+    }
+
+    private void AttackClosestEnemy()
+    {
+        string closestEnemy = enemyTree.EnemigoMasCercano();
+        // Implement attack logic here, e.g., call a method to deal damage to the closest enemy
+        Debug.Log($"Attacking closest enemy: {closestEnemy}");
     }
 
     public void GetDamage(int value)
@@ -89,18 +104,15 @@ public class ChildLife : MonoBehaviour
     {
         isDead = true;
 
-        
         enemyTree.EliminarElem(gameObject.name);
-
-        
+        OnDeath?.Invoke();
         Destroy(gameObject, destroyDelay);
         item.SpawnItem();
 
-        
         GameManager.Instance.counter += 1;
     }
 
-    // Métodos adicionales para consultar el ABB:
+    // Additional methods for querying the ABB
     public string GetClosestEnemy()
     {
         return enemyTree.EnemigoMasCercano();

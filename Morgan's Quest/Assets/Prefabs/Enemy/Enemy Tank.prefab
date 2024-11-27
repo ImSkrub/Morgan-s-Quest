@@ -103,6 +103,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   essencePrefab: {fileID: 4149785580091803785, guid: 9ceaf3ef3f3c530419fad49452d0d0da, type: 3}
+  powerUpPrefab: {fileID: 3686136434242836379, guid: ae8ca0ae879689344903146760c4362c, type: 3}
 --- !u!114 &6988760519434515327
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -131,15 +132,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ce99815158732b441b239c11150db3a1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  follow: {fileID: 0}
-  player: {fileID: 0}
   distToAttack: 15
   vel: 5
   attackDelay: 2
-  closestDist: 1
-  lerpSpeedRotation: 0
-  rb: {fileID: 7808557852648628793}
-  id: Persigue
   damage: 50
 --- !u!50 &7808557852648628793
 Rigidbody2D:
