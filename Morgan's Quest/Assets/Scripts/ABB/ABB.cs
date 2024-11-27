@@ -171,20 +171,6 @@ public class ABB : ABBTDA
         RecorridoInordenRecursivo(raiz);
     }
 
-    private void RecorridoInordenRecursivo(NodoABB nodo)
-    {
-        if (nodo != null)
-        {
-
-            RecorridoInordenRecursivo((NodoABB)nodo.hijoIzq); // Cambiado aquí
-
-            // Visitar nodo actual
-            Console.WriteLine("Enemigo: " + nodo.enemigo + ", Distancia: " + nodo.distancia);
-
-
-            RecorridoInordenRecursivo((NodoABB)nodo.hijoDer); // Cambiado aquí
-        }
-    }
 
 
     private void RecorridoPreordenRecursivo(NodoABB nodo)
@@ -202,6 +188,24 @@ public class ABB : ABBTDA
         }
     }
 
+
+    private void RecorridoInordenRecursivo(NodoABB nodo)
+    {
+        if (nodo != null)
+        {
+
+            RecorridoInordenRecursivo((NodoABB)nodo.hijoIzq); // Cambiado aquí
+
+            // Visitar nodo actual
+            Console.WriteLine("Enemigo: " + nodo.enemigo + ", Distancia: " + nodo.distancia);
+
+
+            RecorridoInordenRecursivo((NodoABB)nodo.hijoDer); // Cambiado aquí
+        }
+    }
+
+
+   
 
     private void RecorridoPostordenRecursivo(NodoABB nodo)
     {
