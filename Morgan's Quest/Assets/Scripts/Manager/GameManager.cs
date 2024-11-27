@@ -21,17 +21,16 @@ public class GameManager : MonoBehaviour
 
     private void Awake()
     {
-
         if (Instance == null)
         {
             Instance = this;
+            player.GetComponent<LifePlayer>().OnDeath += LoseGame; // Suscribirse al evento de muerte
         }
-        else if(Instance != this)
+        else if (Instance != this)
         {
             Destroy(gameObject);
             return;
         }
-        player.GetComponent<LifePlayer>().OnDeath += LoseGame;
     }
 
     private void Update()
@@ -76,16 +75,8 @@ public class GameManager : MonoBehaviour
 
     private void RegistrarPuntaje()
     {
-        QuickSortHS quickSortHS = FindObjectOfType<QuickSortHS>();
-        if (quickSortHS != null)
-        {
-            quickSortHS.AgregarPuntaje(counter); // Agrega el puntaje basado en enemigos derrotados
-        }
-        else
-        {
-            Debug.LogWarning("QuickSortHS no encontrado.");
-        }
+        // Registra el puntaje en PointManager
+        PointManager.Instance.AddScore(counter); // Agrega el puntaje basado en enemigos derrotados
+        PointManager.Instance.SaveScore(); // Guarda el puntaje en PlayerPrefs
     }
-
-
 }

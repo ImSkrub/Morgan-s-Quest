@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 public class QuickSort
 {
-    public static void Sort(List<EscenceScore> list)
+    public static void Sort(List<int> list)
     {
         if (list == null || list.Count <= 1)
             return;
@@ -11,7 +11,7 @@ public class QuickSort
         QuickSortAlgorithm(list, 0, list.Count - 1);
     }
 
-    private static void QuickSortAlgorithm(List<EscenceScore> list, int left, int right)
+    private static void QuickSortAlgorithm(List<int> list, int left, int right)
     {
         if (left < right)
         {
@@ -21,14 +21,14 @@ public class QuickSort
         }
     }
 
-    private static int Partition(List<EscenceScore> list, int left, int right)
+    private static int Partition(List<int> list, int left, int right)
     {
-        EscenceScore pivot = list[right];
+        int pivot = list[right];
         int i = left - 1;
 
         for (int j = left; j < right; j++)
         {
-            if (list[j].Puntaje >= pivot.Puntaje)
+            if (list[j] >= pivot)
             {
                 i++;
                 Swap(list, i, j);
@@ -39,9 +39,9 @@ public class QuickSort
         return i + 1;
     }
 
-    private static void Swap(List<EscenceScore> list, int i, int j)
+    private static void Swap(List<int> list, int i, int j)
     {
-        EscenceScore temp = list[i];
+        int temp = list[i];
         list[i] = list[j];
         list[j] = temp;
     }
