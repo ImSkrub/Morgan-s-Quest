@@ -4,46 +4,60 @@ using TMPro;
 
 public class QuickSortHS : MonoBehaviour
 {
-    public TextMeshProUGUI globalHighScore; // Donde se muestran los puntajes
-    private List<int> puntajes = new List<int>(); // Lista de puntajes
+    public TextMeshProUGUI globalHighScore; // Where scores are displayed
+    private List<int> puntajes = new List<int>(); // List of scores
 
     private void Start()
     {
-        CargarPuntajes(); // Cargar puntajes al inicio
+        // Load scores when the game starts
+        CargarPuntajes();
         MostrarPuntajes();
-        // Suscribirse al evento de actualización de puntajes
+        // Subscribe to the score update event
         PointManager.Instance.OnHighScoreUpdated += ActualizarPuntajes;
     }
 
     private void OnDestroy()
     {
-        // Cancelar la suscripción al evento cuando este objeto se destruye
+        // Unsubscribe from the event when this object is destroyed
         PointManager.Instance.OnHighScoreUpdated -= ActualizarPuntajes;
     }
 
     public void AgregarPuntaje(int score)
     {
-        // Asegurarse de que hay un PointManager en la escena
+        // Ensure there is a PointManager in the scene
         PointManager.Instance.AddScore(score);
-        // Actualizar los puntajes mostrados
+        // Add the score to the list
+        puntajes.Add(score);
+        // Update the displayed scores
+        ActualizarPuntajes();
+    }
+
+    public void CargarPuntajes()
+    {
+        puntajes.Clear(); // Clear the existing scores
+        int scoreCount = PlayerPrefs.GetInt("ScoreCount", 0); // Get the number of scores saved
+
+        for (int i = 0; i < scoreCount; i++)
+        {
+            int score = PlayerPrefs.GetInt($"Score_{i}"); // Load each score
+            puntajes.Add(score); // Add it to the list
+        }
+
+        // After loading, update the displayed scores
         ActualizarPuntajes();
     }
 
     private void ActualizarPuntajes()
     {
-        puntajes.Clear();
-        Stack<int> scoreHistory = PointManager.Instance.GetScoreHistory();
-        foreach (var score in scoreHistory)
-        {
-            puntajes.Add(score);
-        }
+        Debug.Log("Scores before sorting: " + string.Join(", ", puntajes)); // Debug output
         OrdenarPuntajes();
-        MostrarPuntajes();
+        Debug.Log("Scores after sorting: " + string.Join(", ", puntajes)); // Debug output
+        MostrarPuntajes(); // Ensure this is called after sorting
     }
 
     public void OrdenarPuntajes()
     {
-        QuickSort.Sort(puntajes); // Usar QuickSort para ordenar los puntajes
+        QuickSort.Sort(puntajes); // Use QuickSort to sort the scores
     }
 
     public void MostrarPuntajes()
@@ -52,24 +66,10 @@ public class QuickSortHS : MonoBehaviour
 
         for (int i = 0; i < puntajes.Count; i++)
         {
-            puntajesTexto += $"{i + 1} Lugar: - Puntos: {puntajes[i]}\n";
+            puntajesTexto += $"{i + 1} Place: - Points: {puntajes[i]}\n";
         }
 
-        globalHighScore.text = puntajesTexto; // Asegúrate de que este objeto esté vinculado
-        Debug.Log(puntajesTexto); // Salida de depuración para verificar la visualización del leaderboard
-    }
-
-    public void CargarPuntajes()
-    {
-        puntajes.Clear(); // Limpiar la lista antes de cargar
-        int scoreCount = PlayerPrefs.GetInt("ScoreCount", 0);
-        Debug.Log($"Cargando {scoreCount} puntajes."); // Salida de depuración para el conteo de puntajes
-
-        for (int i = 0; i < scoreCount; i++)
-        {
-            int score = PlayerPrefs.GetInt($"Score_{i}", 0);
-            puntajes.Add(score);
-            Debug.Log($"Puntaje cargado: {score}"); // Salida de depuración para cada puntaje cargado
-        }
+        globalHighScore.text = puntajesTexto; // Ensure this object is linked
+        Debug.Log(puntajesTexto); // Debug output to verify leaderboard display
     }
 }
