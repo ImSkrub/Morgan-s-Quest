@@ -6,74 +6,117 @@ public class GraphManager : MonoBehaviour
 {
     private Graph graph;
     private Dijkstra dijkstra;
+    private WaypointManager waypointManager;
 
     private void Start()
     {
-        graph = gameObject.AddComponent<Graph>();
-
-        // Encuentra todos los objetos Waypoint en la escena
-        Waypoint[] waypoints = FindObjectsOfType<Waypoint>();
-
-        // Agrega los waypoints como vértices al grafo
-        foreach (var waypoint in waypoints)
+        // Inicializa el WaypointManager
+        waypointManager = FindObjectOfType<WaypointManager>();
+        if (waypointManager == null)
         {
-            graph.AddVertice(waypoint.gameObject.GetInstanceID()); // Usamos el ID de la instancia como valor
+            Debug.LogError("WaypointManager not found!");
+            return;
+        }
+        InitializeGraph(); // Método que inicializa los vértices y aristas
+
+        // Inicializa el grafo
+        graph = gameObject.AddComponent<Graph>(); // Agrega el componente Graph al mismo GameObject
+    }
+
+    private void InitializeGraph()
+    {
+        if (waypointManager.Waypoints == null || waypointManager.Waypoints.Count == 0)
+        {
+            Debug.LogError("No waypoints available in WaypointManager.");
+            return;
         }
 
-        // Agrega el jugador como un vértice
-        GameObject player = GameObject.FindGameObjectWithTag("Player");
-        if (player != null)
+        Debug.Log($"Number of waypoints: {waypointManager.Waypoints.Count}");
+
+        // Agrega los waypoints como vértices
+        foreach (var waypoint in waypointManager.Waypoints)
         {
-            graph.AddVertice(player.GetInstanceID()); // Usamos el ID de la instancia como valor
-            AddPlayerWaypoint(player); // Asegúrate de agregar el waypoint del jugador
+            graph.AddVertice(waypoint.gameObject.GetInstanceID());
+        }
+        Debug.Log($"Number of waypoints: {waypointManager.Waypoints.Count}");
+
+        // Agrega los waypoints como vértices
+        foreach (var waypoint in waypointManager.Waypoints)
+        {
+            graph.AddVertice(waypoint.gameObject.GetInstanceID());
         }
 
-        // Agrega aristas entre los waypoints con peso 1
-        for (int i = 0; i < waypoints.Length; i++)
+        // Agrega el jugador como vértice
+        int playerWaypointId = waypointManager.GetPlayerWaypointId();
+        if (playerWaypointId != -1)
         {
-            for (int j = i + 1; j < waypoints.Length; j++)
+            graph.AddVertice(playerWaypointId);
+        }
+
+        // Agrega las aristas entre waypoints
+        for (int i = 0; i < waypointManager.Waypoints.Count; i++)
+        {
+            for (int j = i + 1; j < waypointManager.Waypoints.Count; j++)
             {
-                // Asignar peso 1 a todas las aristas
-                graph.AddArista(waypoints[i].gameObject.GetInstanceID(), waypoints[j].gameObject.GetInstanceID(), 1);
+                var waypoint1 = waypointManager.Waypoints[i];
+                var waypoint2 = waypointManager.Waypoints[j];
+                float weight = Vector2.Distance(waypoint1.transform.position, waypoint2.transform.position);
+
+                graph.AddArista(
+                    waypoint1.gameObject.GetInstanceID(),
+                    waypoint2.gameObject.GetInstanceID(),
+                    Mathf.RoundToInt(weight)
+                );
             }
         }
 
-        // Agrega aristas entre el jugador y los waypoints con peso 1
-        if (player != null)
+        // Agrega las aristas entre el jugador y los waypoints
+        if (playerWaypointId != -1)
         {
-            foreach (var waypoint in waypoints)
+            var playerPosition = waypointManager.Player.transform.position;
+            foreach (var waypoint in waypointManager.Waypoints)
             {
-                graph.AddArista(player.GetInstanceID(), waypoint.gameObject.GetInstanceID(), 1);
+                float weight = Vector2.Distance(playerPosition, waypoint.transform.position);
+
+                graph.AddArista(
+                    playerWaypointId,
+                    waypoint.gameObject.GetInstanceID(),
+                    Mathf.RoundToInt(weight)
+                );
             }
-        }
-
-        if (dijkstra == null)
-        {
-            dijkstra = gameObject.AddComponent<Dijkstra>();
-        }
-        var (shortestPaths, predecessors) = dijkstra.ShortestPaths(graph, player.GetInstanceID());
-
-        foreach (var kvp in shortestPaths)
-        {
-            Debug.Log($"Distance from Player to {kvp.Key.Value}: {kvp.Value}");
         }
     }
 
-    public void AddPlayerWaypoint(GameObject player)
+    public int GetPlayerWaypointId()
     {
-        if (player != null)
+        if (waypointManager.Player != null)
         {
-            // Suponiendo que el waypoint es un hijo del jugador
-            Transform playerWaypoint = player.transform.Find("Waypoint"); // Cambia "Waypoint" por el nombre real del objeto
+            Transform playerWaypoint = waypointManager.Player.transform.Find("Waypoint");
             if (playerWaypoint != null)
             {
-                graph.AddVertice(playerWaypoint.GetInstanceID()); // Agregar el waypoint del jugador al grafo
+                Debug.Log($"Player waypoint ID: {playerWaypoint.gameObject.GetInstanceID()}");
+                return playerWaypoint.gameObject.GetInstanceID();
             }
-            else
+            Debug.LogWarning("Player's waypoint not found!");
+            return -1;
+        }
+        
+        var playerPosition = waypointManager.Player.transform.position;
+        int closestWaypointId = -1;
+        float closestDistance = float.MaxValue;
+
+        // Find the closest waypoint to the player
+        foreach (var waypoint in waypointManager.Waypoints)
+        {
+            float distance = Vector2.Distance(playerPosition, waypoint.transform.position);
+            if (distance < closestDistance)
             {
-                Debug.LogWarning("Waypoint not found as a child of the player!");
+                closestDistance = distance;
+                closestWaypointId = waypoint.gameObject.GetInstanceID();
             }
         }
+
+        return closestWaypointId;
     }
 
     public (Dictionary<Vertice, int> distances, Dictionary<Vertice, Vertice> previous) GetShortestPaths(int sourceValue)
@@ -84,23 +127,6 @@ public class GraphManager : MonoBehaviour
 
     public Vertice GetVertice(int instanceId)
     {
-        return graph.GetVertice(instanceId); // Método para obtener un vértice por su ID
-    }
-
-    public Vertice GetSpecificWaypoint(GameObject player)
-    {
-        if (player != null)
-        {
-            Transform playerWaypoint = player.transform.Find("Waypoint"); // Cambia "Waypoint" por el nombre real del objeto
-            if (playerWaypoint != null)
-            {
-                return GetVertice(playerWaypoint.GetInstanceID());
-            }
-            else
-            {
-                Debug.LogWarning("Specific waypoint not found for the player!");
-            }
-        }
-        return null;
+        return graph.GetVertice(instanceId);
     }
 }

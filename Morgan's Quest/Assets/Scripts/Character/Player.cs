@@ -56,12 +56,15 @@ public class Player : MonoBehaviour, IShoot, IMovable
     // Mana
     private ManaPlayer mana;
 
+    private Vector2 lastPosition;
+
     private void Start()
     {
         InitializeComponents();
         InitializeEssenceStack();
         originalBulletSpeed = bulletSpeed;
         SetCurrentState(PlayerStates.IDLE);
+        lastPosition = transform.position;
     }
 
     private void Update()
