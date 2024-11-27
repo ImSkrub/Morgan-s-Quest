@@ -1,4 +1,4 @@
-//using ABB_EnemyPriority;
+
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
@@ -13,7 +13,7 @@ public class GameManager : MonoBehaviour
 
     //player
     [SerializeField]private GameObject player;
-    //public ABB enemyTree;
+    
     //Stats
     public int escence = 0;
     public TextMeshProUGUI textCount;
@@ -64,16 +64,28 @@ public class GameManager : MonoBehaviour
 
     public void WinGame()
     {
-      
-        SceneManager.LoadScene(3);
-  
+        RegistrarPuntaje();
+        SceneManager.LoadScene(3); // Cargar menú de victoria
     }
 
     public void LoseGame()
     {
-      SceneManager.LoadScene(4);
-
+        RegistrarPuntaje();
+        SceneManager.LoadScene(4); // Cargar menú de derrota
     }
 
-   
+    private void RegistrarPuntaje()
+    {
+        QuickSortHS quickSortHS = FindObjectOfType<QuickSortHS>();
+        if (quickSortHS != null)
+        {
+            quickSortHS.AgregarPuntaje(counter); // Agrega el puntaje basado en enemigos derrotados
+        }
+        else
+        {
+            Debug.LogWarning("QuickSortHS no encontrado.");
+        }
+    }
+
+
 }
