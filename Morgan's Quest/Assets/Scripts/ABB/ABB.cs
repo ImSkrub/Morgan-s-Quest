@@ -175,14 +175,46 @@ public class ABB : ABBTDA
     {
         if (nodo != null)
         {
-            // Recorrer subárbol izquierdo
+
             RecorridoInordenRecursivo((NodoABB)nodo.hijoIzq); // Cambiado aquí
 
             // Visitar nodo actual
             Console.WriteLine("Enemigo: " + nodo.enemigo + ", Distancia: " + nodo.distancia);
 
-            // Recorrer subárbol derecho
+
             RecorridoInordenRecursivo((NodoABB)nodo.hijoDer); // Cambiado aquí
+        }
+    }
+
+
+    private void RecorridoPreordenRecursivo(NodoABB nodo)
+    {
+        if (nodo != null)
+        {
+            // Visitar nodo actual
+            Console.WriteLine("Enemigo: " + nodo.enemigo + ", Distancia: " + nodo.distancia);
+
+            // Recorrer subárbol izquierdo
+            RecorridoPreordenRecursivo((NodoABB)nodo.hijoIzq);
+
+            // Recorrer subárbol derecho
+            RecorridoPreordenRecursivo((NodoABB)nodo.hijoDer);
+        }
+    }
+
+
+    private void RecorridoPostordenRecursivo(NodoABB nodo)
+    {
+        if (nodo != null)
+        {
+            // Recorrer subárbol izquierdo
+            RecorridoPostordenRecursivo((NodoABB)nodo.hijoIzq);
+
+            // Recorrer subárbol derecho
+            RecorridoPostordenRecursivo((NodoABB)nodo.hijoDer);
+
+            // Visitar nodo actual
+            Console.WriteLine("Enemigo: " + nodo.enemigo + ", Distancia: " + nodo.distancia);
         }
     }
 }
