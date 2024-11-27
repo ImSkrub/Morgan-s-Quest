@@ -27,14 +27,29 @@ public class WaypointManager : MonoBehaviour
     {
         if (Player != null)
         {
-            Transform playerWaypoint = Player.transform.Find("Waypoint");
-            if (playerWaypoint != null)
+            // Try to find the child GameObject named "Waypoint"
+            Transform playerWaypointTransform = Player.transform.Find("Waypoint");
+
+            if (playerWaypointTransform != null)
             {
-                return playerWaypoint.gameObject.GetInstanceID();
+                Waypoint playerWaypoint = playerWaypointTransform.GetComponent<Waypoint>();  // Assuming the child has a Waypoint component
+                if (playerWaypoint != null)
+                {
+                    return playerWaypoint.gameObject.GetInstanceID();
+                }
+                Debug.LogWarning("Waypoint component not found on player's child object!");
             }
-            Debug.LogWarning("Player's waypoint not found!");
+            else
+            {
+                Debug.LogWarning("Player's waypoint child object not found!");
+            }
         }
-        return -1;
+        else
+        {
+            Debug.LogWarning("Player object is null!");
+        }
+
+        return -1;  // Return -1 if no waypoint is found
     }
 
 }
