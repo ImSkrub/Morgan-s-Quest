@@ -15,10 +15,14 @@ public class ChildLife : MonoBehaviour
     [SerializeField] private float destroyDelay = 0.5f;
     [SerializeField] private GenerateItem item;
 
-    private ABB enemyTree; 
+    private ABB enemyTree;
     private Transform player;
     private float lastDistance;
     public event Action OnDeath;
+
+    // Variables para sonido
+    private AudioSource audioSource;  // AudioSource para reproducir el sonido
+    [SerializeField] private AudioClip damageSound; // Clip de sonido cuando recibe daño
 
     private void Start()
     {
@@ -28,7 +32,7 @@ public class ChildLife : MonoBehaviour
 
         enemyTree = new ABB();
         enemyTree.InicializarArbol();
-       
+
         player = GameObject.FindGameObjectWithTag("Player")?.transform;
 
         if (player != null)
@@ -40,6 +44,9 @@ public class ChildLife : MonoBehaviour
         {
             Debug.LogError("Player not found. Ensure it has the 'Player' tag.");
         }
+
+        // Obtener el componente AudioSource
+        audioSource = GetComponent<AudioSource>();
     }
 
     private void Update()
@@ -50,12 +57,11 @@ public class ChildLife : MonoBehaviour
 
             if (Mathf.Abs(currentDistance - lastDistance) > 0.1f)
             {
-                
-                enemyTree.EliminarElem(gameObject.name);  
-                enemyTree.AgregarElem(gameObject.name, currentDistance);  
+                enemyTree.EliminarElem(gameObject.name);
+                enemyTree.AgregarElem(gameObject.name, currentDistance);
                 lastDistance = currentDistance;
             }
-            
+
             if (currentDistance < 1.5f)
             {
                 AttackClosestEnemy();
@@ -66,14 +72,20 @@ public class ChildLife : MonoBehaviour
     private void AttackClosestEnemy()
     {
         string closestEnemy = enemyTree.EnemigoMasCercano();
-       
         Debug.Log($"Attacking closest enemy: {closestEnemy}");
     }
+
     public void GetDamage(int value)
     {
         if (isDead) return;
 
         health -= value;
+
+        // Reproducir el sonido de daño
+        if (audioSource != null && damageSound != null)
+        {
+            audioSource.PlayOneShot(damageSound); // Reproducir el sonido
+        }
 
         if (health <= 0f && !isDead)
         {
