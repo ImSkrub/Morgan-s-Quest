@@ -25,18 +25,21 @@ public class LevelManager : MonoBehaviour
     
     public void LoadNextLevel()
     {
+        AudioManager.instance.StopMusic();
         currentLevelIndex++;
         LoadLevel(currentLevelIndex);
     }
 
     public void RestartLevel()
     {
+        AudioManager.instance.StopMusic();
         Debug.Log($"Reiniciando nivel: {currentLevelIndex}");
         LoadLevel(currentLevelIndex);
     }
 
     public void LoadLevel(int levelIndex)
     {
+        AudioManager.instance.StopMusic();
         Debug.Log($"Cargando nivel: {levelIndex}");
         SceneManager.LoadScene(levelIndex);
         currentLevelIndex = levelIndex;
@@ -44,6 +47,7 @@ public class LevelManager : MonoBehaviour
 
     public void LoadMainMenu()
     {
+        AudioManager.instance.PlayMenuMusic();
         currentLevelIndex = 0;
         LoadLevel(0);
     }

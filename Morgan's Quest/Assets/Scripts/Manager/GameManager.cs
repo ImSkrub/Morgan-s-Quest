@@ -77,12 +77,14 @@ public class GameManager : MonoBehaviour
     public void WinGame()
     {
         RegistrarPuntaje();
+        AudioManager.instance.PlayWinMusic();
         SceneManager.LoadScene(3); // Load victory menu
     }
 
     public void LoseGame()
     {
         RegistrarPuntaje();
+        AudioManager.instance.PlayLoseMusic();
         SceneManager.LoadScene(4); // Load defeat menu
     }
 

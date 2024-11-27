@@ -7,17 +7,10 @@ public class AudioManager : MonoBehaviour
 {
     public static AudioManager instance;
     [Header("----Audio Source-----")]
-    [SerializeField] AudioSource MusicSource, SFXSource;
-    [Header("-----Audio CLip-----")]
-    //Sound maneja audioclip y nombre. Y lo guarda en un array.
+    [SerializeField] private AudioSource MusicSource, SFXSource;
+    [Header("-----Audio Clip-----")]
     public Sound[] MusicSounds, SFXSounds;
 
-    
-    
-    /*
-     * Si queremos hacer sonidos que tengan en cuenta la distancia con el player el audio tiene que ser en 3D.
-     * Si es en 2D se reproduce constantemente, pero se puede activar o desactivar con los checkpoints.
-    */
     private void Awake()
     {
         if (instance == null)
@@ -25,7 +18,6 @@ public class AudioManager : MonoBehaviour
             instance = this;
             DontDestroyOnLoad(gameObject);
         }
-
         else
         {
             Destroy(gameObject);
@@ -34,82 +26,72 @@ public class AudioManager : MonoBehaviour
 
     private void Start()
     {
-        //PlayMusic("Theme");
-        //playerCharacter.ChestSound.AddListener(ChestSound);
-        //playerCharacter.DoorSound.AddListener(DoorSound);
-
+        PlayMenuMusic();
     }
 
     public void PlayMusic(string name)
     {
+        if (MusicSource == null)
+        {
+            Debug.LogWarning("MusicSource is not assigned!");
+            return;
+        }
+
         Sound s = Array.Find(MusicSounds, x => x.Name == name);
 
         if (s == null)
         {
-            Debug.Log("sound not found");
+            Debug.Log("Sound not found");
         }
-
         else
         {
-
             MusicSource.clip = s.Clip;
             MusicSource.Play();
         }
     }
-    public void PlaySFX(string name) 
-    {
-        Sound s = Array.Find(SFXSounds, x => x.Name == name);
 
-        if (s == null)
+    public void StopMusic()
+    {
+        if (MusicSource == null)
         {
-            Debug.Log("sound not found");
+            Debug.LogWarning("MusicSource is not assigned!");
+            return;
         }
 
-        else
-        {
-            SFXSource.PlayOneShot(s.Clip);
-        }
-
+        MusicSource.Stop();
     }
 
-    public bool isMusicPlaying(string name)
+    public void PlayMenuMusic()
     {
-        Console.WriteLine("hola que tal");
-        if (MusicSource.name == name)
-        {
-            Console.WriteLine("hola");
-            return true;
-        } else
-        {
-            Console.WriteLine("chau");
-            return false;
-        }
+        StopMusic();
+        PlayMusic("BG menu"); // Replace with your actual menu music name
     }
 
-    public void ToggleMusic()
+    public void PlayWinMusic()
     {
-        MusicSource.mute = !MusicSource.mute;
+        StopMusic();
+        PlayMusic("Win"); // Replace with your actual win music name
     }
-    public void ToggleSFX()
+
+    public void PlayLoseMusic()
     {
-        SFXSource.mute = !SFXSource.mute;
+        StopMusic();
+        PlayMusic("Lose"); // Replace with your actual lose music name
     }
 
     public void MusicVolume(float volume)
     {
-        MusicSource.volume = volume;
-    }
-    public void SFXVolume(float volume)
-    {
-        SFXSource.volume = volume;
-    }
-    public void DoorSound()
-    {
-        PlaySFX("Door");
-    }
-    public void ChestSound()
-    {
-        PlaySFX("Chest");
+        if (MusicSource != null)
+        {
+            MusicSource.volume = volume;
+        }
     }
 
+    public void SFXVolume(float volume)
+    {
+        if (SFXSource != null)
+        {
+            SFXSource.volume = volume;
+        }
+    }
 }
