@@ -104,24 +104,27 @@ public class ChildLife : MonoBehaviour
     {
         isDead = true;
 
+        // Limpiar los puntajes antes de agregar nuevos puntos
         QuickSortHS quickSortHS = FindObjectOfType<QuickSortHS>();
         if (quickSortHS != null)
         {
-            quickSortHS.AgregarPuntaje(10); // Sumar 10 puntos por enemigo
-            quickSortHS.GuardarPuntajes();  // Guardar los puntajes al momento
+              // Limpiar los puntajes antes de agregar el nuevo
+            quickSortHS.AgregarPuntaje(10); // Agregar 10 puntos por enemigo
+            Debug.Log("Puntaje agregado al morir el enemigo.");
         }
         else
         {
             Debug.LogWarning("QuickSortHS no encontrado.");
         }
 
+        enemyTree.EliminarElem(gameObject.name);
+        OnDeath?.Invoke();
         Destroy(gameObject, destroyDelay);
         item.SpawnItem();
 
         GameManager.Instance.counter += 1;
     }
 
-    
     public string GetClosestEnemy()
     {
         return enemyTree.EnemigoMasCercano();
