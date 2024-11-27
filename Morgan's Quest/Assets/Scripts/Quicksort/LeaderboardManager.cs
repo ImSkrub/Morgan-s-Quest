@@ -19,14 +19,13 @@ public class LeaderboardManager : MonoBehaviour
 
     public void ShowLeaderboard()
     {
-        // Reset scores when showing the leaderboard
+        // Load the updated scores when showing the leaderboard
         quickSortHS.CargarPuntajes(); // Load the updated scores
-        quickSortHS.MostrarPuntajes();
-        leaderboardPanel.SetActive(true);
+        leaderboardPanel.SetActive(true); // Show the leaderboard panel
     }
 
     public void CloseLeaderboard()
     {
-        leaderboardPanel.SetActive(false);
+        leaderboardPanel.SetActive(false); // Hide the leaderboard panel
     }
 }
