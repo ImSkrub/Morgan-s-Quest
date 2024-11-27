@@ -20,11 +20,9 @@ public class LeaderboardManager : MonoBehaviour
 
     private void ShowLeaderboard()
     {
-        quickSortHS.GenerarPuntajes();
-        quickSortHS.OrdenarPuntajes();
-
+        quickSortHS.CargarPuntajes(); // Cargar puntajes antes de mostrarlos
+        quickSortHS.OrdenarPuntajes(); // Asegúrate de que estén ordenados
         quickSortHS.MostrarPuntajes();
-
         leaderboardPanel.SetActive(true);
     }
 

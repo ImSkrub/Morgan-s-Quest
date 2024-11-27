@@ -4,37 +4,28 @@ using TMPro;
 
 public class QuickSortHS : MonoBehaviour
 {
-    public TextMeshProUGUI globalHighScore; //Donde se muestran los jugadores
-    private int cuenta = 0;
-
-    private PointManager pointManager;
-    private List<EscenceScore> puntajes;
+    public TextMeshProUGUI globalHighScore; // Donde se muestran los puntajes
+    private List<int> puntajes = new List<int>(); // Lista de puntajes
 
     private void Start()
     {
-        Debug.Log(cuenta);
-        pointManager = PointManager.Instance;
-        GenerarPuntajes();
-        OrdenarPuntajes();
+
+        AgregarPuntaje(50);
+        AgregarPuntaje(30);
+        AgregarPuntaje(70);
+        CargarPuntajes(); // Cargar puntajes previos al inicio
         MostrarPuntajes();
     }
 
-    public void GenerarPuntajes()
+    public void AgregarPuntaje(int score)
     {
-        puntajes = new List<EscenceScore>();
-        
-        Stack<int> scoreHistory = pointManager.GetScoreHistory();
-        foreach (int score in scoreHistory)
-        {
-            Debug.Log(score);
-            puntajes.Add(new EscenceScore(score));
-        }
-     
+        puntajes.Add(score); // Añade el nuevo puntaje a la lista
+        GuardarPuntajes();
     }
 
     public void OrdenarPuntajes()
     {
-        QuickSort.Sort(puntajes);
+        puntajes.Sort((a, b) => b.CompareTo(a)); // Ordenar de mayor a menor
     }
 
     public void MostrarPuntajes()
@@ -43,9 +34,31 @@ public class QuickSortHS : MonoBehaviour
 
         for (int i = 0; i < puntajes.Count; i++)
         {
-            puntajesTexto += (i + 1) + " Lugar: " + " - Escencias totales: " + puntajes[i].Puntaje + "\n";
+            puntajesTexto += $"{i + 1} Lugar: - Puntos: {puntajes[i]}\n";
         }
 
-        globalHighScore.text = puntajesTexto;
+        globalHighScore.text = puntajesTexto; // Asegúrate de que este objeto esté vinculado
+    }
+
+    public void GuardarPuntajes()
+    {
+        for (int i = 0; i < puntajes.Count; i++)
+        {
+            PlayerPrefs.SetInt($"Score_{i}", puntajes[i]);
+        }
+        PlayerPrefs.SetInt("ScoreCount", puntajes.Count);
+        PlayerPrefs.Save();
+    }
+
+    public void CargarPuntajes()
+    {
+        puntajes.Clear(); // Limpia la lista antes de cargar
+        int scoreCount = PlayerPrefs.GetInt("ScoreCount", 0);
+
+        for (int i = 0; i < scoreCount; i++)
+        {
+            int score = PlayerPrefs.GetInt($"Score_{i}", 0);
+            puntajes.Add(score);
+        }
     }
 }
