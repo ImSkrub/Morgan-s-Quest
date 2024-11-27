@@ -13,10 +13,7 @@ public class PointManager : MonoBehaviour
 
     private int highScore = 0;
 
-    [Header("UI Elements")]
-    [SerializeField] private TextMeshProUGUI highScoreText;
-
-    
+      
     public event Action OnHighScoreUpdated;
 
     private void Awake()
@@ -49,13 +46,12 @@ public class PointManager : MonoBehaviour
     {
         highScore += points;
         scoreHistory.Push(highScore); 
-        UpdateHighScoreUI();
         NotifyHighScoreUpdated();
         Debug.Log("Highscore actualizado: " + highScore);
     }
 
    
-    private void UpdateHighScoreUI()
+    public void UpdateHighScoreUI(TMP_Text highScoreText)
     {
         if (highScoreText != null)
         {
@@ -72,7 +68,7 @@ public class PointManager : MonoBehaviour
     {
         if (OnHighScoreUpdated != null)
         {
-            OnHighScoreUpdated.Invoke();
+            OnHighScoreUpdated?.Invoke();
         }
     }
 }
