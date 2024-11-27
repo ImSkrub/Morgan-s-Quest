@@ -10,9 +10,8 @@ public class QuickSortHS : MonoBehaviour
     private void Start()
     {
 
-        AgregarPuntaje(50);
-        AgregarPuntaje(30);
-        AgregarPuntaje(70);
+            
+        
         CargarPuntajes(); // Cargar puntajes previos al inicio
         MostrarPuntajes();
     }
@@ -49,7 +48,7 @@ public class QuickSortHS : MonoBehaviour
         PlayerPrefs.SetInt("ScoreCount", puntajes.Count);
         PlayerPrefs.Save();
     }
-
+    
     public void CargarPuntajes()
     {
         puntajes.Clear(); // Limpia la lista antes de cargar

@@ -1383,7 +1383,7 @@ GameObject:
   - component: {fileID: 1253701155}
   - component: {fileID: 1253701157}
   m_Layer: 0
-  m_Name: UILeaderboard
+  m_Name: LeaderboardManager
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1773,7 +1773,7 @@ GameObject:
   - component: {fileID: 1765529663}
   - component: {fileID: 1765529664}
   m_Layer: 5
-  m_Name: Text (TMP)
+  m_Name: globalHighScore
   m_TagString: LeaderboardText
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
