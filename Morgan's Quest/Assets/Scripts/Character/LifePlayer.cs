@@ -57,6 +57,11 @@ public class LifePlayer : MonoBehaviour, IDamageable
         }
     }
 
+    public void AddLife(int value)
+    {
+        currentHealth += value;
+    }
+
     private void RestoreColor()
     {
         spriteRenderer.color = originalColor;

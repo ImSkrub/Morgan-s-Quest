@@ -18,8 +18,8 @@ public class Player : MonoBehaviour, IShoot, IMovable
     // Interface variables for movement
     public int Speed => speed;
 
-    private Rigidbody2D rigidbody;
-    public Rigidbody2D Rigidbody => rigidbody;
+    private Rigidbody2D rb;
+    public Rigidbody2D Rigidbody => rb;
 
     // Animation variables
     private Animator animator;
@@ -74,7 +74,7 @@ public class Player : MonoBehaviour, IShoot, IMovable
 
     private void InitializeComponents()
     {
-        rigidbody = GetComponent<Rigidbody2D>();
+        rb = GetComponent<Rigidbody2D>();
         animator = GetComponent<Animator>();
         spriteRenderer = GetComponent<SpriteRenderer>();
         mana = GetComponent<ManaPlayer>();
@@ -119,7 +119,7 @@ public class Player : MonoBehaviour, IShoot, IMovable
         animator.SetFloat("Vertical", vertical);
         animator.SetFloat("Speed", movementInput.magnitude);
 
-        rigidbody.velocity = new Vector3(horizontal * speed, vertical * speed, 0);
+        rb.velocity = new Vector3(horizontal * speed, vertical * speed, 0);
     }
 
     private void UpdateAnimatorParameters(Vector2 movementInput)
