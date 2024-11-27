@@ -19,7 +19,7 @@ public class QuickSortHS : MonoBehaviour
         MostrarPuntajes();
     }
 
-    private void GenerarPuntajes()
+    public void GenerarPuntajes()
     {
         puntajes = new List<EscenceScore>();
         
@@ -32,19 +32,18 @@ public class QuickSortHS : MonoBehaviour
      
     }
 
-    private void OrdenarPuntajes()
+    public void OrdenarPuntajes()
     {
         QuickSort.Sort(puntajes);
     }
 
-    private void MostrarPuntajes()
+    public void MostrarPuntajes()
     {
-        string puntajesTexto = "";
+        string puntajesTexto = "Leaderboard\n";
 
         for (int i = 0; i < puntajes.Count; i++)
         {
-            puntajesTexto += (i + 1) + "Lugar: " + " - Escencias totales: " + puntajes[i].Puntaje + "\n";
-            Debug.Log((i + 1) + "Lugar: " + " - Escencias totales: " + puntajes[i].Puntaje);
+            puntajesTexto += (i + 1) + " Lugar: " + " - Escencias totales: " + puntajes[i].Puntaje + "\n";
         }
 
         globalHighScore.text = puntajesTexto;

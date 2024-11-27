@@ -5,6 +5,7 @@ using UnityEngine.SceneManagement;
 
 public class ButtonManager : MonoBehaviour
 {
+    [SerializeField] private GameObject leaderboardPanel;
     public void GoToMenu()
     {
         LevelManager.instance.LoadLevel(0);
@@ -29,6 +30,22 @@ public class ButtonManager : MonoBehaviour
     {
         SceneManager.LoadScene(12);
     }
+
+    public void ShowLeaderboard()
+    {
+        if (leaderboardPanel != null)
+        {
+            leaderboardPanel.SetActive(true);
+        }
+    }
+    public void CloseLeaderboard()
+    {
+        if (leaderboardPanel != null)
+        {
+            leaderboardPanel.SetActive(false);
+        }
+    }
+
     //Levels
     public void Level1()
     {
