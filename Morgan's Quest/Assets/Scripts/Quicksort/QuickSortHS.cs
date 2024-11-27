@@ -5,59 +5,35 @@ using TMPro;
 public class QuickSortHS : MonoBehaviour
 {
     public TextMeshProUGUI globalHighScore; // Donde se muestran los puntajes
-    private List<int> puntajes = new List<int>(); // Lista de puntajes
+    private int totalPuntaje = 0; // Para almacenar el puntaje total acumulado
 
     private void Start()
     {
-
-            
-        
         CargarPuntajes(); // Cargar puntajes previos al inicio
         MostrarPuntajes();
     }
 
     public void AgregarPuntaje(int score)
     {
-        puntajes.Add(score); // Añade el nuevo puntaje a la lista
-        GuardarPuntajes();
-    }
-
-    public void OrdenarPuntajes()
-    {
-        puntajes.Sort((a, b) => b.CompareTo(a)); // Ordenar de mayor a menor
+        totalPuntaje += score;  // Agregar puntaje al total
+        GuardarPuntajes(totalPuntaje); // Guardar el puntaje total
     }
 
     public void MostrarPuntajes()
     {
         string puntajesTexto = "Leaderboard\n";
-
-        for (int i = 0; i < puntajes.Count; i++)
-        {
-            puntajesTexto += $"{i + 1} Lugar: - Puntos: {puntajes[i]}\n";
-        }
-
+        puntajesTexto += $"Total: {totalPuntaje} puntos\n";
         globalHighScore.text = puntajesTexto; // Asegúrate de que este objeto esté vinculado
     }
 
-    public void GuardarPuntajes()
+    public void GuardarPuntajes(int score)
     {
-        for (int i = 0; i < puntajes.Count; i++)
-        {
-            PlayerPrefs.SetInt($"Score_{i}", puntajes[i]);
-        }
-        PlayerPrefs.SetInt("ScoreCount", puntajes.Count);
+        PlayerPrefs.SetInt("TotalScore", score);  // Guardar el puntaje total
         PlayerPrefs.Save();
     }
-    
+
     public void CargarPuntajes()
     {
-        puntajes.Clear(); // Limpia la lista antes de cargar
-        int scoreCount = PlayerPrefs.GetInt("ScoreCount", 0);
-
-        for (int i = 0; i < scoreCount; i++)
-        {
-            int score = PlayerPrefs.GetInt($"Score_{i}", 0);
-            puntajes.Add(score);
-        }
+        totalPuntaje = PlayerPrefs.GetInt("TotalScore", 0); // Cargar el puntaje total acumulado
     }
 }

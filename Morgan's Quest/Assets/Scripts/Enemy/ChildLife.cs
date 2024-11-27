@@ -104,12 +104,11 @@ public class ChildLife : MonoBehaviour
     {
         isDead = true;
 
-        // Limpiar los puntajes antes de agregar nuevos puntos
+        // Obtener la instancia de QuickSortHS para agregar puntajes
         QuickSortHS quickSortHS = FindObjectOfType<QuickSortHS>();
         if (quickSortHS != null)
         {
-              // Limpiar los puntajes antes de agregar el nuevo
-            quickSortHS.AgregarPuntaje(10); // Agregar 10 puntos por enemigo
+            quickSortHS.AgregarPuntaje(10); // Solo agregar el puntaje cuando el enemigo muere
             Debug.Log("Puntaje agregado al morir el enemigo.");
         }
         else
@@ -117,11 +116,17 @@ public class ChildLife : MonoBehaviour
             Debug.LogWarning("QuickSortHS no encontrado.");
         }
 
+        // Eliminar el enemigo de la lista de enemigos
         enemyTree.EliminarElem(gameObject.name);
+
+        // Llamar al evento de muerte y destruir el objeto después de un pequeño retraso
         OnDeath?.Invoke();
         Destroy(gameObject, destroyDelay);
+
+        // Generar ítem al morir el enemigo
         item.SpawnItem();
 
+        // Incrementar el contador de enemigos muertos en el GameManager
         GameManager.Instance.counter += 1;
     }
 

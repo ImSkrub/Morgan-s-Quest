@@ -6,17 +6,15 @@ using System;
 
 public class PointManager : MonoBehaviour
 {
-    private Stack<int> scoreHistory = new Stack<int>();
     private static PointManager instance;
 
     public static PointManager Instance => instance;
 
-    private int highScore = 0;
+    private int highScore = 0;  // Puntaje más alto
 
     [Header("UI Elements")]
-    [SerializeField] private TextMeshProUGUI highScoreText;
+    [SerializeField] private TextMeshProUGUI highScoreText;  // Para mostrar el puntaje más alto en la UI
 
-    
     public event Action OnHighScoreUpdated;
 
     private void Awake()
@@ -32,34 +30,32 @@ public class PointManager : MonoBehaviour
         }
     }
 
-    public Stack<int> GetScoreHistory()
+    public int GetHighScore()
     {
-        return new Stack<int>(scoreHistory); 
+        return highScore; // Devuelve el puntaje más alto acumulado
     }
 
-    
+    // Guardar puntaje final
     public void SaveFinalScore(int finalScore)
     {
-        scoreHistory.Push(finalScore);
+        highScore = finalScore;
         NotifyHighScoreUpdated();
     }
 
-   
+    // Añadir puntaje y actualizar el puntaje más alto
     public void AddScore(int points)
     {
         highScore += points;
-        scoreHistory.Push(highScore); 
         UpdateHighScoreUI();
         NotifyHighScoreUpdated();
         Debug.Log("Highscore actualizado: " + highScore);
     }
 
-   
     private void UpdateHighScoreUI()
     {
         if (highScoreText != null)
         {
-            highScoreText.text = $"Highscore: {highScore}";
+            highScoreText.text = $"Highscore: {highScore}"; // Actualiza la UI
         }
         else
         {
@@ -67,12 +63,8 @@ public class PointManager : MonoBehaviour
         }
     }
 
-    
     private void NotifyHighScoreUpdated()
     {
-        if (OnHighScoreUpdated != null)
-        {
-            OnHighScoreUpdated.Invoke();
-        }
+        OnHighScoreUpdated?.Invoke();  // Notifica que el puntaje ha sido actualizado
     }
 }
