@@ -3,17 +3,16 @@ using UnityEngine;
 
 public class EnemyFollow : Enemy
 {
-    private GraphManager graphManager;
-    private List<Vertice> path = new List<Vertice>();
+    private GraphController graphController;
+    private List<int> path = new List<int>(); //Todo se maneja en interger
     private int currentWaypointIndex = 0;
-    public float avoidanceRayLength = 1.5f; // Length of the ray used to detect obstacles
-
+    public float avoidanceRayLength = 1.5f;
+    
     protected override void Start()
     {
         base.Start();
-        graphManager = FindObjectOfType<GraphManager>();
-
-        if (graphManager != null)
+        graphController = FindObjectOfType<GraphController>();
+        if (graphController != null)
         {
             CalculatePathToPlayer();
         }
@@ -23,22 +22,16 @@ public class EnemyFollow : Enemy
     {
         base.Update();
 
+        //Si la lista no esta vacia y el index del waypoint es menor a la cantidad que hay en la lista. Se mueve hacia el waypoint
         if (path.Count > 0 && currentWaypointIndex < path.Count)
         {
-            Vertice targetWaypoint = path[currentWaypointIndex];
-            Vector2 directionToMove = (targetWaypoint.Position - (Vector2)transform.position).normalized;
+            int targetWaypointId = path[currentWaypointIndex];
+            Vector3 targetPosition = graphController.waypointInScene[targetWaypointId].transform.position;
 
-            // Check for obstacles before moving
-            if (IsObstacleInPath(directionToMove))
-            {
-                AvoidObstacle(directionToMove);
-            }
-            else
-            {
-                MoveTowardsWaypoint(targetWaypoint);
-            }
+            // Move towards the target waypoint
+            MoveTowardsWaypoint(targetPosition);
 
-            if (Vector2.Distance(transform.position, targetWaypoint.Position) < 0.1f)
+            if (Vector3.Distance(transform.position, targetPosition) < 0.1f)
             {
                 currentWaypointIndex++;
             }
@@ -51,21 +44,19 @@ public class EnemyFollow : Enemy
 
     private void CalculatePathToPlayer()
     {
-        Graph graph = graphManager.GetGraph();
-        if (graph == null || player == null) return;
+        if (graphController == null || player == null) return;
 
         int enemyVerticeId = GetClosestVerticeId();
-        int playerVerticeId = player.gameObject.GetInstanceID();
+        int playerVerticeId = player.GetComponent<Waypoint>().waypointId;
 
-        Dijkstra dijkstra = gameObject.AddComponent<Dijkstra>();
-        var (distances, previous) = dijkstra.ShortestPaths(graph, enemyVerticeId);
+        AlgDijkstra.Dijkstra(graphController.GetGraph(), enemyVerticeId);
 
         path.Clear();
-        Vertice current = graph.Vertices[playerVerticeId];
-        while (current != null)
+        int current = playerVerticeId;
+        while (current != -1)
         {
             path.Insert(0, current);
-            previous.TryGetValue(current, out current);
+            current = graphController.GetGraph().Vert2Indice(current);
         }
 
         currentWaypointIndex = 0;
@@ -73,68 +64,60 @@ public class EnemyFollow : Enemy
 
     private int GetClosestVerticeId()
     {
-        Graph graph = graphManager.GetGraph();
-        Vertice closest = null;
+        TDA_Grafos graph = graphController.GetGraph();
+        int closestId = -1;
         float minDistance = float.MaxValue;
 
-        foreach (var vertice in graph.Vertices.Values)
+        foreach (var waypointId in graph.Etiqs)
         {
-            float distance = Vector2.Distance(transform.position, vertice.Position);
+            Vector3 waypointPosition = graphController.waypointInScene[waypointId].transform.position;
+            float distance = Vector3.Distance(transform.position, waypointPosition);
             if (distance < minDistance)
             {
-                closest = vertice;
+                closestId = waypointId;
                 minDistance = distance;
             }
         }
 
-        return closest?.Value ?? -1;
+        return closestId;
     }
 
-    private void MoveTowardsWaypoint(Vertice targetWaypoint)
+    private void MoveTowardsWaypoint(Vector3 targetPosition)
     {
-        Vector2 targetPosition = targetWaypoint.Position;
-        transform.position = Vector2.MoveTowards(transform.position, targetPosition, vel * Time.deltaTime);
-    }
+        Vector3 direction = (targetPosition - transform.position).normalized;
 
-    // Check if there is an obstacle in the way using Raycasting
-    private bool IsObstacleInPath(Vector2 direction)
-    {
-        RaycastHit2D hit = Physics2D.Raycast(transform.position, direction, avoidanceRayLength, wallLayer);
-        return hit.collider != null;
-    }
-
-    // Adjust direction to avoid obstacle (bounce off or steer)
-    private void AvoidObstacle(Vector2 direction)
-    {
-        // If obstacle detected, try to move in a different direction
-        // Cast multiple rays to check for left or right movement to avoid the obstacle
-        Vector2 avoidanceDirection = direction;
-
-        // Cast to the left
-        RaycastHit2D leftHit = Physics2D.Raycast(transform.position, -Vector2.right, avoidanceRayLength, wallLayer);
-        // Cast to the right
-        RaycastHit2D rightHit = Physics2D.Raycast(transform.position, Vector2.right, avoidanceRayLength, wallLayer);
-
-        // If both directions are clear, move in the original direction
-        if (leftHit.collider == null && rightHit.collider == null)
+        // Comprobar si hay obstáculos antes de moverse
+        if (!IsObstacleInPath(direction))
         {
-            avoidanceDirection = direction;
+            transform.position = Vector3.MoveTowards(transform.position, targetPosition, vel * Time.deltaTime);
         }
         else
         {
-            // If left side is clear, move left
-            if (leftHit.collider == null)
-            {
-                avoidanceDirection = -Vector2.right;
-            }
-            // If right side is clear, move right
-            else if (rightHit.collider == null)
-            {
-                avoidanceDirection = Vector2.right;
-            }
+            AvoidObstacle(direction);
+        }
+    }
+
+    private bool IsObstacleInPath(Vector3 direction)
+    {
+        RaycastHit hit;
+        return Physics.Raycast(transform.position, direction, avoidanceRayLength, wallLayer);
+    }
+
+    private void AvoidObstacle(Vector3 direction)
+    {
+        Vector3 avoidanceDirection = direction;
+
+        // Lanzar un rayo hacia la izquierda
+        if (!IsObstacleInPath(Quaternion.Euler(0, -30, 0) * direction))
+        {
+            avoidanceDirection = Quaternion.Euler(0, -30, 0) * direction;
+        }
+        // Lanzar un rayo hacia la derecha
+        else if (!IsObstacleInPath(Quaternion.Euler(0, 30, 0) * direction))
+        {
+            avoidanceDirection = Quaternion.Euler(0, 30, 0) * direction;
         }
 
-        // Apply the new avoidance direction
-        transform.position = Vector2.MoveTowards(transform.position, (Vector2)transform.position + avoidanceDirection, vel* Time.deltaTime);
+        transform.position += avoidanceDirection * vel * Time.deltaTime;
     }
 }
