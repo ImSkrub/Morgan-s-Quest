@@ -9,7 +9,7 @@ using UnityEngine.UI;
 public class GameManager : MonoBehaviour
 {
     public static GameManager Instance;
-    public int counter = 0;
+    public int counter = 10;
 
     // Player
     [SerializeField] private GameObject player;
@@ -18,10 +18,7 @@ public class GameManager : MonoBehaviour
     public int escence = 0;
     public TextMeshProUGUI textCount;
 
-    // Define the desired score to pass level 2
-    private const int desiredScoreForLevel2 = 20;
-
-    private void Awake()
+     private void Awake()
     {
         if (Instance == null)
         {
@@ -46,20 +43,20 @@ public class GameManager : MonoBehaviour
         }
 
         // Check if in level 1 and counter reaches 10
-        if (LevelManager.instance.currentLevel == 1 && counter >= 10)
+        if (LevelManager.instance.currentLevel == 1 && counter >= 0)
         {
             LevelManager.instance.LoadNextLevel();
-            counter = 0;
+            counter = 20;
             escence = 0;
         }
 
         // Check if in level 2 and counter reaches the desired score
         if (LevelManager.instance.currentLevel == 2)
         {
-            if (counter >= desiredScoreForLevel2)
+            if (counter >= 0)
             {
                 WinGame(); // Call WinGame if the desired score is reached
-                counter = 0;
+                counter = 10;
                 escence = 0;
             }
             // If the score is less than the desired score, do not allow level progression
@@ -68,7 +65,7 @@ public class GameManager : MonoBehaviour
 
     public void EnemyDied()
     {
-        counter += 1; // Increment the counter for enemy deaths
+        counter -= 1; // Increment the counter for enemy deaths
         PointManager.Instance.AddScore(10); // Add 10 points for enemy death
         QuickSortHS quickSortHS = FindObjectOfType<QuickSortHS>();
         quickSortHS.AgregarPuntaje(10); // Add score to leaderboard
