@@ -5,32 +5,34 @@ public class GraphController : MonoBehaviour
 {
     private TDA_Grafos grafo;
     public Dictionary<int, Waypoint> waypointInScene;
-    public Waypoint[] nodos;
-    public float maxDistanciaConexiones = 5f;
+    public Waypoint[] nodos; // Array de nodos que se configuran manualmente en Unity
+    public float maxDistanciaConexiones = 5f; // Distancia máxima para conectar nodos
+
     private void Awake()
     {
-        InitializeGraph();
+        InitializeGraph(); // Inicializa el grafo y genera conexiones
     }
+
     private void InitializeGraph()
     {
         grafo = new TDA_Grafos();
         grafo.InicializarGrafo();
         waypointInScene = new Dictionary<int, Waypoint>();
-        
+
         if (nodos.Length == 0)
         {
-            Debug.LogError("No se encontraron nodos!");
+            Debug.LogError("No se encontraron nodos en la escena. Asegúrate de asignarlos en el inspector.");
             return;
         }
 
+        // Agregar cada nodo al grafo y al diccionario de waypoints
         foreach (Waypoint nodo in nodos)
         {
             grafo.AgregarVertice(nodo.waypointId);
             waypointInScene.Add(nodo.waypointId, nodo);
         }
 
-        GenerarConexionesAutomaticas();
-
+        GenerarConexionesAutomaticas(); // Genera las conexiones entre nodos automáticamente
     }
 
     private void GenerarConexionesAutomaticas()
@@ -54,59 +56,15 @@ public class GraphController : MonoBehaviour
                 // Si la distancia es menor o igual al umbral, conectar los nodos
                 if (distancia <= maxDistanciaConexiones)
                 {
-                    grafo.AgregarArista(idArista++, nodoA.Key, nodoB.Key, ((int)distancia));
-                    grafo.AgregarArista(idArista++, nodoB.Key, nodoA.Key, ((int)distancia));
+                    grafo.AgregarArista(idArista++, nodoA.Key, nodoB.Key, Mathf.RoundToInt(distancia));
+                    grafo.AgregarArista(idArista++, nodoB.Key, nodoA.Key, Mathf.RoundToInt(distancia));
                 }
             }
         }
 
-        Debug.Log("Conexiones autom�ticas generadas.");
-    }
-    /*
-    public Vector3[] ObtenerPosicionesCamino(Vector3 inicio, Vector3 fin)
-    {
-        int nodoInicial = ObtenerNodoMasCercano(inicio);
-        int nodoFinal = ObtenerNodoMasCercano(fin);
-
-        AlgDijkstra.Dijkstra(grafo, nodoInicial);
-
-        int nodoFinalIndex = grafo.Vert2Indice(nodoFinal);
-        string caminoStr = AlgDijkstra.nodos[nodoFinalIndex];
-
-        if (string.IsNullOrEmpty(caminoStr))
-            return null;
-
-        string[] nodosIds = caminoStr.Split(',');
-        Vector3[] posiciones = new Vector3[nodosIds.Length];
-
-        for (int i = 0; i < nodosIds.Length; i++)
-        {
-            int id = int.Parse(nodosIds[i]);
-            posiciones[i] = waypointInScene[id].transform.position;
-        }
-
-        return posiciones;
+        Debug.Log("Conexiones automáticas generadas entre los waypoints.");
     }
 
-    private int ObtenerNodoMasCercano(Vector3 posicion)
-    {
-        float distanciaMinima = float.MaxValue;
-        int idNodoMasCercano = 1;
-
-        foreach (var nodo in waypointInScene)
-        {
-            float distancia = Vector2.Distance(
-                new Vector2(posicion.x, posicion.y),
-                new Vector2(nodo.Value.transform.position.x, nodo.Value.transform.position.y)
-            );
-            if (distancia < distanciaMinima)
-            {
-                distanciaMinima = distancia;
-                idNodoMasCercano = nodo.Key;
-            }
-        }
-        return idNodoMasCercano;
-    }*/
     public TDA_Grafos GetGraph()
     {
         return grafo;
