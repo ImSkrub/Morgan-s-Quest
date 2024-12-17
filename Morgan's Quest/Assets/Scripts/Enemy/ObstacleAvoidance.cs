@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ObstacleAvoidance : MonoBehaviour
+public class ObstacleAvoidance : IObstacleAvoidance
 {
     private LayerMask wallLayer;
 

@@ -7,27 +7,31 @@ public class EnemyFollow : Enemy
     public Transform jugador;  // Referencia al jugador
     public float velocidad = 3f;  // Velocidad de movimiento del enemigo
     public float distanciaDeteccion = 5f;  // Distancia de detección del jugador
+    public float rayDistance = 1f;
 
     private List<Waypoint> camino;  // Lista de waypoints por donde el enemigo pasará
     private int waypointIndex = 0;  // Índice del waypoint actual
 
+    private IObstacleAvoidance obstacleAvoidance;
+
     private void Awake()
     {
         graphController = FindAnyObjectByType<GraphController>();
-        jugador = FindObjectOfType<Player>().transform;
-    }
-
-    void Start()
-    {
-        base.Start();
-
+        
         if (graphController == null)
         {
             Debug.LogError("GraphController no está asignado.");
             return;
         }
+        
+        jugador = FindObjectOfType<Player>().transform;
 
-        // Inicializa el camino al comienzo
+        obstacleAvoidance = new ObstacleAvoidance(LayerMask.GetMask("Wall"));
+    }
+
+    void Start()
+    {
+        base.Start();
         ActualizarCamino();
     }
 
@@ -35,22 +39,16 @@ public class EnemyFollow : Enemy
     {
         base.Update();
 
-        
+        if (camino.Count == 0) return;
 
-        if (camino.Count == 0) return;  // Si no hay camino, no hacer nada
-
-        // Mover al enemigo hacia el waypoint más cercano
         MoverHaciaWaypoint();
 
-        // Verificar si el enemigo ha llegado al waypoint
         if (waypointIndex < camino.Count && Vector3.Distance(transform.position, camino[waypointIndex].transform.position) < 0.5f)
         {
-            waypointIndex++;  // Avanzar al siguiente waypoint
+            waypointIndex++;
             if (waypointIndex >= camino.Count)
             {
-                // Recalcular el camino en cada frame
                 ActualizarCamino();
-                Debug.Log("Enemigo ha llegado al destino.");
             }
         }
     }
@@ -93,8 +91,14 @@ public class EnemyFollow : Enemy
     {
         if (waypointIndex < camino.Count)
         {
-            Vector3 direccion = (camino[waypointIndex].transform.position - transform.position).normalized;
-            transform.position += direccion * velocidad * Time.deltaTime;
+            Vector3 targetDirection = (camino[waypointIndex].transform.position - transform.position).normalized;
+
+            // Ajusta la dirección usando la lógica de evasión
+            Vector3 adjustedDirection = obstacleAvoidance.GetAdjustedDirection(transform, targetDirection, rayDistance);
+
+            // Aplica el movimiento
+            transform.position += adjustedDirection * velocidad * Time.deltaTime;
         }
     }
+
 }
