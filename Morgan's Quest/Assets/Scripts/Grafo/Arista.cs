@@ -4,20 +4,14 @@ using UnityEngine;
 
 public class Arista : MonoBehaviour
 {
-    public Waypoint source { get; }
-    public Waypoint destination { get; }
-    public int weight { get; }
+    public Waypoint source;
+    public Waypoint destination;
+    public int weight=1;
 
     public Arista(Waypoint source, Waypoint destination, int weight)
     {
         this.source = source;
         this.destination = destination;
-        this.weight = weight;
+        this.weight = 1;
     }
-    private void OnDrawGizmos()
-    {
-        Gizmos.color = Color.green;
-        Gizmos.DrawLine(source.gameObject.transform.position,destination.gameObject.transform.position);
-    }
-
 }

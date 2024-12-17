@@ -4,13 +4,16 @@ using UnityEngine;
 
 public class TDA_Grafos
 {
-    private List<Waypoint> nodos;  // Lista de Waypoints
-    private List<Arista> aristas; // Lista de Aristas
+    private List<Waypoint> nodos;
+    private List<Arista> aristas;
 
-    public TDA_Grafos()
+    private GameObject aristaPrefab; // Prefab de arista
+
+    public TDA_Grafos(GameObject aristaPrefab)
     {
         nodos = new List<Waypoint>();
         aristas = new List<Arista>();
+        this.aristaPrefab = aristaPrefab; // Guardamos la referencia al prefab
     }
 
     public void AgregarVertice(Waypoint v)
@@ -24,15 +27,17 @@ public class TDA_Grafos
 
     public void AgregarArista(Waypoint origen, Waypoint destino, int peso)
     {
-        // Verificar si la arista ya existe
         if (!ExisteArista(origen, destino))
         {
+            // Crear la arista lógica
             Arista nuevaArista = new Arista(origen, destino, peso);
             aristas.Add(nuevaArista);
-            origen.AgregarArista(destino, peso);  // Agregar la arista al Waypoint también
+            origen.AgregarArista(destino, peso);
+
             Debug.Log($"Arista agregada entre {origen.iD} y {destino.iD} con peso {peso}");
         }
     }
+
 
     public bool ExisteArista(Waypoint origen, Waypoint destino)
     {
