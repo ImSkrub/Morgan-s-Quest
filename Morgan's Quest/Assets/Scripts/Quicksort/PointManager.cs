@@ -6,15 +6,24 @@ using System;
 
 public class PointManager : MonoBehaviour
 {
-    public static PointManager Instance { get; private set; }
     private Stack<int> scoreHistory = new Stack<int>();
-    public int CurrentScore { get; private set; } // Current score
+    private static PointManager instance;
+
+    public static PointManager Instance => instance;
+
+    private int highScore = 0;
+
+    [Header("UI Elements")]
+    [SerializeField] private TextMeshProUGUI highScoreText;
+
+    
+    public event Action OnHighScoreUpdated;
 
     private void Awake()
     {
-        if (Instance == null)
+        if (instance == null)
         {
-            Instance = this;
+            instance = this;
             DontDestroyOnLoad(gameObject);
         }
         else
@@ -23,31 +32,47 @@ public class PointManager : MonoBehaviour
         }
     }
 
-    public void AddScore(int score)
-    {
-        CurrentScore += score; // Add to current score
-        scoreHistory.Push(CurrentScore); // Save score in history
-        OnHighScoreUpdated?.Invoke();
-    }
-
-    public void SaveScore()
-    {
-        int scoreCount = PlayerPrefs.GetInt("ScoreCount", 0);
-        PlayerPrefs.SetInt($"Score_{scoreCount}", CurrentScore); // Save current score
-        PlayerPrefs.SetInt("ScoreCount", scoreCount + 1); // Increment score count
-        PlayerPrefs.Save(); // Save changes in PlayerPrefs
-        Debug.Log($"Score saved: {CurrentScore}");
-    }
-
     public Stack<int> GetScoreHistory()
     {
-        return scoreHistory;
+        return new Stack<int>(scoreHistory); 
     }
 
-    public event System.Action OnHighScoreUpdated;
-
-    public void ResetCurrentScore()
+    
+    public void SaveFinalScore(int finalScore)
     {
-        CurrentScore = 0; // Reset current score
+        scoreHistory.Push(finalScore);
+        NotifyHighScoreUpdated();
+    }
+
+   
+    public void AddScore(int points)
+    {
+        highScore += points;
+        scoreHistory.Push(highScore); 
+        UpdateHighScoreUI();
+        NotifyHighScoreUpdated();
+        Debug.Log("Highscore actualizado: " + highScore);
+    }
+
+   
+    private void UpdateHighScoreUI()
+    {
+        if (highScoreText != null)
+        {
+            highScoreText.text = $"Highscore: {highScore}";
+        }
+        else
+        {
+            Debug.LogWarning("No se asignó un TextMeshProUGUI al PointManager.");
+        }
+    }
+
+    
+    private void NotifyHighScoreUpdated()
+    {
+        if (OnHighScoreUpdated != null)
+        {
+            OnHighScoreUpdated.Invoke();
+        }
     }
 }

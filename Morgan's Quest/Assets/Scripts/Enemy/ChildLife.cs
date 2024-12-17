@@ -15,14 +15,10 @@ public class ChildLife : MonoBehaviour
     [SerializeField] private float destroyDelay = 0.5f;
     [SerializeField] private GenerateItem item;
 
-    private ABB enemyTree;
+    private ABB enemyTree; // Instance of ABB
     private Transform player;
     private float lastDistance;
     public event Action OnDeath;
-
-    // Variables para sonido
-    private AudioSource audioSource;  // AudioSource para reproducir el sonido
-    [SerializeField] private AudioClip damageSound; // Clip de sonido cuando recibe daño
 
     private void Start()
     {
@@ -30,13 +26,16 @@ public class ChildLife : MonoBehaviour
         originalColor = spriteRenderer.color;
         item = GetComponent<GenerateItem>();
 
+        // Initialize the ABB
         enemyTree = new ABB();
         enemyTree.InicializarArbol();
 
+        // Find reference to the player
         player = GameObject.FindGameObjectWithTag("Player")?.transform;
 
         if (player != null)
         {
+            // Calculate initial distance and add this enemy to the ABB
             lastDistance = Vector2.Distance(transform.position, player.position);
             enemyTree.AgregarElem(gameObject.name, lastDistance);
         }
@@ -44,24 +43,24 @@ public class ChildLife : MonoBehaviour
         {
             Debug.LogError("Player not found. Ensure it has the 'Player' tag.");
         }
-
-        // Obtener el componente AudioSource
-        audioSource = GetComponent<AudioSource>();
     }
 
     private void Update()
     {
         if (!isDead && player != null)
         {
+            // Calculate current distance to the player
             float currentDistance = Vector2.Distance(transform.position, player.position);
 
             if (Mathf.Abs(currentDistance - lastDistance) > 0.1f)
             {
-                enemyTree.EliminarElem(gameObject.name);
-                enemyTree.AgregarElem(gameObject.name, currentDistance);
+                // Update position in the ABB
+                enemyTree.EliminarElem(gameObject.name);  // Remove by enemy name
+                enemyTree.AgregarElem(gameObject.name, currentDistance);  // Add by name and distance
                 lastDistance = currentDistance;
             }
 
+            // Check if the enemy can attack
             if (currentDistance < 1.5f)
             {
                 AttackClosestEnemy();
@@ -72,6 +71,7 @@ public class ChildLife : MonoBehaviour
     private void AttackClosestEnemy()
     {
         string closestEnemy = enemyTree.EnemigoMasCercano();
+        // Implement attack logic here, e.g., call a method to deal damage to the closest enemy
         Debug.Log($"Attacking closest enemy: {closestEnemy}");
     }
 
@@ -80,12 +80,6 @@ public class ChildLife : MonoBehaviour
         if (isDead) return;
 
         health -= value;
-
-        // Reproducir el sonido de daño
-        if (audioSource != null && damageSound != null)
-        {
-            audioSource.PlayOneShot(damageSound); // Reproducir el sonido
-        }
 
         if (health <= 0f && !isDead)
         {
@@ -110,7 +104,6 @@ public class ChildLife : MonoBehaviour
     {
         isDead = true;
 
-        PointManager.Instance.AddScore(10);
         enemyTree.EliminarElem(gameObject.name);
         OnDeath?.Invoke();
         Destroy(gameObject, destroyDelay);
@@ -119,6 +112,7 @@ public class ChildLife : MonoBehaviour
         GameManager.Instance.counter += 1;
     }
 
+    // Additional methods for querying the ABB
     public string GetClosestEnemy()
     {
         return enemyTree.EnemigoMasCercano();

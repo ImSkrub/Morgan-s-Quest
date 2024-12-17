@@ -1,126 +1,61 @@
-ï»¿using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UIElements;
 
-public class AlgDijkstra : MonoBehaviour
+public class Dijkstra : MonoBehaviour
 {
-    public static int[] distance;
-    public static string[] nodos;
-
-    private static int MinimumDistance(int[] distance, bool[] shortestPathTreeSet, int verticesCount)
+    public (Dictionary<Vertice, int> distances, Dictionary<Vertice, Vertice> previous) ShortestPaths(Graph graph, int sourceValue)
     {
-        int min = int.MaxValue;
-        int minIndex = 0;
-
-        for (int v = 0; v < verticesCount; ++v)
+        if (!graph.Vertices.ContainsKey(sourceValue))
         {
-            // obtengo siempre el nodo con la menor distancia calculada
-            // solo lo verifico en los nodos que no tienen seteado ya un camino (shortestPathTreeSet[v] == false)
-            if (shortestPathTreeSet[v] == false && distance[v] <= min)
-            {
-                min = distance[v];
-                minIndex = v;
-            }
+            return (null, null); // Source vertex not found
         }
 
-        // devuelvo el nodo calculado
-        return minIndex;
-    }
+        var distances = new Dictionary<Vertice, int>();
+        var previous = new Dictionary<Vertice, Vertice>();
+        var priorityQueue = new List<(int distance, Vertice vertex)>();
 
-    public static void Dijkstra(TDA_Grafos grafo, int source)
-    {
-        // obtengo la matriz de adyacencia del TDA_Grafo
-        int[,] graph = grafo.MAdy;
-
-        // obtengo la cantidad de nodos del TDA_Grafo
-        int verticesCount = grafo.cantNodos;
-
-        // obtengo el indice del nodo elegido como origen a partir de su valor
-        source = grafo.Vert2Indice(source);
-
-        // vector donde se van a guardar los resultados de las distancias entre 
-        // el origen y cada vertice del grafo
-        distance = new int[verticesCount];
-
-        bool[] shortestPathTreeSet = new bool[verticesCount];
-
-        int[] nodos1 = new int[verticesCount];
-        int[] nodos2 = new int[verticesCount];
-
-        for (int i = 0; i < verticesCount; ++i)
+        foreach (var vertex in graph.Vertices.Values)
         {
-            // asigno un valor maximo (inalcanzable) como distancia a cada nodo
-            // cualquier camino que se encuentre va a ser menor a ese valor
-            // si no se encuentra un camino, este valor maximo permanece y es el 
-            // indica que no hay ningun camino entre el origen y ese nodo
-            distance[i] = int.MaxValue;
-
-            // seteo en falso al vector que guarda la booleana cuando se encuentra un camino
-            shortestPathTreeSet[i] = false;
-
-            nodos1[i] = nodos2[i] = -1;
+            distances[vertex] = int.MaxValue; // Inicializa todas las distancias a infinito
+            previous[vertex] = null;
+            priorityQueue.Add((int.MaxValue, vertex));
         }
 
-        // la distancia al nodo origen es 0
-        distance[source] = 0;
-        nodos1[source] = nodos2[source] = grafo.Etiqs[source];
+        distances[graph.Vertices[sourceValue]] = 0; // La distancia al vértice de origen es 0
+        priorityQueue.Add((0, graph.Vertices[sourceValue]));
 
-        // recorro todos los nodos (vertices)
-        for (int count = 0; count < verticesCount - 1; ++count)
+        while (priorityQueue.Count > 0)
         {
-            int u = MinimumDistance(distance, shortestPathTreeSet, verticesCount);
-            shortestPathTreeSet[u] = true;
+            // Ordenar la cola de prioridad para encontrar el vértice con la distancia más pequeña
+            priorityQueue.Sort((a, b) => a.distance.CompareTo(b.distance));
+            var (currentDistance, currentVertex) = priorityQueue[0];
+            priorityQueue.RemoveAt(0); // Eliminar el vértice con la distancia más pequeña
 
-            // recorro todos los nodos (vertices)
-            for (int v = 0; v < verticesCount; ++v)
+            // Debugging: Log the current vertex and its distance
+            Debug.Log($"Current Vertex: {currentVertex.Value}, Distance: {currentDistance}");
+
+            foreach (var edge in currentVertex.aristas)
             {
-                // comparo cada nodo (que aun no se haya calculado) contra el que se encontro que tiene la menor distancia al origen elegido
-                if (!shortestPathTreeSet[v] && Convert.ToBoolean(graph[u, v]) && distance[u] != int.MaxValue && distance[u] + graph[u, v] < distance[v])
+                int newDistance = currentDistance + edge.Weight;
+
+                // Debugging: Log the new distance calculation
+                Debug.Log($"Checking edge from {currentVertex.Value} to {edge.Destination.Value}, New Distance: {newDistance}");
+
+                if (newDistance < distances[edge.Destination])
                 {
-                    // si encontrï¿½ una distancia menor a la que tenia, la reasigno la nodo
-                    distance[v] = distance[u] + graph[u, v];
-                    // guardo los nodos para reconstruir el camino
-                    nodos1[v] = grafo.Etiqs[u];
-                    nodos2[v] = grafo.Etiqs[v];
+                    // Actualizar la distancia y el vértice anterior
+                    distances[edge.Destination] = newDistance;
+                    previous[edge.Destination] = currentVertex;
+
+                    // Actualizar la cola de prioridad
+                    priorityQueue.RemoveAll(x => x.vertex == edge.Destination);
+                    priorityQueue.Add((newDistance, edge.Destination));
                 }
             }
         }
 
-        // construyo camino de nodos
-        nodos = new string[verticesCount];
-        int nodOrig = grafo.Etiqs[source];
-        for (int i = 0; i < verticesCount; i++)
-        {
-            if (nodos1[i] != -1)
-            {
-                List<int> l1 = new List<int>();
-                l1.Add(nodos1[i]);
-                l1.Add(nodos2[i]);
-                while (l1[0] != nodOrig)
-                {
-                    for (int j = 0; j < verticesCount; j++)
-                    {
-                        if (j != source && l1[0] == nodos2[j])
-                        {
-                            l1.Insert(0, nodos1[j]);
-                            break;
-                        }
-                    }
-                }
-                for (int j = 0; j < l1.Count; j++)
-                {
-                    if (j == 0)
-                    {
-                        nodos[i] = l1[j].ToString();
-                    }
-                    else
-                    {
-                        nodos[i] += "," + l1[j].ToString();
-                    }
-                }
-            }
-        }
+        return (distances, previous); // Devolver distancias y predecesores
     }
 }

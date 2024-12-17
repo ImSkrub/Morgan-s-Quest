@@ -25,10 +25,6 @@ public class Player : MonoBehaviour, IShoot, IMovable
     private Animator animator;
     private SpriteRenderer spriteRenderer;
 
-    // Variables para sonido
-    private AudioSource audioSource;  // AudioSource para reproducir el sonido
-    [SerializeField] private AudioClip shootSound; // Clip de sonido del disparo
-
     public enum PlayerStates
     {
         IDLE,
@@ -60,16 +56,12 @@ public class Player : MonoBehaviour, IShoot, IMovable
     // Mana
     private ManaPlayer mana;
 
-    private Vector2 lastPosition;
-
     private void Start()
     {
         InitializeComponents();
-        audioSource = GetComponent<AudioSource>(); // Obtiene el AudioSource
         InitializeEssenceStack();
         originalBulletSpeed = bulletSpeed;
         SetCurrentState(PlayerStates.IDLE);
-        lastPosition = transform.position;
     }
 
     private void Update()
@@ -152,7 +144,7 @@ public class Player : MonoBehaviour, IShoot, IMovable
     {
         if (mana.currentMana < 20)
         {
-            // No hay suficiente mana para disparar
+            // Not enough mana to shoot
             return;
         }
 
@@ -160,15 +152,9 @@ public class Player : MonoBehaviour, IShoot, IMovable
         Bullet bullet = BulletPool.Instance.GetBullet();
         if (bullet != null)
         {
-            bullet.transform.position = transform.position; // Establecer la posición de la bala
-            bullet.Fire(new Vector2(x, y), bulletSpeed); // Disparar la bala
-            mana.currentMana -= 20; // Restar mana por disparar
-
-            // Reproducir el sonido del disparo
-            if (audioSource != null && shootSound != null)
-            {
-                audioSource.PlayOneShot(shootSound); // Reproducir el sonido
-            }
+            bullet.transform.position = transform.position; // Set bullet position
+            bullet.Fire(new Vector2(x, y), bulletSpeed); // Fire bullet
+            mana.currentMana -= 20; // Deduct mana cost
         }
     }
 

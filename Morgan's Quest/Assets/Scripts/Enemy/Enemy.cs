@@ -9,7 +9,6 @@ public abstract class Enemy : MonoBehaviour
     [SerializeField] protected float vel;
     [SerializeField] protected float attackDelay;
     [SerializeField] protected int damage;
-    [SerializeField] protected LayerMask wallLayer;
 
     protected Transform player;
     protected Rigidbody2D rb;
