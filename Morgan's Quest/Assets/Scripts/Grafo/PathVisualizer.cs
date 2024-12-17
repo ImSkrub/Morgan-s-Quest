@@ -6,13 +6,15 @@ public class PathVisualizer : MonoBehaviour
 {
     public GameObject linePrefab; // Prefab con LineRenderer
     private List<GameObject> lineObjects = new List<GameObject>();
+    public bool debug = false;
 
     public void RenderizarConexiones(TDA_Grafos grafo)
     {
         LimpiarLineas(); // Limpiar líneas anteriores
 
         List<Arista> aristas = grafo.GetAristas();
-
+        if (debug)
+        {
         foreach (Arista arista in aristas)
         {
             // Crear un objeto de línea
@@ -42,6 +44,8 @@ public class PathVisualizer : MonoBehaviour
             }
 
             lineObjects.Add(nuevaLinea);
+        }
+
         }
     }
 
