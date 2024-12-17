@@ -14,11 +14,14 @@ public class ChildLife : MonoBehaviour
     [SerializeField] private Color damageColor = Color.red;
     [SerializeField] private float destroyDelay = 0.5f;
     [SerializeField] private GenerateItem item;
+    [SerializeField] private ParticleSystem damageParticles;
 
     private ABB enemyTree;
     private Transform player;
     private float lastDistance;
     public event Action OnDeath;
+    private ParticleSystem damageParticlesInstance;
+    private Animator m_animator;
 
     // Variables para sonido
     private AudioSource audioSource;  // AudioSource para reproducir el sonido
@@ -29,6 +32,7 @@ public class ChildLife : MonoBehaviour
         spriteRenderer = GetComponent<SpriteRenderer>();
         originalColor = spriteRenderer.color;
         item = GetComponent<GenerateItem>();
+        m_animator = GetComponent<Animator>();
 
         enemyTree = new ABB();
         enemyTree.InicializarArbol();
@@ -45,13 +49,12 @@ public class ChildLife : MonoBehaviour
             Debug.LogError("Player not found. Ensure it has the 'Player' tag.");
         }
 
-        // Obtener el componente AudioSource
         audioSource = GetComponent<AudioSource>();
     }
 
     private void Update()
     {
-        if (!isDead && player != null)
+        if (!isDead && player != null) return;
         {
             float currentDistance = Vector2.Distance(transform.position, player.position);
 
@@ -81,20 +84,30 @@ public class ChildLife : MonoBehaviour
 
         health -= value;
 
-        // Reproducir el sonido de daño
         if (audioSource != null && damageSound != null)
         {
-            audioSource.PlayOneShot(damageSound); // Reproducir el sonido
+            audioSource.PlayOneShot(damageSound);
         }
 
-        if (health <= 0f && !isDead)
+        SpawnDamageParticles();
+
+        if (health <= 0f)
         {
             Die();
         }
         else
         {
             spriteRenderer.color = damageColor;
-            Invoke("RestoreColor", 0.5f);
+            Invoke(nameof(RestoreColor), 0.5f);
+        }
+    }
+
+
+    private void SpawnDamageParticles()
+    {
+        if(damageParticles != null)
+        {
+            damageParticlesInstance = Instantiate(damageParticles, transform.position, Quaternion.identity);
         }
     }
 
@@ -108,16 +121,55 @@ public class ChildLife : MonoBehaviour
 
     public void Die()
     {
+        if (isDead) return;
+
         isDead = true;
 
         PointManager.Instance.AddScore(10);
         enemyTree.EliminarElem(gameObject.name);
-        OnDeath?.Invoke();
-        Destroy(gameObject, destroyDelay);
-        item.SpawnItem();
 
-        GameManager.Instance.counter += 1;
+        OnDeath?.Invoke();
+
+        Collider2D collider = GetComponent<Collider2D>();
+        if (collider != null)
+        {
+            collider.enabled = false;
+        }
+
+        MonoBehaviour[] scripts = GetComponents<MonoBehaviour>();
+        foreach (var script in scripts)
+        {
+            if (script != this) script.enabled = false;
+        }
+
+        if (m_animator != null)
+        {
+            m_animator.SetTrigger("Death");
+        }
+
+        StartCoroutine(HandleDeathAnimation());
     }
+
+    private IEnumerator HandleDeathAnimation()
+    {
+        if (m_animator != null)
+        {
+            AnimatorStateInfo animStateInfo = m_animator.GetCurrentAnimatorStateInfo(0);
+
+            yield return new WaitForSeconds(animStateInfo.length);
+        }
+        else
+        {
+            yield return new WaitForSeconds(1.0f);
+        }
+
+        item?.SpawnItem();
+
+        Destroy(gameObject);
+    }
+
+
+
 
     public string GetClosestEnemy()
     {
