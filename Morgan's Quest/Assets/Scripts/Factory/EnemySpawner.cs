@@ -4,39 +4,49 @@ using UnityEngine;
 
 public class EnemySpawner : MonoBehaviour
 {
-    [SerializeField] private EnemyFactory factory;
-    [SerializeField] [Range(5,20f)]private float spawnTime = 10f;
+  [SerializeField] private EnemyFactory factory;
+    [SerializeField] [Range(5, 20f)] private float spawnTime = 10f;
     private float nextSpawnTime;
-    [SerializeField] private List<Transform> spawnpoint = new List<Transform>();
+    [SerializeField] private List<Transform> spawnpoints = new List<Transform>();
+    
+    // Máximo número de enemigos permitidos en pantalla
+    [SerializeField] private int maxEnemies = 10;
+    private int currentEnemyCount = 0;
 
     void Start()
     {
-        nextSpawnTime = Time.time + spawnTime; // Iniciar el contador en Start
-        Debug.Log("Spawn comenzará en: " + nextSpawnTime);
+        nextSpawnTime = Time.time + spawnTime; // Inicializar el temporizador de spawn
     }
 
     void Update()
     {
-        if (Time.time >= nextSpawnTime)
+        if (Time.time >= nextSpawnTime && currentEnemyCount < maxEnemies)
         {
-            Debug.Log("Spawneando enemigos en: " + Time.time);
-
-            foreach (Transform t in spawnpoint)
+            foreach (Transform t in spawnpoints)
             {
                 if (t != null)
                 {
-                    Debug.Log("Spawneando en punto: " + t.position);
-                    factory.Create(t);
-                }
-                else
-                {
-                    Debug.LogWarning("Punto de spawn es nulo");
+                    // Crear el enemigo y suscribirse al evento OnDeath
+                    Enemy enemy = factory.Create(t);
+                    if (enemy != null)
+                    {
+                        ChildLife childLife = enemy.GetComponent<ChildLife>();
+                        if (childLife != null)
+                        {
+                            childLife.OnDeath += OnEnemyDestroyed; // Subscribe to the event
+                        }
+                        currentEnemyCount++;
+                    }
                 }
             }
 
             nextSpawnTime = Time.time + spawnTime; // Establecer el próximo tiempo de spawn
-            Debug.Log("Próximo spawn en: " + nextSpawnTime);
         }
     }
 
+    // Método que se llama cuando un enemigo muere
+    private void OnEnemyDestroyed()
+    {
+        currentEnemyCount--;
+    }
 }

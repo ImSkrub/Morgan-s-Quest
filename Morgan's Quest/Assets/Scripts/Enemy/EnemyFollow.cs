@@ -1,41 +1,87 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class EnemyFollow : Enemy
 {
-    private void Start()
+    private GraphManager graphManager;
+    private List<Vertice> path = new List<Vertice>();
+    private int currentWaypointIndex = 0;
+    public float speed = 2;
+    protected override void Start()
     {
-        
-        // Buscar al jugador por la etiqueta "Player"
-        player = GameObject.FindGameObjectWithTag("Player")?.transform;
+        base.Start();
+        graphManager = FindObjectOfType<GraphManager>();
 
-        if (player == null)
+        if (graphManager != null)
         {
-            Debug.LogError("No se encontró el jugador. Asegúrate de que el jugador tenga la etiqueta 'Player'.");
+            CalculatePathToPlayer();
         }
     }
 
     private void Update()
     {
-        if (player != null)
-        {
-            // Calcula la distancia al jugador
-            float distanceToPlayer = Vector2.Distance(transform.position, player.position);
+        base.Update();
 
-            if (distanceToPlayer < distToAttack && distanceToPlayer > closestDist)
+        if (path.Count > 0 && currentWaypointIndex < path.Count)
+        {
+            Vertice targetWaypoint = path[currentWaypointIndex];
+            MoveTowardsWaypoint(targetWaypoint);
+
+            if (Vector2.Distance(transform.position, targetWaypoint.Position) < 0.1f)
             {
-                // Moverse hacia el jugador
-                Vector2 direction = (player.position - transform.position).normalized;
-                rb.MovePosition((Vector2)transform.position + direction * vel * Time.deltaTime);
+                currentWaypointIndex++;
             }
         }
-    }
-    private void OnCollisionEnter2D(Collision2D collision)
-    {
-        if (collision.gameObject.CompareTag("Player"))
+        else
         {
-            collision.gameObject.GetComponent<LifePlayer>().GetDamage(damage);
+            CalculatePathToPlayer();
         }
+    }
+
+    private void CalculatePathToPlayer()
+    {
+        Graph graph = graphManager.GetGraph();
+        if (graph == null || player == null) return;
+
+        int enemyVerticeId = GetClosestVerticeId();
+        int playerVerticeId = player.gameObject.GetInstanceID();
+
+        Dijkstra dijkstra = gameObject.AddComponent<Dijkstra>();
+        var (distances, previous) = dijkstra.ShortestPaths(graph, enemyVerticeId);
+
+        path.Clear();
+        Vertice current = graph.Vertices[playerVerticeId];
+        while (current != null)
+        {
+            path.Insert(0, current);
+            previous.TryGetValue(current, out current);
+        }
+
+        currentWaypointIndex = 0;
+    }
+
+    private int GetClosestVerticeId()
+    {
+        Graph graph = graphManager.GetGraph();
+        Vertice closest = null;
+        float minDistance = float.MaxValue;
+
+        foreach (var vertice in graph.Vertices.Values)
+        {
+            float distance = Vector2.Distance(transform.position, vertice.Position);
+            if (distance < minDistance)
+            {
+                closest = vertice;
+                minDistance = distance;
+            }
+        }
+
+        return closest?.Value ?? -1;
+    }
+
+    private void MoveTowardsWaypoint(Vertice targetWaypoint)
+    {
+        Vector2 targetPosition = targetWaypoint.Position;
+        transform.position = Vector2.MoveTowards(transform.position, targetPosition, speed * Time.deltaTime);
     }
 }

@@ -1,43 +1,78 @@
 using UnityEngine;
 using System.Collections.Generic;
+using TMPro;
+using System;
+
 
 public class PointManager : MonoBehaviour
 {
-    [SerializeField] public Estadisticas estadisticas;
-
-    //Variable para mantener un registro de las puntuaciones anteriores.
     private Stack<int> scoreHistory = new Stack<int>();
-     
-
     private static PointManager instance;
 
-    public static PointManager Instance
-    {
-        get { return instance; }
-    }
+    public static PointManager Instance => instance;
+
+    private int highScore = 0;
+
+    [Header("UI Elements")]
+    [SerializeField] private TextMeshProUGUI highScoreText;
+
+    
+    public event Action OnHighScoreUpdated;
 
     private void Awake()
     {
-        if (PointManager.Instance == null)
+        if (instance == null)
         {
-            PointManager.instance = this;
-            DontDestroyOnLoad(this.gameObject);
+            instance = this;
+            DontDestroyOnLoad(gameObject);
         }
         else
         {
-            Destroy(this.gameObject);
+            Destroy(gameObject);
         }
     }
 
     public Stack<int> GetScoreHistory()
     {
-        // no saca 
-        return scoreHistory;
+        return new Stack<int>(scoreHistory); 
     }
 
-    public void SaveFinalScore()
+    
+    public void SaveFinalScore(int finalScore)
     {
-        scoreHistory.Push(estadisticas.puntos);
+        scoreHistory.Push(finalScore);
+        NotifyHighScoreUpdated();
+    }
+
+   
+    public void AddScore(int points)
+    {
+        highScore += points;
+        scoreHistory.Push(highScore); 
+        UpdateHighScoreUI();
+        NotifyHighScoreUpdated();
+        Debug.Log("Highscore actualizado: " + highScore);
+    }
+
+   
+    private void UpdateHighScoreUI()
+    {
+        if (highScoreText != null)
+        {
+            highScoreText.text = $"Highscore: {highScore}";
+        }
+        else
+        {
+            Debug.LogWarning("No se asignó un TextMeshProUGUI al PointManager.");
+        }
+    }
+
+    
+    private void NotifyHighScoreUpdated()
+    {
+        if (OnHighScoreUpdated != null)
+        {
+            OnHighScoreUpdated.Invoke();
+        }
     }
 }
- 
