@@ -3,85 +3,98 @@ using UnityEngine;
 
 public class EnemyFollow : Enemy
 {
-    private GraphManager graphManager;
-    private List<Vertice> path = new List<Vertice>();
-    private int currentWaypointIndex = 0;
-    public float speed = 2;
-    protected override void Start()
-    {
-        base.Start();
-        graphManager = FindObjectOfType<GraphManager>();
+    public GraphController graphController;  // Referencia al GraphController
+    public Transform jugador;  // Referencia al jugador
+    public float velocidad = 3f;  // Velocidad de movimiento del enemigo
+    public float distanciaDeteccion = 5f;  // Distancia de detección del jugador
 
-        if (graphManager != null)
-        {
-            CalculatePathToPlayer();
-        }
+    private List<Waypoint> camino;  // Lista de waypoints por donde el enemigo pasará
+    private int waypointIndex = 0;  // Índice del waypoint actual
+
+    private void Awake()
+    {
+        graphController = FindAnyObjectByType<GraphController>();
+        jugador = FindObjectOfType<Player>().transform;
     }
 
-    private void Update()
+    void Start()
+    {
+        base.Start();
+
+        if (graphController == null)
+        {
+            Debug.LogError("GraphController no está asignado.");
+            return;
+        }
+
+        // Inicializa el camino al comienzo
+        ActualizarCamino();
+    }
+
+    void Update()
     {
         base.Update();
 
-        if (path.Count > 0 && currentWaypointIndex < path.Count)
-        {
-            Vertice targetWaypoint = path[currentWaypointIndex];
-            MoveTowardsWaypoint(targetWaypoint);
+        
 
-            if (Vector2.Distance(transform.position, targetWaypoint.Position) < 0.1f)
+        if (camino.Count == 0) return;  // Si no hay camino, no hacer nada
+
+        // Mover al enemigo hacia el waypoint más cercano
+        MoverHaciaWaypoint();
+
+        // Verificar si el enemigo ha llegado al waypoint
+        if (waypointIndex < camino.Count && Vector3.Distance(transform.position, camino[waypointIndex].transform.position) < 0.5f)
+        {
+            waypointIndex++;  // Avanzar al siguiente waypoint
+            if (waypointIndex >= camino.Count)
             {
-                currentWaypointIndex++;
+                // Recalcular el camino en cada frame
+                ActualizarCamino();
+                Debug.Log("Enemigo ha llegado al destino.");
             }
         }
-        else
-        {
-            CalculatePathToPlayer();
-        }
     }
 
-    private void CalculatePathToPlayer()
+    // Obtener el waypoint más cercano a una posición dada
+    private Waypoint ObtenerWaypointMasCercano(Vector3 posicion)
     {
-        Graph graph = graphManager.GetGraph();
-        if (graph == null || player == null) return;
+        Waypoint closestWaypoint = null;
+        float minDistancia = Mathf.Infinity;
 
-        int enemyVerticeId = GetClosestVerticeId();
-        int playerVerticeId = player.gameObject.GetInstanceID();
-
-        Dijkstra dijkstra = gameObject.AddComponent<Dijkstra>();
-        var (distances, previous) = dijkstra.ShortestPaths(graph, enemyVerticeId);
-
-        path.Clear();
-        Vertice current = graph.Vertices[playerVerticeId];
-        while (current != null)
+        foreach (Waypoint waypoint in graphController.nodos)
         {
-            path.Insert(0, current);
-            previous.TryGetValue(current, out current);
-        }
-
-        currentWaypointIndex = 0;
-    }
-
-    private int GetClosestVerticeId()
-    {
-        Graph graph = graphManager.GetGraph();
-        Vertice closest = null;
-        float minDistance = float.MaxValue;
-
-        foreach (var vertice in graph.Vertices.Values)
-        {
-            float distance = Vector2.Distance(transform.position, vertice.Position);
-            if (distance < minDistance)
+            float distancia = Vector3.Distance(posicion, waypoint.transform.position);
+            if (distancia < minDistancia)
             {
-                closest = vertice;
-                minDistance = distance;
+                minDistancia = distancia;
+                closestWaypoint = waypoint;
             }
         }
 
-        return closest?.Value ?? -1;
+        return closestWaypoint;
     }
 
-    private void MoveTowardsWaypoint(Vertice targetWaypoint)
+    // Recalcular el camino hacia el jugador
+    private void ActualizarCamino()
     {
-        Vector2 targetPosition = targetWaypoint.Position;
-        transform.position = Vector2.MoveTowards(transform.position, targetPosition, speed * Time.deltaTime);
+        // Obtener el waypoint más cercano al enemigo y al jugador
+        Waypoint waypointInicio = ObtenerWaypointMasCercano(transform.position);
+        Waypoint waypointDestino = ObtenerWaypointMasCercano(jugador.position);
+
+        // Obtener el camino más corto usando Dijkstra
+        Pathfinding pathfinding = new Pathfinding(graphController);
+        camino = pathfinding.Dijkstra(waypointInicio, waypointDestino);
+
+        waypointIndex = 0;  // Reiniciar el índice de waypoint
+    }
+
+    // Mover al enemigo hacia el waypoint actual
+    private void MoverHaciaWaypoint()
+    {
+        if (waypointIndex < camino.Count)
+        {
+            Vector3 direccion = (camino[waypointIndex].transform.position - transform.position).normalized;
+            transform.position += direccion * velocidad * Time.deltaTime;
+        }
     }
 }

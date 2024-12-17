@@ -4,69 +4,72 @@ using UnityEngine;
 public class GraphController : MonoBehaviour
 {
     private TDA_Grafos grafo;
+    public Waypoint[] nodos; // Array de waypoints que se agarran
     public Dictionary<int, Waypoint> waypointInScene;
-    public Waypoint[] nodos; // Array de nodos que se configuran manualmente en Unity
     public float maxDistanciaConexiones = 5f; // Distancia máxima para conectar nodos
 
     private void Awake()
     {
+        nodos = FindObjectsOfType<Waypoint>();
         InitializeGraph(); // Inicializa el grafo y genera conexiones
     }
 
     private void InitializeGraph()
     {
         grafo = new TDA_Grafos();
-        grafo.InicializarGrafo();
         waypointInScene = new Dictionary<int, Waypoint>();
 
-        if (nodos.Length == 0)
+        if (nodos == null || nodos.Length == 0)
         {
             Debug.LogError("No se encontraron nodos en la escena. Asegúrate de asignarlos en el inspector.");
             return;
         }
 
-        // Agregar cada nodo al grafo y al diccionario de waypoints
+        // Agregar cada nodo al grafo y al diccionario
         foreach (Waypoint nodo in nodos)
         {
-            grafo.AgregarVertice(nodo.waypointId);
-            waypointInScene.Add(nodo.waypointId, nodo);
+            if (nodo != null)
+            {
+                grafo.AgregarVertice(nodo);
+                waypointInScene[nodo.iD] = nodo;
+            }
         }
 
-        GenerarConexionesAutomaticas(); // Genera las conexiones entre nodos automáticamente
+        // Generar conexiones automáticas entre los waypoints
+        GenerarConexionesAutomaticas();
     }
 
     private void GenerarConexionesAutomaticas()
     {
-        int idArista = 1;
+        int conexionesGeneradas = 0;  // Contador de conexiones generadas
 
-        foreach (var nodoA in waypointInScene)
+        foreach (var nodoA in waypointInScene.Values)
         {
-            foreach (var nodoB in waypointInScene)
+            foreach (var nodoB in waypointInScene.Values)
             {
-                // Evitar conectar un nodo consigo mismo
-                if (nodoA.Key == nodoB.Key)
-                    continue;
+                if (nodoA == nodoB) continue;  // No conectar el nodo consigo mismo
 
-                // Calcular la distancia entre los nodos
-                float distancia = Vector3.Distance(
-                    nodoA.Value.transform.position,
-                    nodoB.Value.transform.position
-                );
+                float distancia = Vector3.Distance(nodoA.transform.position, nodoB.transform.position);
 
-                // Si la distancia es menor o igual al umbral, conectar los nodos
                 if (distancia <= maxDistanciaConexiones)
                 {
-                    grafo.AgregarArista(idArista++, nodoA.Key, nodoB.Key, Mathf.RoundToInt(distancia));
-                    grafo.AgregarArista(idArista++, nodoB.Key, nodoA.Key, Mathf.RoundToInt(distancia));
+                    // Asegurarse de que no haya arista existente
+                    if (!grafo.ExisteArista(nodoA, nodoB))
+                    {
+                        grafo.AgregarArista(nodoA, nodoB, Mathf.RoundToInt(distancia));
+                        Debug.Log($"Conexión creada entre Waypoint {nodoA.iD} y Waypoint {nodoB.iD} con peso {Mathf.RoundToInt(distancia)}");
+                        conexionesGeneradas++;
+                    }
                 }
             }
         }
 
-        Debug.Log("Conexiones automáticas generadas entre los waypoints.");
+        Debug.Log($"Conexiones automáticas generadas: {conexionesGeneradas}");
     }
 
     public TDA_Grafos GetGraph()
     {
         return grafo;
     }
+
 }

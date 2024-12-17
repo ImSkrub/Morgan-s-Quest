@@ -2,124 +2,71 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class TDA_Grafos : GrafoTDA
+public class TDA_Grafos
 {
-    static int n = 1;
-    public int[,] MAdy;
-    public int[,] MId;
-    public int[] Etiqs;
-    public int cantNodos;
+    private List<Waypoint> nodos;  // Lista de Waypoints
+    private List<Arista> aristas; // Lista de Aristas
 
-    public void InicializarGrafo()
+    public TDA_Grafos()
     {
-        MAdy = new int[n, n];
-        MId = new int[n, n];
-        Etiqs = new int[n];
-        cantNodos = 0;
+        nodos = new List<Waypoint>();
+        aristas = new List<Arista>();
     }
 
-    public void AgregarVertice(int v)
+    public void AgregarVertice(Waypoint v)
     {
-        // Verificar si necesitamos redimensionar los arreglos
-        if (cantNodos >= n)
+        if (!nodos.Contains(v))
         {
-            ExpandirArreglos();
+            nodos.Add(v);
+            Debug.Log($"Vertice agregado: {v.iD}");
         }
-
-        Etiqs[cantNodos] = v;
-        for (int i = 0; i <= cantNodos; i++)
-        {
-            MAdy[cantNodos, i] = 0;
-            MAdy[i, cantNodos] = 0;
-        }
-        cantNodos++;
     }
 
-    private void ExpandirArreglos()
+    public void AgregarArista(Waypoint origen, Waypoint destino, int peso)
     {
-        int nuevoTamaño = n * 2; // Aumentamos el tamaño al doble
-        Debug.Log($"Redimensionando arreglos a tamaño {nuevoTamaño}.");
-
-        // Crear nuevos arreglos con mayor tamaño
-        int[,] nuevaMAdy = new int[nuevoTamaño, nuevoTamaño];
-        int[,] nuevaMId = new int[nuevoTamaño, nuevoTamaño];
-        int[] nuevosEtiqs = new int[nuevoTamaño];
-
-        // Copiar valores existentes a los nuevos arreglos
-        for (int i = 0; i < n; i++)
+        // Verificar si la arista ya existe
+        if (!ExisteArista(origen, destino))
         {
-            for (int j = 0; j < n; j++)
+            Arista nuevaArista = new Arista(origen, destino, peso);
+            aristas.Add(nuevaArista);
+            origen.AgregarArista(destino, peso);  // Agregar la arista al Waypoint también
+            Debug.Log($"Arista agregada entre {origen.iD} y {destino.iD} con peso {peso}");
+        }
+    }
+
+    public bool ExisteArista(Waypoint origen, Waypoint destino)
+    {
+        foreach (Arista arista in aristas)
+        {
+            if ((arista.source == origen && arista.destination == destino) ||
+                (arista.source == destino && arista.destination == origen))
             {
-                nuevaMAdy[i, j] = MAdy[i, j];
-                nuevaMId[i, j] = MId[i, j];
+                return true;
             }
-            nuevosEtiqs[i] = Etiqs[i];
         }
-
-        // Reasignar referencias a los nuevos arreglos
-        MAdy = nuevaMAdy;
-        MId = nuevaMId;
-        Etiqs = nuevosEtiqs;
-
-        // Actualizar el tamaño de `n`
-        n = nuevoTamaño;
+        return false;
     }
 
-    public void EliminarVertice(int v)
+    public int PesoArista(Waypoint origen, Waypoint destino)
     {
-        int ind = Vert2Indice(v);
-
-        for (int k = 0; k < cantNodos; k++)
+        foreach (Arista arista in aristas)
         {
-            MAdy[k, ind] = MAdy[k, cantNodos - 1];
+            if ((arista.source == origen && arista.destination == destino) ||
+                (arista.source == destino && arista.destination == origen))
+            {
+                return arista.weight;
+            }
         }
-
-        for (int k = 0; k < cantNodos; k++)
-        {
-            MAdy[ind, k] = MAdy[cantNodos - 1, k];
-        }
-
-        Etiqs[ind] = Etiqs[cantNodos - 1];
-        cantNodos--;
+        return 0;
     }
 
-    public int Vert2Indice(int v)
+    public List<Waypoint> GetNodos()
     {
-        int i = cantNodos - 1;
-        while (i >= 0 && Etiqs[i] != v)
-        {
-            i--;
-        }
-        return i;
+        return nodos;
     }
 
-    public void AgregarArista(int id, int v1, int v2, int peso)
+    public List<Arista> GetAristas()
     {
-        int o = Vert2Indice(v1);
-        int d = Vert2Indice(v2);
-        MAdy[o, d] = peso;
-        MId[o, d] = id;
-    }
-
-    public void EliminarArista(int v1, int v2)
-    {
-        int o = Vert2Indice(v1);
-        int d = Vert2Indice(v2);
-        MAdy[o, d] = 0;
-        MId[o, d] = 0;
-    }
-
-    public bool ExisteArista(int v1, int v2)
-    {
-        int o = Vert2Indice(v1);
-        int d = Vert2Indice(v2);
-        return MAdy[o, d] != 0;
-    }
-
-    public int PesoArista(int v1, int v2)
-    {
-        int o = Vert2Indice(v1);
-        int d = Vert2Indice(v2);
-        return MAdy[o, d];
+        return aristas;
     }
 }
