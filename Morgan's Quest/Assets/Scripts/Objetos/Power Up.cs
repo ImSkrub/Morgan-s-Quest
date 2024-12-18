@@ -7,6 +7,8 @@ public class PowerUp : MonoBehaviour
     public int lifeBonus = 25; // Amount of life to give to the player
     
     [SerializeField] private ParticleSystem pickupParticles;
+    [SerializeField] private AudioSource audioSource;
+    [SerializeField] private AudioClip clip;
     private void OnTriggerEnter2D(Collider2D other)
     {
         // Check if the player collided with the power-up
@@ -14,6 +16,7 @@ public class PowerUp : MonoBehaviour
         {
             // Assuming the player has a PlayerHealth script to manage health
             LifePlayer playerHealth = other.GetComponent<LifePlayer>();
+            audioSource.PlayOneShot(clip,0.75f);
             if (playerHealth != null)
             {
                 playerHealth.AddLife(lifeBonus); // Add life to the player
