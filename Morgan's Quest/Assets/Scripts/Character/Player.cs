@@ -56,8 +56,9 @@ public class Player : MonoBehaviour, IShoot, IMovable
     // Mana
     private ManaPlayer mana;
 
+    // Variables de disparo
+    [SerializeField] private AudioClip fireballSound,noManaSound;
     private AudioSource audioSource;
-
     private void Start()
     {
         InitializeComponents();
@@ -76,7 +77,6 @@ public class Player : MonoBehaviour, IShoot, IMovable
     private void Update()
     {
         UpdateScoreText();
-        HandleBulletSpeedChange();
         HandleMovement();
         HandleShooting();
     }
@@ -100,12 +100,6 @@ public class Player : MonoBehaviour, IShoot, IMovable
     {
         scoreText.text = "Escencias " + GameManager.Instance.escence;
     }
-
-    private void HandleBulletSpeedChange()
-    {
-        bulletSpeed = Input.GetKey(KeyCode.G) ? 1f : originalBulletSpeed;
-    }
-
     private void HandleMovement()
     {
         float horizontal = Input.GetAxis("Horizontal");
@@ -144,9 +138,9 @@ public class Player : MonoBehaviour, IShoot, IMovable
 
         if ((shootHorizontal != 0 || shootVertical != 0) && Time.time > nextFire)
         {
+            // Lógica de disparo
             Shoot(shootHorizontal, shootVertical);
             nextFire = Time.time + fireRate;
-            AudioManager.instance.PlaySFX("Fireball");
         }
     }
 
@@ -154,8 +148,12 @@ public class Player : MonoBehaviour, IShoot, IMovable
     {
         if (mana.currentMana < 20)
         {
-            // Not enough mana to shoot
+            audioSource.PlayOneShot(noManaSound,0.3f);
             return;
+        }
+        else
+        {
+            audioSource.PlayOneShot(fireballSound, 0.4f);
         }
 
         isShooting = true;

@@ -184,6 +184,8 @@ MonoBehaviour:
   bulletSpawn: {fileID: 1066305577440737971}
   bulletSpeed: 20
   scoreText: {fileID: 0}
+  fireballSound: {fileID: 8300000, guid: bb0134f6ee9d90941b564131dcac282a, type: 3}
+  noManaSound: {fileID: 8300000, guid: ee13bacbc118dfa45913de96ed027711, type: 3}
 --- !u!114 &3230147441993176510
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -201,6 +203,8 @@ MonoBehaviour:
   damageColor: {r: 1, g: 0, b: 0, a: 1}
   inmortal: 0
   barraHp: {fileID: 0}
+  damageSound: {fileID: 8300000, guid: 8b23b175a78d6b5458322e3a6c9905d0, type: 3}
+  deathSound: {fileID: 8300000, guid: 566d2ea6240b489479a6e9fd608c2621, type: 3}
 --- !u!114 &1454767695649868040
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -216,7 +220,7 @@ MonoBehaviour:
   maxMana: 100
   currentMana: 0
   manaCooldown: 5
-  maxTime: 1.01
+  maxTime: 1
   manaImage: {fileID: 0}
 --- !u!95 &4479434989589700337
 Animator:
@@ -347,7 +351,7 @@ GameObject:
   - component: {fileID: 3946609583741494132}
   m_Layer: 3
   m_Name: Pool
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

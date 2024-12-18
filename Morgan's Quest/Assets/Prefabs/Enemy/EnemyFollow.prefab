@@ -13,11 +13,11 @@ GameObject:
   - component: {fileID: 6249668151975592760}
   - component: {fileID: 6988760519434515327}
   - component: {fileID: 1863384209875965968}
+  - component: {fileID: -8390884945818754393}
   - component: {fileID: 7808557852648628793}
   - component: {fileID: 1580407401438509767}
   - component: {fileID: 4636935855304977660}
   - component: {fileID: 8019873231866715263}
-  - component: {fileID: -8390884945818754393}
   - component: {fileID: -2422638363482395072}
   m_Layer: 7
   m_Name: EnemyFollow
@@ -119,7 +119,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c9528051fed1d164fbada0f028ece14a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  health: 25
+  health: 50
   damageColor: {r: 1, g: 0, b: 0, a: 1}
   destroyDelay: 0.5
   item: {fileID: 6249668151975592760}
@@ -127,6 +127,7 @@ MonoBehaviour:
   deathParticles: {fileID: 7507310904836721656, guid: 69e84da3147a22b49b9b12f34d4cce59, type: 3}
   floatingTextPrefab: {fileID: 3766442867679149807, guid: 3c5f2bc2b356d7d4c841003aed88944a, type: 3}
   damageSound: {fileID: 8300000, guid: 7c47b20bb9874304a809dc5580d403ba, type: 3}
+  deathSound: {fileID: 8300000, guid: 566d2ea6240b489479a6e9fd608c2621, type: 3}
 --- !u!114 &1863384209875965968
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -153,6 +154,18 @@ MonoBehaviour:
     m_Bits: 64
   camino: []
   modoNavegacion: 0
+--- !u!114 &-8390884945818754393
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 961352286208665006}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4c586e66f75924b429dc9becb815c842, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!50 &7808557852648628793
 Rigidbody2D:
   serializedVersion: 4
@@ -281,18 +294,6 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
---- !u!114 &-8390884945818754393
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 961352286208665006}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4c586e66f75924b429dc9becb815c842, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!82 &-2422638363482395072
 AudioSource:
   m_ObjectHideFlags: 0

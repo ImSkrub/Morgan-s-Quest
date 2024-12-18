@@ -8,6 +8,7 @@ public class ButtonManager : MonoBehaviour
     public void GoToMenu()
     {
         LevelManager.instance.LoadLevel(0);
+        AudioManager.instance.PlayMenuMusic();
     }
 
     public void RestartGame()
@@ -54,6 +55,6 @@ public class ButtonManager : MonoBehaviour
 
     public void Level4()
     {
-        LevelManager.instance.LoadLevel(4);
+        LevelManager.instance.LoadLevel(5);
     }
 }

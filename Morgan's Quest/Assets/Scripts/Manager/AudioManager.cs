@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System;
+using UnityEngine.SceneManagement;
 
 public class AudioManager : MonoBehaviour
 {
@@ -10,6 +11,7 @@ public class AudioManager : MonoBehaviour
     [SerializeField] private AudioSource MusicSource, SFXSource;
     [Header("-----Audio Clip-----")]
     public Sound[] MusicSounds, SFXSounds;
+    private int lastLevel = -1;
 
     private void Awake()
     {
@@ -24,9 +26,32 @@ public class AudioManager : MonoBehaviour
         }
     }
 
-    private void Start()
+    
+
+    private void Update()
     {
-        PlayMenuMusic();
+        int currentLevel = LevelManager.instance?.currentLevel ?? -1;
+
+        if (currentLevel != lastLevel)
+        {
+            lastLevel = currentLevel;
+
+            switch (currentLevel)
+            {
+                case 0:
+                    PlayMenuMusic();
+                    break;
+                case 3:
+                    PlayLoseMusic();
+                    break;
+                case 4:
+                    PlayWinMusic();
+                    break;
+                default:
+                    Debug.Log($"No specific music for level {currentLevel}");
+                    break;
+            }
+        }
     }
 
     public void PlayMusic(string name)
@@ -72,13 +97,20 @@ public class AudioManager : MonoBehaviour
 
         if (s == null)
         {
-            Debug.LogWarning($"Sound '{name}' not found");
+            Debug.LogWarning($"SFX '{name}' not found in SFXSounds array");
+            return;
         }
-        else
+
+        if (s.Clip == null)
         {
-            SFXSource.PlayOneShot(s.Clip);
+            Debug.LogWarning($"SFX '{name}' has no assigned audio clip!");
+            return;
         }
+
+        Debug.Log($"Playing SFX: {name}");
+        SFXSource.PlayOneShot(s.Clip);
     }
+
     public void PlayMenuMusic()
     {
         StopMusic();

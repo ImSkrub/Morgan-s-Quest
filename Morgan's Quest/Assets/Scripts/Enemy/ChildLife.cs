@@ -23,8 +23,10 @@ public class ChildLife : MonoBehaviour
     private float lastDistance;
     public event Action OnDeath;
 
-    private AudioSource audioSource;
+    // Sonidos
     [SerializeField] private AudioClip damageSound;
+    [SerializeField] private AudioClip deathSound;
+    private AudioSource audioSource;
 
     private void Start()
     {
@@ -48,6 +50,10 @@ public class ChildLife : MonoBehaviour
         }
 
         audioSource = GetComponent<AudioSource>();
+        if (audioSource == null)
+        {
+            audioSource = gameObject.AddComponent<AudioSource>();
+        }
     }
 
     private void Update()
@@ -75,7 +81,7 @@ public class ChildLife : MonoBehaviour
         string closestEnemy = enemyTree.EnemigoMasCercano();
         Debug.Log($"Attacking closest enemy: {closestEnemy}");
     }
-
+ 
     public void GetDamage(int value)
     {
         ShowDamage(value.ToString());
@@ -126,25 +132,17 @@ public class ChildLife : MonoBehaviour
 
         PointManager.Instance.AddScore(10);
         enemyTree.EliminarElem(gameObject.name);
-        OnDeath?.Invoke();
 
-        
+        if (audioSource != null && deathSound != null)
+        {
+            audioSource.PlayOneShot(deathSound);
+        } 
         GameManager.Instance.DecreaseCounter();
 
-        Collider2D collider = GetComponent<Collider2D>();
-        if (collider != null)
-        {
-            collider.enabled = false;
-        }
-
-        MonoBehaviour[] scripts = GetComponents<MonoBehaviour>();
-        foreach (var script in scripts)
-        {
-            if (script != this) script.enabled = false;
-        }
-
+     
         SpawnDeathParticles();
 
+        OnDeath?.Invoke();
         item?.SpawnItem();
         Destroy(gameObject);
     }

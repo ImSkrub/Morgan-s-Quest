@@ -22,6 +22,11 @@ public class LifePlayer : MonoBehaviour, IDamageable
     public event Action OnDeath;
     public Image barraHp;
 
+    // Sonidos
+    [SerializeField] private AudioClip damageSound;
+    [SerializeField] private AudioClip deathSound;
+    private AudioSource audioSource;
+
     // Implementación de la propiedad requerida por IDamageable
     public float CurrentHealth => currentHealth;
 
@@ -30,6 +35,12 @@ public class LifePlayer : MonoBehaviour, IDamageable
         currentHealth = maxHealth;
         spriteRenderer = GetComponent<SpriteRenderer>();
         originalColor = spriteRenderer.color;
+
+        audioSource = GetComponent<AudioSource>();
+        if (audioSource == null)
+        {
+            audioSource = gameObject.AddComponent<AudioSource>();
+        }
     }
 
     private void Update()
@@ -38,7 +49,7 @@ public class LifePlayer : MonoBehaviour, IDamageable
         {
             Die();
         }
-        barraHp.fillAmount = currentHealth/maxHealth;
+        barraHp.fillAmount = currentHealth / maxHealth;
     }
 
     public void GetDamage(int value)
@@ -48,6 +59,11 @@ public class LifePlayer : MonoBehaviour, IDamageable
             currentHealth -= value;
             spriteRenderer.color = damageColor;
             Invoke("RestoreColor", 0.5f);
+
+            if (audioSource != null && damageSound != null)
+            {
+                audioSource.PlayOneShot(damageSound);
+            }
 
             if (!EssenceManager.instance.escenceStack.IsEmpty())
             {
@@ -69,12 +85,18 @@ public class LifePlayer : MonoBehaviour, IDamageable
 
     public void Die()
     {
+        if (audioSource != null && deathSound != null)
+        {
+            audioSource.PlayOneShot(deathSound);
+        }
+
         this.gameObject.SetActive(false);
-        OnDeath?.Invoke(); // Invocamos el evento de muerte si está suscrito
-               
+
+        // Invoca el evento de muerte (esto llama a LoseGame en GameManager)
+        OnDeath?.Invoke();
+
+        // Reinicia las esencias, pero no modifiques el counter aquí
         EssenceManager.instance.escenceStack.InitializeStack();
         GameManager.Instance.escence = 0;
-        GameManager.Instance.counter = 0;
-        AudioManager.instance.PlaySFX("DeathSound");
     }
 }

@@ -46,6 +46,7 @@ public class LevelManager : MonoBehaviour
     {
         currentLevelIndex = 0;
         LoadLevel(0);
+        AudioManager.instance.PlayMenuMusic();
     }
 
     public void QuitGame()
