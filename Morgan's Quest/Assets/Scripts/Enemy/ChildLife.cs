@@ -128,7 +128,7 @@ public class ChildLife : MonoBehaviour
         enemyTree.EliminarElem(gameObject.name);
         OnDeath?.Invoke();
 
-        // Disminuir el contador de enemigos en el GameManager
+        
         GameManager.Instance.DecreaseCounter();
 
         Collider2D collider = GetComponent<Collider2D>();
