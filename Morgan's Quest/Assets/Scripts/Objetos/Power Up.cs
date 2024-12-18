@@ -5,7 +5,8 @@ using UnityEngine;
 public class PowerUp : MonoBehaviour
 {
     public int lifeBonus = 25; // Amount of life to give to the player
-
+    
+    [SerializeField] private ParticleSystem pickupParticles;
     private void OnTriggerEnter2D(Collider2D other)
     {
         // Check if the player collided with the power-up
@@ -17,6 +18,11 @@ public class PowerUp : MonoBehaviour
             {
                 playerHealth.AddLife(lifeBonus); // Add life to the player
                 Debug.Log("Power-up collected! Life increased by " + lifeBonus);
+            }
+
+            if (pickupParticles != null)
+            {
+                Instantiate(pickupParticles, transform.position, Quaternion.identity);
             }
 
             // Destroy the power-up after collection
