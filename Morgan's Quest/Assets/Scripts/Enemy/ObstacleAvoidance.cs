@@ -1,28 +1,36 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class ObstacleAvoidance : IObstacleAvoidance
 {
     private LayerMask wallLayer;
-
-    public ObstacleAvoidance(LayerMask wallLayer)
+    private GraphController controller;
+    public ObstacleAvoidance(LayerMask wallLayer,GraphController graphController)
     {
         this.wallLayer = wallLayer;
+        this.controller = graphController;
     }
 
     public Vector3 GetAdjustedDirection(Transform enemyTransform, Vector3 targetDirection, float rayDistance)
     {
-        // Realiza un Raycast al frente del enemigo
         RaycastHit2D hit = Physics2D.Raycast(enemyTransform.position, targetDirection, rayDistance, wallLayer);
 
         if (hit.collider != null)
         {
-            // Si detecta una pared, calcula una dirección de evasión simple (perpendicular)
-            Vector3 perpendicularDirection = Vector3.Cross(targetDirection, Vector3.forward).normalized;
-            return perpendicularDirection; // Retorna la dirección ajustada
+            // Encuentra el waypoint más cercano que no esté bloqueado
+            
+            Waypoint nearestWaypoint = controller.GetGraph().GetNodos()
+                .OrderBy(wp => Vector3.Distance(enemyTransform.position, wp.transform.position))
+                .FirstOrDefault(wp => !Physics2D.Raycast(enemyTransform.position, wp.transform.position - enemyTransform.position, rayDistance, wallLayer));
+
+            if (nearestWaypoint != null)
+            {
+                return (nearestWaypoint.transform.position - enemyTransform.position).normalized;
+            }
         }
 
-        return targetDirection; // Si no hay obstáculo, sigue la dirección original
+        return targetDirection;
     }
 }

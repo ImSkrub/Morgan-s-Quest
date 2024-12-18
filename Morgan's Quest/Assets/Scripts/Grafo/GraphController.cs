@@ -48,8 +48,14 @@ public class GraphController : MonoBehaviour
         {
             Debug.LogError("PathVisualizer no está asignado en el GraphController.");
         }
-        Debug.Log(grafo.GetAristas());
+        
     }
+
+    //private void FixedUpdate()
+    //{
+    //    pathVisualizer.RenderizarConexiones(grafo);
+    //    GenerarConexionesAutomaticas();
+    //}
 
     private void GenerarConexionesAutomaticas()
     {

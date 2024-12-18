@@ -136,6 +136,15 @@ MonoBehaviour:
   vel: 5
   attackDelay: 2
   damage: 50
+  graphController: {fileID: 0}
+  jugador: {fileID: 0}
+  velocidad: 3
+  distanciaDeteccion: 5
+  rayDistance: 1
+  tiempoRecalculo: 3
+  wallLayer:
+    serializedVersion: 2
+    m_Bits: 64
 --- !u!50 &7808557852648628793
 Rigidbody2D:
   serializedVersion: 4

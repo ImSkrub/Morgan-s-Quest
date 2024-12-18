@@ -15,37 +15,41 @@ public class PathVisualizer : MonoBehaviour
         List<Arista> aristas = grafo.GetAristas();
         if (debug)
         {
-        foreach (Arista arista in aristas)
-        {
-            // Crear un objeto de línea
-            GameObject nuevaLinea = Instantiate(linePrefab, transform);
-            LineRenderer lineRenderer = nuevaLinea.GetComponent<LineRenderer>();
-
-            if (lineRenderer != null)
+            foreach (Arista arista in aristas)
             {
-                // Configurar el LineRenderer para 2D
-                lineRenderer.positionCount = 2;
-                lineRenderer.startWidth = 0.1f; // Grosor de la línea
-                lineRenderer.endWidth = 0.1f;
+                // Crear un objeto de línea
+                GameObject nuevaLinea = Instantiate(linePrefab, transform);
+                LineRenderer lineRenderer = nuevaLinea.GetComponent<LineRenderer>();
 
-                // Asignar las posiciones en el mismo plano 2D (Z = 0)
-                Vector3 posOrigen = arista.source.transform.position;
-                Vector3 posDestino = arista.destination.transform.position;
+                if (lineRenderer != null)
+                {
+                    // Configurar el material dinámicamente
+                    Material lineMaterial = new Material(Shader.Find("Unlit/Color"));
+                    lineMaterial.color = Color.green; // Cambia el color aquí
+                    lineRenderer.material = lineMaterial;
 
-                posOrigen.z = 0;
-                posDestino.z = 0;
+                    // Configurar el LineRenderer para 2D
+                    lineRenderer.positionCount = 2;
+                    lineRenderer.startWidth = 0.1f;
+                    lineRenderer.endWidth = 0.1f;
 
-                lineRenderer.SetPosition(0, posOrigen);
-                lineRenderer.SetPosition(1, posDestino);
+                    // Asignar las posiciones en el mismo plano 2D (Z = 0)
+                    Vector3 posOrigen = arista.source.transform.position;
+                    Vector3 posDestino = arista.destination.transform.position;
 
-                // Configurar Sorting Layer para que se vea en 2D
-                lineRenderer.sortingLayerName = "Foreground"; // Asegúrate de tener esta Sorting Layer
-                lineRenderer.sortingOrder = 1;
+                    posOrigen.z = 0;
+                    posDestino.z = 0;
+
+                    lineRenderer.SetPosition(0, posOrigen);
+                    lineRenderer.SetPosition(1, posDestino);
+
+                    // Configurar Sorting Layer para que se vea en 2D
+                    lineRenderer.sortingLayerName = "Foreground";
+                    lineRenderer.sortingOrder = 1;
+                }
+
+                lineObjects.Add(nuevaLinea);
             }
-
-            lineObjects.Add(nuevaLinea);
-        }
-
         }
     }
 

@@ -3,36 +3,40 @@ using UnityEngine;
 
 public class EnemyFollow : Enemy
 {
-    public GraphController graphController;  // Referencia al GraphController
-    public Transform jugador;  // Referencia al jugador
-    public float velocidad = 3f;  // Velocidad de movimiento del enemigo
-    public float distanciaDeteccion = 5f;  // Distancia de detección del jugador
+    public GraphController graphController;
+    public Transform jugador;
+    public float velocidad = 3f;
+    public float distanciaDeteccion = 5f;
     public float rayDistance = 1f;
+    public float tiempoRecalculo = 3f; // Tiempo para recalcular el camino si no se alcanza el destino
 
-    private List<Waypoint> camino;  // Lista de waypoints por donde el enemigo pasará
-    private int waypointIndex = 0;  // Índice del waypoint actual
+    [SerializeField] private LayerMask wallLayer;
+    private List<Waypoint> camino;
+    private int waypointIndex = 0;
+    private float tiempoUltimoRecalculo;
 
     private IObstacleAvoidance obstacleAvoidance;
 
     private void Awake()
     {
         graphController = FindAnyObjectByType<GraphController>();
-        
+
         if (graphController == null)
         {
             Debug.LogError("GraphController no está asignado.");
             return;
         }
-        
+
         jugador = FindObjectOfType<Player>().transform;
 
-        obstacleAvoidance = new ObstacleAvoidance(LayerMask.GetMask("Wall"));
+        obstacleAvoidance = new ObstacleAvoidance(wallLayer,graphController);
     }
 
     void Start()
     {
         base.Start();
         ActualizarCamino();
+        tiempoUltimoRecalculo = Time.time;
     }
 
     void Update()
@@ -43,17 +47,24 @@ public class EnemyFollow : Enemy
 
         MoverHaciaWaypoint();
 
+        // Si no alcanzamos el waypoint en el tiempo límite, recalculamos el camino
+        if (Time.time - tiempoUltimoRecalculo > tiempoRecalculo)
+        {
+            ActualizarCamino();
+            tiempoUltimoRecalculo = Time.time;
+        }
+
         if (waypointIndex < camino.Count && Vector3.Distance(transform.position, camino[waypointIndex].transform.position) < 0.5f)
         {
             waypointIndex++;
             if (waypointIndex >= camino.Count)
             {
                 ActualizarCamino();
+                tiempoUltimoRecalculo = Time.time;
             }
         }
     }
 
-    // Obtener el waypoint más cercano a una posición dada
     private Waypoint ObtenerWaypointMasCercano(Vector3 posicion)
     {
         Waypoint closestWaypoint = null;
@@ -72,32 +83,46 @@ public class EnemyFollow : Enemy
         return closestWaypoint;
     }
 
-    // Recalcular el camino hacia el jugador
     private void ActualizarCamino()
     {
-        // Obtener el waypoint más cercano al enemigo y al jugador
         Waypoint waypointInicio = ObtenerWaypointMasCercano(transform.position);
         Waypoint waypointDestino = ObtenerWaypointMasCercano(jugador.position);
-
-        // Obtener el camino más corto usando Dijkstra
         Pathfinding pathfinding = new Pathfinding(graphController);
         camino = pathfinding.Dijkstra(waypointInicio, waypointDestino);
 
-        waypointIndex = 0;  // Reiniciar el índice de waypoint
+        waypointIndex = 0;
     }
 
-    // Mover al enemigo hacia el waypoint actual
     private void MoverHaciaWaypoint()
     {
         if (waypointIndex < camino.Count)
         {
-            Vector3 targetDirection = (camino[waypointIndex].transform.position - transform.position).normalized;
+            Waypoint waypointActual = camino[waypointIndex];
+            Waypoint waypointSiguiente = waypointIndex + 1 < camino.Count ? camino[waypointIndex + 1] : null;
 
-            // Ajusta la dirección usando la lógica de evasión
-            Vector3 adjustedDirection = obstacleAvoidance.GetAdjustedDirection(transform, targetDirection, rayDistance);
+            
+            // Si tenemos un waypoint siguiente, obtenemos la arista que conecta ambos waypoints
+            if (waypointSiguiente != null)
+            {
+                foreach (Arista arista in graphController.GetGraph().GetAristas())
+                {
+                    if (arista != null)
+                    {
+                        Vector3 targetDirection = (waypointSiguiente.transform.position - transform.position).normalized;
 
-            // Aplica el movimiento
-            transform.position += adjustedDirection * velocidad * Time.deltaTime;
+                        // Ajustamos la dirección usando el peso de la arista (más peso, menos velocidad)
+                        Vector3 adjustedDirection = obstacleAvoidance.GetAdjustedDirection(transform, targetDirection, rayDistance);
+                        transform.position += adjustedDirection * velocidad * Time.deltaTime;
+                    }
+                }
+            }
+            else
+            {
+                // Si no hay waypoint siguiente, simplemente nos movemos hacia el waypoint actual
+                Vector3 targetDirection = (waypointActual.transform.position - transform.position).normalized;
+                Vector3 adjustedDirection = obstacleAvoidance.GetAdjustedDirection(transform, targetDirection, rayDistance);
+                transform.position += adjustedDirection * velocidad * Time.deltaTime;
+            }
         }
     }
 
