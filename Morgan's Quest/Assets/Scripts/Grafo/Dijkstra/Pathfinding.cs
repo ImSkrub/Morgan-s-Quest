@@ -29,7 +29,9 @@ public class Pathfinding : MonoBehaviour
                 if (arista.source == nodo)
                 {
                     Waypoint vecino = arista.destination;
-                    if (EsWaypointAccesible(nodo, vecino, wallLayer)) // Precalcular si la arista es accesible
+
+                    // Asegurarnos de que el camino entre los waypoints esté libre de obstáculos
+                    if (EsWaypointAccesible(nodo, vecino, wallLayer))
                     {
                         aristasAccesibles[nodo].Add(vecino);
                     }

@@ -27,6 +27,8 @@ public class ChildLife : MonoBehaviour
     private AudioSource audioSource;  // AudioSource para reproducir el sonido
     [SerializeField] private AudioClip damageSound; // Clip de sonido cuando recibe daño
 
+    
+
     private void Start()
     {
         spriteRenderer = GetComponent<SpriteRenderer>();
@@ -125,7 +127,9 @@ public class ChildLife : MonoBehaviour
 
         isDead = true;
 
+
         PointManager.Instance.AddScore(10);
+
         enemyTree.EliminarElem(gameObject.name);
 
         OnDeath?.Invoke();
@@ -145,29 +149,21 @@ public class ChildLife : MonoBehaviour
         if (m_animator != null)
         {
             m_animator.SetTrigger("Death");
-        }
-
-        StartCoroutine(HandleDeathAnimation());
-    }
-
-    private IEnumerator HandleDeathAnimation()
-    {
-        if (m_animator != null)
-        {
-            AnimatorStateInfo animStateInfo = m_animator.GetCurrentAnimatorStateInfo(0);
-
-            yield return new WaitForSeconds(animStateInfo.length);
+            float animationDuration = m_animator.GetCurrentAnimatorStateInfo(0).length;
+            Invoke("HandleDeath", animationDuration);
         }
         else
         {
-            yield return new WaitForSeconds(1.0f);
+            Invoke("HandleDeath", 1.0f);
         }
-
-        item?.SpawnItem();
-
-        Destroy(gameObject);
+        HandleDeath();
     }
 
+    private void HandleDeath()
+    {
+        item?.SpawnItem();
+        Destroy(gameObject);
+    }
 
 
 
