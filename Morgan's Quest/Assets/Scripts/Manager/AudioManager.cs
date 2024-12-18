@@ -60,7 +60,25 @@ public class AudioManager : MonoBehaviour
 
         MusicSource.Stop();
     }
+    public void PlaySFX(string name)
+    {
+        if (SFXSource == null)
+        {
+            Debug.LogWarning("SFXSource is not assigned!");
+            return;
+        }
 
+        Sound s = Array.Find(SFXSounds, x => x.Name == name);
+
+        if (s == null)
+        {
+            Debug.LogWarning($"Sound '{name}' not found");
+        }
+        else
+        {
+            SFXSource.PlayOneShot(s.Clip);
+        }
+    }
     public void PlayMenuMusic()
     {
         StopMusic();

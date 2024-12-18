@@ -56,12 +56,21 @@ public class Player : MonoBehaviour, IShoot, IMovable
     // Mana
     private ManaPlayer mana;
 
+    private AudioSource audioSource;
+
     private void Start()
     {
         InitializeComponents();
         InitializeEssenceStack();
         originalBulletSpeed = bulletSpeed;
         SetCurrentState(PlayerStates.IDLE);
+
+        audioSource = GetComponent<AudioSource>();
+        if (audioSource == null)
+        {
+            audioSource = gameObject.AddComponent<AudioSource>();
+        }
+
     }
 
     private void Update()
@@ -137,6 +146,7 @@ public class Player : MonoBehaviour, IShoot, IMovable
         {
             Shoot(shootHorizontal, shootVertical);
             nextFire = Time.time + fireRate;
+            AudioManager.instance.PlaySFX("Fireball");
         }
     }
 

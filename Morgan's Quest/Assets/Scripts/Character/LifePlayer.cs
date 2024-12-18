@@ -76,6 +76,6 @@ public class LifePlayer : MonoBehaviour, IDamageable
         EssenceManager.instance.escenceStack.InitializeStack();
         GameManager.Instance.escence = 0;
         GameManager.Instance.counter = 0;
-
+        AudioManager.instance.PlaySFX("DeathSound");
     }
 }

@@ -25,7 +25,6 @@ public class ChildLife : MonoBehaviour
 
     // Variables para sonido
     private AudioSource audioSource;  // AudioSource para reproducir el sonido
-    [SerializeField] private AudioClip damageSound; // Clip de sonido cuando recibe daño
     private void Start()
     {
         spriteRenderer = GetComponent<SpriteRenderer>();
@@ -48,7 +47,13 @@ public class ChildLife : MonoBehaviour
             Debug.LogError("Player not found. Ensure it has the 'Player' tag.");
         }
 
+
         audioSource = GetComponent<AudioSource>();
+        if (audioSource == null)
+        {
+            audioSource = gameObject.AddComponent<AudioSource>();
+        }
+
     }
 
     private void Update()
@@ -83,9 +88,10 @@ public class ChildLife : MonoBehaviour
 
         health -= value;
 
-        if (audioSource != null && damageSound != null)
+      
+        if (AudioManager.instance != null)
         {
-            audioSource.PlayOneShot(damageSound);
+            AudioManager.instance.PlaySFX("DamageSound"); // Asegúrate de que "DamageSound" esté configurado en los clips de SFX
         }
 
         SpawnDamageParticles();

@@ -286,6 +286,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b6639769a25f3ed44abb0530de828e44, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  highScoreText: {fileID: 0}
 --- !u!4 &323563683
 Transform:
   m_ObjectHideFlags: 0
@@ -1050,7 +1051,13 @@ MonoBehaviour:
     Clip: {fileID: 8300000, guid: c33b393a69711e04cbf01e3f839faf33, type: 3}
   - Name: Win
     Clip: {fileID: 8300000, guid: e56be9f1b6cdbb944b8239ebc587eace, type: 3}
-  SFXSounds: []
+  SFXSounds:
+  - Name: DamageSound
+    Clip: {fileID: 8300000, guid: 7c47b20bb9874304a809dc5580d403ba, type: 3}
+  - Name: Fireball
+    Clip: {fileID: 8300000, guid: a652877b012108e41871f867ada9f176, type: 3}
+  - Name: DeathSound
+    Clip: {fileID: 8300000, guid: 566d2ea6240b489479a6e9fd608c2621, type: 3}
 --- !u!4 &624236064
 Transform:
   m_ObjectHideFlags: 0
@@ -1701,7 +1708,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: eb359d162103081489c5ef25e60e9e1f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  leaderboardPanel: {fileID: 1758347605}
 --- !u!4 &1431985631
 Transform:
   m_ObjectHideFlags: 0
@@ -1874,10 +1880,10 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1431985630}
-        m_TargetAssemblyTypeName: ButtonManager, Assembly-CSharp
-        m_MethodName: CloseLeaderboard
-        m_Mode: 1
+      - m_Target: {fileID: 1758347605}
+        m_TargetAssemblyTypeName: UnityEngine.GameObject, UnityEngine
+        m_MethodName: SetActive
+        m_Mode: 6
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine

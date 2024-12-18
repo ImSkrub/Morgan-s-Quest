@@ -104891,7 +104891,7 @@ PrefabInstance:
       objectReference: {fileID: 268624367}
     - target: {fileID: 3230147441993176510, guid: 06f5550d5f1373345bc6f2f1b18aa3ee, type: 3}
       propertyPath: maxHealth
-      value: 1500000
+      value: 100
       objectReference: {fileID: 0}
     - target: {fileID: 3946609583741494132, guid: 06f5550d5f1373345bc6f2f1b18aa3ee, type: 3}
       propertyPath: bulletPrefab
