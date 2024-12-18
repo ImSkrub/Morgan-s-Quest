@@ -120,6 +120,8 @@ MonoBehaviour:
   damageColor: {r: 1, g: 0, b: 0, a: 1}
   destroyDelay: 0.5
   item: {fileID: 6249668151975592760}
+  damageParticles: {fileID: 1084894594648249943, guid: e6da33ae1fa1ee748a8a1b8187c8a745, type: 3}
+  damageSound: {fileID: 0}
 --- !u!114 &1863384209875965968
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -139,9 +141,8 @@ MonoBehaviour:
   graphController: {fileID: 0}
   jugador: {fileID: 0}
   velocidad: 3
-  distanciaDeteccion: 5
-  rayDistance: 1
-  tiempoRecalculo: 3
+  rayDistance: 2
+  tiempoRecalculo: 1
   wallLayer:
     serializedVersion: 2
     m_Bits: 64

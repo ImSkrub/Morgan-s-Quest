@@ -51,11 +51,11 @@ public class GraphController : MonoBehaviour
         
     }
 
-    //private void FixedUpdate()
-    //{
-    //    pathVisualizer.RenderizarConexiones(grafo);
-    //    GenerarConexionesAutomaticas();
-    //}
+    private void FixedUpdate()
+    {
+        pathVisualizer.RenderizarConexiones(grafo);
+        GenerarConexionesAutomaticas();
+    }
 
     private void GenerarConexionesAutomaticas()
     {

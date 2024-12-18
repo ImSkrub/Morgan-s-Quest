@@ -11,63 +11,57 @@ public class Pathfinding : MonoBehaviour
         this.graphController = graphController;
     }
 
-    public List<Waypoint> Dijkstra(Waypoint start, Waypoint target)
+    public List<Waypoint> Dijkstra(Waypoint inicio, Waypoint destino)
     {
-        var weights = new Dictionary<int, int>();
-        var previous = new Dictionary<int, Waypoint>();
-        var visited = new HashSet<int>();
-        var priorityQueue = new MinHeap<int>();
+        var grafo = graphController.GetGraph();
+        var distancias = new Dictionary<Waypoint, float>();
+        var previos = new Dictionary<Waypoint, Waypoint>();
+        var visitados = new HashSet<Waypoint>();
+        var cola = new MinHeap<Waypoint>();
 
-        foreach (var nodo in graphController.waypointInScene)
+        foreach (var nodo in grafo.GetNodos())
         {
-            weights[nodo.Key] = int.MaxValue;
-            previous[nodo.Key] = null;
+            distancias[nodo] = float.MaxValue;
+            previos[nodo] = null;
         }
 
-        weights[start.iD] = 0;
-        priorityQueue.Add(0, start.iD);
+        distancias[inicio] = 0;
+        cola.Add(0, inicio);
 
-        while (priorityQueue.Count > 0)
+        while (cola.Count > 0)
         {
-            var (currentWeight, currentNodeId) = priorityQueue.ExtractMin();
-            var currentNode = graphController.waypointInScene[currentNodeId];
+            var actual = cola.ExtractMin().item;
 
-            if (visited.Contains(currentNodeId)) continue;
+            if (actual == destino) break;
 
-            visited.Add(currentNodeId);
+            if (visitados.Contains(actual)) continue;
+            visitados.Add(actual);
 
-            if (currentNode == target) break;
-
-            foreach (var arista in currentNode.aristasConectadas)
+            foreach (var arista in grafo.GetAristas())
             {
-                var neighbourNode = arista.destination;
-                int neighbourNodeId = neighbourNode.iD;
-
-                if (visited.Contains(neighbourNodeId)) continue;
-
-                int weight = arista.weight;
-                int newDist = weights[currentNodeId] + weight;
-
-                if (newDist < weights[neighbourNodeId])
+                if (arista.source == actual)
                 {
-                    weights[neighbourNodeId] = newDist;
-                    previous[neighbourNodeId] = currentNode;
-                    priorityQueue.Add(newDist, neighbourNodeId);
+                    Waypoint vecino = arista.destination;
+                    float peso = arista.weight;
+                    float nuevaDistancia = distancias[actual] + peso;
+
+                    if (nuevaDistancia < distancias[vecino])
+                    {
+                        distancias[vecino] = nuevaDistancia;
+                        previos[vecino] = actual;
+                        cola.Add((int)nuevaDistancia, vecino);
+                    }
                 }
             }
         }
 
-        var path = new List<Waypoint>();
-        Waypoint current = target;
-
-        while (current != null)
+        // Reconstruir el camino
+        var camino = new List<Waypoint>();
+        for (var nodo = destino; nodo != null; nodo = previos[nodo])
         {
-            path.Add(current);
-            current = previous.ContainsKey(current.iD) ? previous[current.iD] : null;
+            camino.Insert(0, nodo);
         }
 
-        path.Reverse();
-
-        return path;
+        return camino;
     }
 }

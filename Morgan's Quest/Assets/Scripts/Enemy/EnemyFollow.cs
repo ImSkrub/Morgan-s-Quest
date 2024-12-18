@@ -6,9 +6,8 @@ public class EnemyFollow : Enemy
     public GraphController graphController;
     public Transform jugador;
     public float velocidad = 3f;
-    public float distanciaDeteccion = 5f;
     public float rayDistance = 1f;
-    public float tiempoRecalculo = 3f; // Tiempo para recalcular el camino si no se alcanza el destino
+    public float tiempoRecalculo = 1f;
 
     [SerializeField] private LayerMask wallLayer;
     private List<Waypoint> camino;
@@ -29,7 +28,7 @@ public class EnemyFollow : Enemy
 
         jugador = FindObjectOfType<Player>().transform;
 
-        obstacleAvoidance = new ObstacleAvoidance(wallLayer,graphController);
+        obstacleAvoidance = new ObstacleAvoidance(wallLayer, graphController);
     }
 
     void Start()
@@ -65,28 +64,11 @@ public class EnemyFollow : Enemy
         }
     }
 
-    private Waypoint ObtenerWaypointMasCercano(Vector3 posicion)
-    {
-        Waypoint closestWaypoint = null;
-        float minDistancia = Mathf.Infinity;
-
-        foreach (Waypoint waypoint in graphController.nodos)
-        {
-            float distancia = Vector3.Distance(posicion, waypoint.transform.position);
-            if (distancia < minDistancia)
-            {
-                minDistancia = distancia;
-                closestWaypoint = waypoint;
-            }
-        }
-
-        return closestWaypoint;
-    }
-
     private void ActualizarCamino()
     {
         Waypoint waypointInicio = ObtenerWaypointMasCercano(transform.position);
         Waypoint waypointDestino = ObtenerWaypointMasCercano(jugador.position);
+
         Pathfinding pathfinding = new Pathfinding(graphController);
         camino = pathfinding.Dijkstra(waypointInicio, waypointDestino);
 
@@ -100,21 +82,13 @@ public class EnemyFollow : Enemy
             Waypoint waypointActual = camino[waypointIndex];
             Waypoint waypointSiguiente = waypointIndex + 1 < camino.Count ? camino[waypointIndex + 1] : null;
 
-            
-            // Si tenemos un waypoint siguiente, obtenemos la arista que conecta ambos waypoints
             if (waypointSiguiente != null)
             {
-                foreach (Arista arista in graphController.GetGraph().GetAristas())
-                {
-                    if (arista != null)
-                    {
-                        Vector3 targetDirection = (waypointSiguiente.transform.position - transform.position).normalized;
+                Vector3 targetDirection = (waypointSiguiente.transform.position - transform.position).normalized;
 
-                        // Ajustamos la dirección usando el peso de la arista (más peso, menos velocidad)
-                        Vector3 adjustedDirection = obstacleAvoidance.GetAdjustedDirection(transform, targetDirection, rayDistance);
-                        transform.position += adjustedDirection * velocidad * Time.deltaTime;
-                    }
-                }
+                // Ajustamos la dirección usando la evasión de obstáculos
+                Vector3 adjustedDirection = obstacleAvoidance.GetAdjustedDirection(transform, targetDirection, rayDistance);
+                transform.position += adjustedDirection * velocidad * Time.deltaTime;
             }
             else
             {
@@ -126,4 +100,21 @@ public class EnemyFollow : Enemy
         }
     }
 
+    private Waypoint ObtenerWaypointMasCercano(Vector3 posicion)
+    {
+        Waypoint closestWaypoint = null;
+        float minDistancia = Mathf.Infinity;
+
+        foreach (Waypoint waypoint in graphController.GetGraph().GetNodos())
+        {
+            float distancia = Vector3.Distance(posicion, waypoint.transform.position);
+            if (distancia < minDistancia)
+            {
+                minDistancia = distancia;
+                closestWaypoint = waypoint;
+            }
+        }
+
+        return closestWaypoint;
+    }
 }

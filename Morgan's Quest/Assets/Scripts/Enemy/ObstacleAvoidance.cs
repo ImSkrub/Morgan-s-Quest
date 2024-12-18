@@ -7,7 +7,8 @@ public class ObstacleAvoidance : IObstacleAvoidance
 {
     private LayerMask wallLayer;
     private GraphController controller;
-    public ObstacleAvoidance(LayerMask wallLayer,GraphController graphController)
+
+    public ObstacleAvoidance(LayerMask wallLayer, GraphController graphController)
     {
         this.wallLayer = wallLayer;
         this.controller = graphController;
@@ -19,18 +20,24 @@ public class ObstacleAvoidance : IObstacleAvoidance
 
         if (hit.collider != null)
         {
-            // Encuentra el waypoint más cercano que no esté bloqueado
-            
-            Waypoint nearestWaypoint = controller.GetGraph().GetNodos()
-                .OrderBy(wp => Vector3.Distance(enemyTransform.position, wp.transform.position))
-                .FirstOrDefault(wp => !Physics2D.Raycast(enemyTransform.position, wp.transform.position - enemyTransform.position, rayDistance, wallLayer));
-
-            if (nearestWaypoint != null)
+            // Si se detecta un obstáculo, buscamos el waypoint más cercano sin bloqueo
+            foreach (var waypoint in controller.GetGraph().GetNodos())
             {
-                return (nearestWaypoint.transform.position - enemyTransform.position).normalized;
+                // Verificamos si el waypoint está accesible
+                Vector3 directionToWaypoint = waypoint.transform.position - enemyTransform.position;
+                RaycastHit2D waypointHit = Physics2D.Raycast(enemyTransform.position, directionToWaypoint, rayDistance, wallLayer);
+
+                if (waypointHit.collider == null) 
+                {
+                    return directionToWaypoint.normalized;
+                }
             }
+
+            // Si no se encontró ningún waypoint accesible, podríamos retornar una dirección aleatoria
+            return Random.insideUnitCircle.normalized;
         }
 
+        // Si no hay obstáculos, seguimos la dirección original
         return targetDirection;
     }
 }

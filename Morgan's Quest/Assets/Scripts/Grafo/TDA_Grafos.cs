@@ -1,6 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 public class TDA_Grafos
 {
@@ -38,31 +40,33 @@ public class TDA_Grafos
         }
     }
 
+    public void EliminarArista(Waypoint origen, Waypoint destino)
+    {
+        Arista aristaAEliminar = aristas.FirstOrDefault(arista =>
+            (arista.source == origen && arista.destination == destino) ||
+            (arista.source == destino && arista.destination == origen));
+
+        if (aristaAEliminar != null)
+        {
+            aristas.Remove(aristaAEliminar);
+            Debug.Log($"Arista eliminada entre {origen.iD} y {destino.iD}");
+        }
+    }
 
     public bool ExisteArista(Waypoint origen, Waypoint destino)
     {
-        foreach (Arista arista in aristas)
-        {
-            if ((arista.source == origen && arista.destination == destino) ||
-                (arista.source == destino && arista.destination == origen))
-            {
-                return true;
-            }
-        }
-        return false;
+        return aristas.Any(arista =>
+            (arista.source == origen && arista.destination == destino) ||
+            (arista.source == destino && arista.destination == origen));
     }
 
     public int PesoArista(Waypoint origen, Waypoint destino)
     {
-        foreach (Arista arista in aristas)
-        {
-            if ((arista.source == origen && arista.destination == destino) ||
-                (arista.source == destino && arista.destination == origen))
-            {
-                return arista.weight;
-            }
-        }
-        return 0;
+        var arista = aristas.FirstOrDefault(a =>
+            (a.source == origen && a.destination == destino) ||
+            (a.source == destino && a.destination == origen));
+
+        return arista != null ? arista.weight : 0;
     }
 
     public List<Waypoint> GetNodos()
@@ -73,5 +77,25 @@ public class TDA_Grafos
     public List<Arista> GetAristas()
     {
         return aristas;
+    }
+
+    // Método para eliminar aristas basadas en la distancia
+    public void EliminarAristasPorDistancia(float distanciaMaxima)
+    {
+        var aristasAEliminar = new List<Arista>();
+
+        foreach (var arista in aristas)
+        {
+            float distancia = Vector3.Distance(arista.source.transform.position, arista.destination.transform.position);
+            if (distancia > distanciaMaxima)
+            {
+                aristasAEliminar.Add(arista);
+            }
+        }
+
+        foreach (var arista in aristasAEliminar)
+        {
+            EliminarArista(arista.source, arista.destination);
+        }
     }
 }
