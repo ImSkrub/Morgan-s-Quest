@@ -26,9 +26,6 @@ public class ChildLife : MonoBehaviour
     // Variables para sonido
     private AudioSource audioSource;  // AudioSource para reproducir el sonido
     [SerializeField] private AudioClip damageSound; // Clip de sonido cuando recibe daño
-
-    
-
     private void Start()
     {
         spriteRenderer = GetComponent<SpriteRenderer>();
