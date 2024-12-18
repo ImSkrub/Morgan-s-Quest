@@ -10,6 +10,7 @@ public class QuickSortHS : MonoBehaviour
     private void Start()
     {
         // Load scores when the game starts
+        puntajes.Clear();
         CargarPuntajes();
         MostrarPuntajes();
         // Subscribe to the score update event
@@ -18,17 +19,13 @@ public class QuickSortHS : MonoBehaviour
 
     private void OnDestroy()
     {
-        // Unsubscribe from the event when this object is destroyed
         PointManager.Instance.OnHighScoreUpdated -= ActualizarPuntajes;
     }
 
     public void AgregarPuntaje(int score)
     {
-        // Ensure there is a PointManager in the scene
         PointManager.Instance.AddScore(score);
-        // Add the score to the list
         puntajes.Add(score);
-        // Update the displayed scores
         ActualizarPuntajes();
     }
 
@@ -36,11 +33,13 @@ public class QuickSortHS : MonoBehaviour
     {
         puntajes.Clear(); // Clear the existing scores
         int scoreCount = PlayerPrefs.GetInt("ScoreCount", 0); // Get the number of scores saved
+        Debug.Log($"Cargando {scoreCount} puntajes."); // Debug output
 
         for (int i = 0; i < scoreCount; i++)
         {
             int score = PlayerPrefs.GetInt($"Score_{i}"); // Load each score
             puntajes.Add(score); // Add it to the list
+            Debug.Log($"Cargado puntaje: {score}"); // Debug output
         }
 
         // After loading, update the displayed scores
@@ -54,7 +53,6 @@ public class QuickSortHS : MonoBehaviour
         Debug.Log("Scores after sorting: " + string.Join(", ", puntajes)); // Debug output
         MostrarPuntajes(); // Ensure this is called after sorting
     }
-
     public void OrdenarPuntajes()
     {
         QuickSort.Sort(puntajes); // Use QuickSort to sort the scores
@@ -70,6 +68,6 @@ public class QuickSortHS : MonoBehaviour
         }
 
         globalHighScore.text = puntajesTexto; // Ensure this object is linked
-        Debug.Log(puntajesTexto); // Debug output to verify leaderboard display
+        Debug.Log($"Mostrando puntajes:\n{puntajesTexto}"); // Debug output to verify leaderboard display
     }
 }

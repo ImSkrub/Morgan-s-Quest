@@ -32,6 +32,28 @@ public class PointManager : MonoBehaviour
         }
     }
 
+    private void Start()
+    {
+        if (highScoreText == null)
+        {
+            GameObject leaderboardTextObject = GameObject.FindGameObjectWithTag("LeaderboardText");
+            if (leaderboardTextObject != null)
+            {
+                highScoreText = leaderboardTextObject.GetComponent<TextMeshProUGUI>();
+            }
+
+            if (highScoreText == null)
+            {
+                Debug.LogWarning("No se encontró un TextMeshProUGUI con el tag 'LeaderboardText'.");
+            }
+        }
+
+        if (highScoreText != null)
+        {
+            UpdateHighScoreUI();
+        }
+    }
+
     public Stack<int> GetScoreHistory()
     {
         return new Stack<int>(scoreHistory); 

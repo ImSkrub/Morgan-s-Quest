@@ -530,10 +530,10 @@ RectTransform:
   m_LocalScale: {x: 0, y: 0, z: 0}
   m_ConstrainProportionsScale: 0
   m_Children:
+  - {fileID: 277621302}
   - {fileID: 1169793724}
   - {fileID: 268624366}
   - {fileID: 1689276821}
-  - {fileID: 277621302}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
@@ -761,7 +761,7 @@ GameObject:
   - component: {fileID: 277621300}
   m_Layer: 5
   m_Name: HIGHSCORE
-  m_TagString: Untagged
+  m_TagString: LeaderboardText
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -879,7 +879,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 1104, y: 565}
+  m_AnchoredPosition: {x: 859.22, y: 515}
   m_SizeDelta: {x: 200, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &281295307
