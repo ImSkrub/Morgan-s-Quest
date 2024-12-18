@@ -24,12 +24,21 @@ public class QuickSortHS : MonoBehaviour
 
     public void AgregarPuntaje(int score)
     {
-        // Ensure there is a PointManager in the scene
-        PointManager.Instance.AddScore(score);
-        // Add the score to the list
-        puntajes.Add(score);
-        // Update the displayed scores
-        ActualizarPuntajes();
+        // Verificar si el puntaje ya ha sido agregado recientemente
+        if (!puntajes.Contains(score))
+        {
+            // Asegurarse de que PointManager esté en la escena y que agregue el puntaje
+            PointManager.Instance.AddScore(score);
+
+            // Agregar el puntaje a la lista
+            puntajes.Add(score);
+
+            // Guardar los puntajes actualizados
+            GuardarPuntajes();
+
+            // Actualizar la interfaz de usuario de los puntajes
+            ActualizarPuntajes();
+        }
     }
 
     public void CargarPuntajes()
@@ -43,21 +52,23 @@ public class QuickSortHS : MonoBehaviour
             puntajes.Add(score); // Add it to the list
         }
 
-        // After loading, update the displayed scores
-        ActualizarPuntajes();
+        OrdenarPuntajes(); // Ordena los puntajes después de cargar
+        MostrarPuntajes(); // Actualiza la UI después de ordenar
     }
 
     private void ActualizarPuntajes()
     {
-        Debug.Log("Scores before sorting: " + string.Join(", ", puntajes)); // Debug output
+        // Ordenar los puntajes antes de mostrarlos
         OrdenarPuntajes();
-        Debug.Log("Scores after sorting: " + string.Join(", ", puntajes)); // Debug output
-        MostrarPuntajes(); // Ensure this is called after sorting
+
+        // Mostrar la lista de puntajes actualizada
+        MostrarPuntajes();
     }
 
     public void OrdenarPuntajes()
     {
-        QuickSort.Sort(puntajes); // Use QuickSort to sort the scores
+        // Usar QuickSort para ordenar los puntajes de mayor a menor
+        QuickSort.Sort(puntajes);
     }
 
     public void MostrarPuntajes()
@@ -69,7 +80,20 @@ public class QuickSortHS : MonoBehaviour
             puntajesTexto += $"{i + 1} Place: - Points: {puntajes[i]}\n";
         }
 
-        globalHighScore.text = puntajesTexto; // Ensure this object is linked
+        globalHighScore.text = puntajesTexto; // Actualizar la UI de la leaderboard
         Debug.Log(puntajesTexto); // Debug output to verify leaderboard display
+    }
+
+    private void GuardarPuntajes()
+    {
+        // Guardar los puntajes en PlayerPrefs
+        PlayerPrefs.SetInt("ScoreCount", puntajes.Count); // Guardar la cantidad de puntajes
+
+        for (int i = 0; i < puntajes.Count; i++)
+        {
+            PlayerPrefs.SetInt($"Score_{i}", puntajes[i]); // Guardar cada puntaje
+        }
+
+        PlayerPrefs.Save(); // Asegurarse de que los cambios se guarden
     }
 }
