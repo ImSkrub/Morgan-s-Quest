@@ -51,12 +51,6 @@ public class GraphController : MonoBehaviour
         
     }
 
-    private void FixedUpdate()
-    {
-        pathVisualizer.RenderizarConexiones(grafo);
-        GenerarConexionesAutomaticas();
-    }
-
     private void GenerarConexionesAutomaticas()
     {
         int conexionesGeneradas = 0;
@@ -69,13 +63,11 @@ public class GraphController : MonoBehaviour
 
                 float distancia = Vector3.Distance(nodoA.transform.position, nodoB.transform.position);
 
-                if (distancia <= maxDistanciaConexiones)
+                // Comprobar solo una vez para cada par de nodos (evitar duplicados)
+                if (distancia <= maxDistanciaConexiones && !grafo.ExisteArista(nodoA, nodoB))
                 {
-                    if (!grafo.ExisteArista(nodoA, nodoB))
-                    {
-                        grafo.AgregarArista(nodoA, nodoB, Mathf.RoundToInt(distancia));
-                        conexionesGeneradas++;
-                    }
+                    grafo.AgregarArista(nodoA, nodoB, Mathf.RoundToInt(distancia));
+                    conexionesGeneradas++;
                 }
             }
         }

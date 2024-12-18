@@ -11,7 +11,7 @@ public class Pathfinding : MonoBehaviour
         this.graphController = graphController;
     }
 
-    public List<Waypoint> Dijkstra(Waypoint inicio, Waypoint destino)
+    public List<Waypoint> Dijkstra(Waypoint inicio, Waypoint destino, LayerMask wallLayer)
     {
         var grafo = graphController.GetGraph();
         var distancias = new Dictionary<Waypoint, float>();
@@ -19,6 +19,25 @@ public class Pathfinding : MonoBehaviour
         var visitados = new HashSet<Waypoint>();
         var cola = new MinHeap<Waypoint>();
 
+        // Precalcular las aristas accesibles
+        var aristasAccesibles = new Dictionary<Waypoint, List<Waypoint>>();
+        foreach (var nodo in grafo.GetNodos())
+        {
+            aristasAccesibles[nodo] = new List<Waypoint>();
+            foreach (var arista in grafo.GetAristas())
+            {
+                if (arista.source == nodo)
+                {
+                    Waypoint vecino = arista.destination;
+                    if (EsWaypointAccesible(nodo, vecino, wallLayer)) // Precalcular si la arista es accesible
+                    {
+                        aristasAccesibles[nodo].Add(vecino);
+                    }
+                }
+            }
+        }
+
+        // Inicializar las distancias y la cola de prioridad
         foreach (var nodo in grafo.GetNodos())
         {
             distancias[nodo] = float.MaxValue;
@@ -28,6 +47,7 @@ public class Pathfinding : MonoBehaviour
         distancias[inicio] = 0;
         cola.Add(0, inicio);
 
+        // Algoritmo de Dijkstra
         while (cola.Count > 0)
         {
             var actual = cola.ExtractMin().item;
@@ -37,20 +57,16 @@ public class Pathfinding : MonoBehaviour
             if (visitados.Contains(actual)) continue;
             visitados.Add(actual);
 
-            foreach (var arista in grafo.GetAristas())
+            foreach (var vecino in aristasAccesibles[actual])
             {
-                if (arista.source == actual)
-                {
-                    Waypoint vecino = arista.destination;
-                    float peso = arista.weight;
-                    float nuevaDistancia = distancias[actual] + peso;
+                float peso = Vector3.Distance(actual.transform.position, vecino.transform.position); // O el peso que corresponda
+                float nuevaDistancia = distancias[actual] + peso;
 
-                    if (nuevaDistancia < distancias[vecino])
-                    {
-                        distancias[vecino] = nuevaDistancia;
-                        previos[vecino] = actual;
-                        cola.Add((int)nuevaDistancia, vecino);
-                    }
+                if (nuevaDistancia < distancias[vecino])
+                {
+                    distancias[vecino] = nuevaDistancia;
+                    previos[vecino] = actual;
+                    cola.Add((int)nuevaDistancia, vecino);
                 }
             }
         }
@@ -63,5 +79,14 @@ public class Pathfinding : MonoBehaviour
         }
 
         return camino;
+    }
+
+    private bool EsWaypointAccesible(Waypoint desde, Waypoint hasta, LayerMask wallLayer)
+    {
+        Vector3 direccion = hasta.transform.position - desde.transform.position;
+        float distancia = Vector3.Distance(desde.transform.position, hasta.transform.position);
+        RaycastHit2D hit = Physics2D.Raycast(desde.transform.position, direccion, distancia, wallLayer);
+
+        return hit.collider == null; // Devuelve true si no hay colisión
     }
 }

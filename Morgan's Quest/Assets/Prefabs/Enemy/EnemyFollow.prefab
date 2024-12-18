@@ -142,10 +142,11 @@ MonoBehaviour:
   jugador: {fileID: 0}
   velocidad: 3
   rayDistance: 2
-  tiempoRecalculo: 1
+  tiempoRecalculo: 3
   wallLayer:
     serializedVersion: 2
     m_Bits: 64
+  camino: []
 --- !u!50 &7808557852648628793
 Rigidbody2D:
   serializedVersion: 4
@@ -216,8 +217,8 @@ BoxCollider2D:
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 1, y: 1}
-  m_EdgeRadius: 0
+  m_Size: {x: 1.03, y: 1.5087719}
+  m_EdgeRadius: 0.05
 --- !u!95 &8019873231866715263
 Animator:
   serializedVersion: 5
