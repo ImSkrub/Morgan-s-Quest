@@ -11,12 +11,14 @@ public class EnemyFollow : Enemy
 
     private Vector3 ultimaPosicionJugador;
 
-    [SerializeField] private LayerMask wallLayer;
+    public LayerMask wallLayer;
     public List<Waypoint> camino;
     private int waypointIndex = 0;
     private float tiempoUltimoRecalculo;
 
     private IObstacleAvoidance obstacleAvoidance;
+    public enum NavigationMode { Dijkstra, Waypoints }
+    public NavigationMode modoNavegacion = NavigationMode.Dijkstra;
 
     private void Awake()
     {
@@ -41,24 +43,26 @@ public class EnemyFollow : Enemy
         tiempoUltimoRecalculo = Time.time;
     }
 
-    void Update()
+    private void Update()
     {
         base.Update();
 
         if (camino == null || camino.Count == 0) return;
 
         RecalculatePathIfNeeded();
-        MoverHaciaWaypoint();
-       
+
+        if (waypointIndex < camino.Count)
+        {
+            MoverHaciaWaypoint(camino[waypointIndex]);
+        }
     }
 
     private void RecalculatePathIfNeeded()
     {
         bool jugadorSeMovio = Vector3.Distance(jugador.position, ultimaPosicionJugador) > 1f;
         bool tiempoExcedido = Time.time - tiempoUltimoRecalculo > tiempoRecalculo;
-        bool waypointInaccesible = waypointIndex < camino.Count && !EsWaypointAccesible(transform.position, camino[waypointIndex].transform.position);
 
-        if (jugadorSeMovio || tiempoExcedido || waypointInaccesible || waypointIndex >= camino.Count)
+        if (jugadorSeMovio || tiempoExcedido || waypointIndex >= camino.Count)
         {
             ActualizarCamino();
             ultimaPosicionJugador = jugador.position;
@@ -66,16 +70,15 @@ public class EnemyFollow : Enemy
         }
     }
 
-    public void ActualizarCamino()
+
+    private void ActualizarCamino()
     {
-        Waypoint waypointInicio = ObtenerWaypointMasCercano(transform.position);
-        Waypoint waypointDestino = ObtenerWaypointMasCercano(jugador.position);
+        Waypoint inicio = ObtenerWaypointMasCercano(transform.position);
+        Waypoint destino = ObtenerWaypointMasCercano(jugador.position);
 
-        // Usamos Dijkstra para encontrar el camino más corto entre los waypoints
         Pathfinding pathfinding = new Pathfinding(graphController);
-        camino = pathfinding.Dijkstra(waypointInicio, waypointDestino, wallLayer);
+        camino = pathfinding.Dijkstra(inicio, destino, wallLayer);
 
-        // Reiniciamos el índice del waypoint
         waypointIndex = 0;
 
         if (camino.Count == 0)
@@ -84,8 +87,37 @@ public class EnemyFollow : Enemy
         }
     }
 
-    private void MoverHaciaWaypoint()
+    private void MoverHaciaWaypoint(Waypoint waypointActual)
     {
+        Vector3 targetDirection = (waypointActual.transform.position - transform.position).normalized;
+        Vector3 adjustedDirection = obstacleAvoidance.GetAdjustedDirection(transform, targetDirection, rayDistance);
+
+        // Si no hay dirección ajustada, recalcula el camino
+        if (adjustedDirection == Vector3.zero)
+        {
+            Debug.LogWarning("Obstáculo detectado. Recalculando camino...");
+            ActualizarCamino();
+            return;
+        }
+
+        transform.position += adjustedDirection * velocidad * Time.deltaTime;
+
+        // Si el enemigo está cerca del waypoint, avanza al siguiente
+        if (Vector3.Distance(transform.position, waypointActual.transform.position) < 0.5f)
+        {
+            waypointIndex++;
+        }
+    }
+
+    private void SeguirCaminoDijkstra()
+    {
+        if (camino == null || camino.Count == 0)
+        {
+            ActualizarCamino();
+            return;
+        }
+
+        // Verifica si el índice es válido
         if (waypointIndex < camino.Count)
         {
             Waypoint waypointActual = camino[waypointIndex];
@@ -93,27 +125,57 @@ public class EnemyFollow : Enemy
             Vector3 targetDirection = (waypointActual.transform.position - transform.position).normalized;
             Vector3 adjustedDirection = obstacleAvoidance.GetAdjustedDirection(transform, targetDirection, rayDistance);
 
+            // Si no hay dirección ajustada, intenta recalcular el camino
             if (adjustedDirection == Vector3.zero)
             {
-                // Si no hay dirección accesible, recalculamos el camino
-                Debug.Log("Rayo detecta obstáculo. Recalculando camino...");
+                Debug.LogWarning("Obstáculo detectado. Recalculando camino...");
                 ActualizarCamino();
                 return;
             }
 
-            // Mover hacia la dirección ajustada
             transform.position += adjustedDirection * velocidad * Time.deltaTime;
 
-            // Avanzar al siguiente waypoint si estamos cerca
-            if (Vector3.Distance(transform.position, waypointActual.transform.position) < 0.5f)
+            // Si el enemigo está cerca del waypoint, avanza al siguiente
+            if (Vector3.Distance(transform.position, waypointActual.transform.position) < Mathf.Max(0.5f, velocidad * Time.deltaTime))
             {
                 waypointIndex++;
+
+                // Si alcanzó el último waypoint, recalcula el camino
+                if (waypointIndex >= camino.Count)
+                {
+                    Debug.Log("Camino completado. Recalculando...");
+                    ActualizarCamino();
+                }
             }
         }
         else
         {
-            // Si no hay más waypoints, recalcular camino
+            // Si el índice es inválido, recalcula el camino
+            Debug.LogWarning("Índice de waypoint fuera de rango. Recalculando...");
             ActualizarCamino();
+        }
+    }
+
+    private void NavegarEntreWaypoints()
+    {
+        Waypoint waypointMasCercano = ObtenerWaypointMasCercano(transform.position);
+
+        if (waypointMasCercano == null)
+        {
+            Debug.LogWarning("No se encontró un waypoint cercano.");
+            return;
+        }
+
+        Vector3 targetDirection = (waypointMasCercano.transform.position - transform.position).normalized;
+        Vector3 adjustedDirection = obstacleAvoidance.GetAdjustedDirection(transform, targetDirection, rayDistance);
+
+        if (adjustedDirection != Vector3.zero)
+        {
+            transform.position += adjustedDirection * velocidad * Time.deltaTime;
+        }
+        else
+        {
+            Debug.LogWarning("Obstáculo detectado en modo Waypoints.");
         }
     }
 
@@ -126,7 +188,18 @@ public class EnemyFollow : Enemy
 
         return hit.collider == null; // True si no hay colisión
     }
+    private Waypoint BuscarWaypointAlternativo(Waypoint waypointInaccesible)
+    {
+        foreach (var vecino in graphController.GetGraph().GetVecinos(waypointInaccesible))
+        {
+            if (EsWaypointAccesible(transform.position, vecino.transform.position))
+            {
+                return vecino;
+            }
+        }
 
+        return null; // No se encontró un waypoint alternativo
+    }
     private Waypoint ObtenerWaypointMasCercano(Vector3 posicion)
     {
         Waypoint closestWaypoint = null;

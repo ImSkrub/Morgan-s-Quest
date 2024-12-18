@@ -143,12 +143,13 @@ MonoBehaviour:
   graphController: {fileID: 0}
   jugador: {fileID: 0}
   velocidad: 3
-  rayDistance: 2
-  tiempoRecalculo: 3
+  rayDistance: 1
+  tiempoRecalculo: 5
   wallLayer:
     serializedVersion: 2
     m_Bits: 64
   camino: []
+  modoNavegacion: 0
 --- !u!50 &7808557852648628793
 Rigidbody2D:
   serializedVersion: 4

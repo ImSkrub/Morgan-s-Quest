@@ -40,8 +40,19 @@ public class AutoMoveArea : MonoBehaviour
 
     private void MoveTowardsPlayer()
     {
-        // Mover al enemigo hacia el jugador
-        Vector3 direction = (enemy.jugador.position - transform.position).normalized; // Dirección hacia el jugador
-        transform.position += direction * enemy.velocidad * Time.deltaTime; // Movimiento hacia el jugador
+        
+        Vector3 direction = (enemy.jugador.position - transform.position).normalized;
+                
+        RaycastHit2D hit = Physics2D.Raycast(transform.position, direction, enemy.rayDistance, enemy.wallLayer);
+
+        if (hit.collider != null)
+        {
+           
+            Vector3 normal = hit.normal; 
+            direction = Vector3.Reflect(direction, normal); 
+        }
+
+        // Movimiento del enemigo
+        transform.position += direction * enemy.velocidad * Time.deltaTime;
     }
 }

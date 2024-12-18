@@ -21,33 +21,20 @@ public class ObstacleAvoidance : IObstacleAvoidance
 
         if (hit.collider != null)
         {
-            // Intentar encontrar un waypoint accesible
             Vector3 adjustedDirection = BuscarWaypointAccesible(enemyTransform, rayDistance);
             if (adjustedDirection != Vector3.zero)
             {
-                return adjustedDirection; // Ir hacia un waypoint accesible
+                return adjustedDirection;
             }
 
-            // Intentar evitar el obstáculo
             Vector3 avoidanceDirection = EvitarObstaculo(enemyTransform, targetDirection, rayDistance);
             if (avoidanceDirection != Vector3.zero)
             {
-                return avoidanceDirection; // Evitar el obstáculo
+                return avoidanceDirection;
             }
 
-            // Si no podemos evitar el obstáculo, recalculamos el camino usando Dijkstra
-            EnemyFollow enemyFollow = enemyTransform.GetComponent<EnemyFollow>();
-            if (enemyFollow != null)
-            {
-                enemyFollow.ActualizarCamino(); // Recalcular el camino usando Dijkstra
-                if (enemyFollow.camino.Count > 0)
-                {
-                    return (enemyFollow.camino[0].transform.position - enemyTransform.position).normalized;
-                }
-            }
-
-            // Si no hay camino alternativo, detenerse
-            return Vector3.zero;
+            // Si no hay solución, intenta moverse en una dirección perpendicular al obstáculo
+            return Vector3.Cross(targetDirection, Vector3.forward).normalized;
         }
 
         return targetDirection; // Continuar en la dirección actual

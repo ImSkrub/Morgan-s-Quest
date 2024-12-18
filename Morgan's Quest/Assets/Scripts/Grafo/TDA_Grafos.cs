@@ -23,7 +23,7 @@ public class TDA_Grafos
         if (!nodos.Contains(v))
         {
             nodos.Add(v);
-            Debug.Log($"Vertice agregado: {v.iD}");
+            //Debug.Log($"Vertice agregado: {v.iD}");
         }
     }
 
@@ -36,7 +36,7 @@ public class TDA_Grafos
             aristas.Add(nuevaArista);
             origen.AgregarArista(destino, peso);
 
-            Debug.Log($"Arista agregada entre {origen.iD} y {destino.iD} con peso {peso}");
+            //Debug.Log($"Arista agregada entre {origen.iD} y {destino.iD} con peso {peso}");
         }
     }
 
@@ -68,17 +68,6 @@ public class TDA_Grafos
 
         return arista != null ? arista.weight : 0;
     }
-
-    public List<Waypoint> GetNodos()
-    {
-        return nodos;
-    }
-
-    public List<Arista> GetAristas()
-    {
-        return aristas;
-    }
-
     // Método para eliminar aristas basadas en la distancia
     public void EliminarAristasPorDistancia(float distanciaMaxima)
     {
@@ -97,5 +86,34 @@ public class TDA_Grafos
         {
             EliminarArista(arista.source, arista.destination);
         }
+    }
+
+    public List<Waypoint> GetNodos()
+    {
+        return nodos;
+    }
+
+    public List<Arista> GetAristas()
+    {
+        return aristas;
+    }
+
+    public List<Waypoint> GetVecinos(Waypoint nodo)
+    {
+        List<Waypoint> vecinos = new List<Waypoint>();
+
+        foreach (var arista in aristas)
+        {
+            if (arista.source == nodo)
+            {
+                vecinos.Add(arista.destination);
+            }
+            else if (arista.destination == nodo)
+            {
+                vecinos.Add(arista.source);
+            }
+        }
+
+        return vecinos;
     }
 }
