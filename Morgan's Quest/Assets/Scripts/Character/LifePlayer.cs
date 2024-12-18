@@ -71,8 +71,7 @@ public class LifePlayer : MonoBehaviour, IDamageable
     {
         this.gameObject.SetActive(false);
         OnDeath?.Invoke(); // Invocamos el evento de muerte si está suscrito
-
-        // Reiniciar la pila de essences
+               
         EssenceManager.instance.escenceStack.InitializeStack();
         GameManager.Instance.escence = 0;
         GameManager.Instance.counter = 0;

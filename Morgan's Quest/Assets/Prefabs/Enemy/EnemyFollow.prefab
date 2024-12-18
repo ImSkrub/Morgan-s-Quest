@@ -124,6 +124,8 @@ MonoBehaviour:
   destroyDelay: 0.5
   item: {fileID: 6249668151975592760}
   damageParticles: {fileID: 1084894594648249943, guid: e6da33ae1fa1ee748a8a1b8187c8a745, type: 3}
+  deathParticles: {fileID: 7507310904836721656, guid: 69e84da3147a22b49b9b12f34d4cce59, type: 3}
+  floatingTextPrefab: {fileID: 3766442867679149807, guid: 3c5f2bc2b356d7d4c841003aed88944a, type: 3}
   damageSound: {fileID: 8300000, guid: 7c47b20bb9874304a809dc5580d403ba, type: 3}
 --- !u!114 &1863384209875965968
 MonoBehaviour:
