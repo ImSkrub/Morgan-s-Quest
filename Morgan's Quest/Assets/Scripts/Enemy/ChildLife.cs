@@ -15,22 +15,22 @@ public class ChildLife : MonoBehaviour
     [SerializeField] private float destroyDelay = 0.5f;
     [SerializeField] private GenerateItem item;
     [SerializeField] private ParticleSystem damageParticles;
+    [SerializeField] private ParticleSystem deathParticles;
+    [SerializeField] private GameObject floatingTextPrefab;
 
     private ABB enemyTree;
     private Transform player;
     private float lastDistance;
     public event Action OnDeath;
-    private ParticleSystem damageParticlesInstance;
-    private Animator m_animator;
 
-    // Variables para sonido
-    private AudioSource audioSource;  // AudioSource para reproducir el sonido
+    private AudioSource audioSource;
+    [SerializeField] private AudioClip damageSound;
+
     private void Start()
     {
         spriteRenderer = GetComponent<SpriteRenderer>();
         originalColor = spriteRenderer.color;
         item = GetComponent<GenerateItem>();
-        m_animator = GetComponent<Animator>();
 
         enemyTree = new ABB();
         enemyTree.InicializarArbol();
@@ -47,18 +47,12 @@ public class ChildLife : MonoBehaviour
             Debug.LogError("Player not found. Ensure it has the 'Player' tag.");
         }
 
-
         audioSource = GetComponent<AudioSource>();
-        if (audioSource == null)
-        {
-            audioSource = gameObject.AddComponent<AudioSource>();
-        }
-
     }
 
     private void Update()
     {
-        if (!isDead && player != null) return;
+        if (!isDead && player != null)
         {
             float currentDistance = Vector2.Distance(transform.position, player.position);
 
@@ -84,14 +78,15 @@ public class ChildLife : MonoBehaviour
 
     public void GetDamage(int value)
     {
+        ShowDamage(value.ToString());
+
         if (isDead) return;
 
         health -= value;
 
-      
-        if (AudioManager.instance != null)
+        if (audioSource != null && damageSound != null)
         {
-            AudioManager.instance.PlaySFX("DamageSound"); // Asegúrate de que "DamageSound" esté configurado en los clips de SFX
+            audioSource.PlayOneShot(damageSound);
         }
 
         SpawnDamageParticles();
@@ -107,12 +102,11 @@ public class ChildLife : MonoBehaviour
         }
     }
 
-
     private void SpawnDamageParticles()
     {
-        if(damageParticles != null)
+        if (damageParticles != null)
         {
-            damageParticlesInstance = Instantiate(damageParticles, transform.position, Quaternion.identity);
+            Instantiate(damageParticles, transform.position, Quaternion.identity);
         }
     }
 
@@ -130,11 +124,8 @@ public class ChildLife : MonoBehaviour
 
         isDead = true;
 
-
         PointManager.Instance.AddScore(10);
-
         enemyTree.EliminarElem(gameObject.name);
-
         OnDeath?.Invoke();
 
         Collider2D collider = GetComponent<Collider2D>();
@@ -149,26 +140,28 @@ public class ChildLife : MonoBehaviour
             if (script != this) script.enabled = false;
         }
 
-        if (m_animator != null)
-        {
-            m_animator.SetTrigger("Death");
-            float animationDuration = m_animator.GetCurrentAnimatorStateInfo(0).length;
-            Invoke("HandleDeath", animationDuration);
-        }
-        else
-        {
-            Invoke("HandleDeath", 1.0f);
-        }
-        HandleDeath();
-    }
+        SpawnDeathParticles();
 
-    private void HandleDeath()
-    {
         item?.SpawnItem();
         Destroy(gameObject);
     }
 
+    private void SpawnDeathParticles()
+    {
+        if (deathParticles != null)
+        {
+            Instantiate(deathParticles, transform.position, Quaternion.identity);
+        }
+    }
 
+    void ShowDamage(string text)
+    {
+        if (floatingTextPrefab)
+        {
+            GameObject prefab = Instantiate(floatingTextPrefab, transform.position, Quaternion.identity);
+            prefab.GetComponentInChildren<TextMesh>().text = text;
+        }
+    }
 
     public string GetClosestEnemy()
     {
