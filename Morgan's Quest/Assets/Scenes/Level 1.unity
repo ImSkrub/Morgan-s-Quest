@@ -75362,9 +75362,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 39bdbfd5179bc954d956fc0392782382, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  counter: 0
-  player: {fileID: 524018344}
+  counter: 10
   escence: 0
+  player: {fileID: 524018344}
   textCount: {fileID: 39813234}
 --- !u!4 &1575354894
 Transform:

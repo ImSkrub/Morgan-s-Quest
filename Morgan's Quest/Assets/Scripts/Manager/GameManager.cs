@@ -9,24 +9,19 @@ using UnityEngine.UI;
 public class GameManager : MonoBehaviour
 {
     public static GameManager Instance;
-    public int counter = 0;    
-
-    //player
-    [SerializeField]private GameObject player;
-    //public ABB enemyTree;
-    //Stats
+    public int counter = 10; // Inicia el contador en el valor máximo para el primer nivel.
     public int escence = 0;
-    public TextMeshProUGUI textCount;
 
+    [SerializeField] private GameObject player;
+    [SerializeField] private TextMeshProUGUI textCount;
 
     private void Awake()
     {
-
         if (Instance == null)
         {
             Instance = this;
         }
-        else if(Instance != this)
+        else if (Instance != this)
         {
             Destroy(gameObject);
             return;
@@ -36,44 +31,52 @@ public class GameManager : MonoBehaviour
 
     private void Update()
     {
-        textCount.text = "Enemy deaths: " + counter;
-        //Exit game
+        textCount.text = "Enemies remaining: " + counter;
+
+        // Salir del juego
         if (Input.GetKeyDown(KeyCode.Escape))
         {
             SceneManager.LoadScene(0);
         }
 
-        if (LevelManager.instance.currentLevel== 1 && counter >= 10)
+        // Cambiar de nivel cuando el contador llega a 0
+        if (counter <= 0)
         {
-            //Pasar siguiente nivel y reiniciar las estadisticas --> puntaje
+            NextLevel();
+        }
+    }
+
+    private void NextLevel()
+    {
+        if (LevelManager.instance.currentLevel == 1)
+        {
             LevelManager.instance.LoadNextLevel();
             Estadisticas.Instance.RestarStat();
-            counter = 0;
+            counter = 20; // Reinicia el contador para el siguiente nivel.
             escence = 0;
         }
-        //Si es el segundo nivel
-        if (LevelManager.instance.currentLevel == 2 && counter >= 20)
+        else if (LevelManager.instance.currentLevel == 2)
         {
             WinGame();
-            counter = 0;
-            escence = 0;
         }
-
-
     }
 
     public void WinGame()
     {
-      
-        SceneManager.LoadScene(3);
-  
+        SceneManager.LoadScene(3); // Escena de victoria
     }
 
     public void LoseGame()
     {
-      SceneManager.LoadScene(4);
-
+        SceneManager.LoadScene(4); // Escena de derrota
     }
 
-   
+    // Método para reducir el contador
+    public void DecreaseCounter()
+    {
+        if (counter > 0)
+        {
+            counter--;
+        }
+    }
 }

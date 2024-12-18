@@ -109,7 +109,7 @@ public class ChildLife : MonoBehaviour
         Destroy(gameObject, destroyDelay);
         item.SpawnItem();
 
-        GameManager.Instance.counter += 1;
+        GameManager.Instance.DecreaseCounter(); // Reduce el contador
     }
 
     // Additional methods for querying the ABB
